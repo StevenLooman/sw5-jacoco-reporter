@@ -1,0 +1,15 @@
+fixture_product_tests layered_product
+
+title
+	Tests for sw5-jacoco-reporter fixture product
+end
+
+description
+	Tests for sw5-jacoco-reporter fixture product.
+end
+
+requires
+	#munit
+end
+
+version 1.0.0

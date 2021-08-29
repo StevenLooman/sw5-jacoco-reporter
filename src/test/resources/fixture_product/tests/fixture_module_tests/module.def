@@ -1,0 +1,22 @@
+fixture_module_tests 1
+
+description
+	Tests for fixture module for sw5-jacoco-reporter tests.
+end
+
+requires
+	fixture_module
+	munit_base
+end
+
+tests_modules
+	fixture_module
+end
+
+test
+	name		fixture_module_tests
+	framework	munit
+	args 		fixture_module_tests
+end
+
+hidden

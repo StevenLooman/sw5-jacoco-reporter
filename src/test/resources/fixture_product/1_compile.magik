@@ -1,0 +1,11 @@
+system.rmdir("./libs", _true, _true)
+$
+
+smallworld_product.add_product(".../munit/munit")
+$
+
+smallworld_product.add_product(".")
+$
+
+smallworld_product.product(:fixture_product).compile_all_modules()
+$

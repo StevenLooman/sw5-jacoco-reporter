@@ -1,0 +1,26 @@
+_package sw
+
+_method char16_vector.method1()
+	_local str << _self + "abc"
+	_for var _over 1.upto(10)
+	_loop
+		str +<< write_string(var)
+	_endloop
+	_return str
+_endmethod
+$
+
+_method char16_vector.method2()
+	_local new_string << _self
+	_if _self.includes?(%x)
+	_then
+		new_string << _self.method1()
+	_endif
+	_return new_string
+_endmethod
+$
+
+_method char16_vector.method3?()
+	_return _self.includes?(%x)
+_endmethod
+$

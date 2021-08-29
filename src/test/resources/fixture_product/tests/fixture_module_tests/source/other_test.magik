@@ -1,0 +1,29 @@
+_package sw
+
+def_slotted_exemplar(
+	:other_test,
+	{},
+	{:test_case})
+$
+
+_pragma(classify_level=debug, topic={xsd_loader})
+_method other_test.test_integer_plus_100()
+    _local val << 150
+
+    _local expected << 250
+    _local actual << val.plus_100()
+
+    _self.assert_equals(expected, actual)
+_endmethod
+$
+
+_pragma(classify_level=debug, topic={xsd_loader})
+_method other_test.test_float_plus_100()
+    _local val << 150.0
+
+    _local expected << 250.0
+    _local actual << val.plus_100()
+
+    _self.assert_equals(expected, actual)
+_endmethod
+$

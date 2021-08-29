@@ -1,0 +1,11 @@
+fixture_product layered_product
+
+title
+	sw5-jacoco-reporter fixture product
+end
+
+description
+	sw5-jacoco-reporter fixture product.
+end
+
+version 1.0.0

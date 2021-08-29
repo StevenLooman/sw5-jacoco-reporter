@@ -1,0 +1,5 @@
+fixture_module 1
+
+description
+	Fixture module for sw5-jacoco-reporter tests.
+end

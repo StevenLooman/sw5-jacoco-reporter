@@ -1,0 +1,11 @@
+smallworld_product.add_product(".../munit/munit")
+$
+
+smallworld_product.add_product(".")
+$
+
+sw_module_manager.load_module(:fixture_module_tests)
+$
+
+sw_module_manager.module(:fixture_module_tests).run_loaded_tests()
+$

@@ -1,0 +1,11 @@
+_package sw
+
+_method integer.plus_100()
+	_return _self + 100
+_endmethod
+$
+
+_method float.plus_100()
+	_return _self + 100
+_endmethod
+$
