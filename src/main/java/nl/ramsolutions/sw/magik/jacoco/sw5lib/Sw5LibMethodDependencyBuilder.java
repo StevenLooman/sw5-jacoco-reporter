@@ -22,28 +22,29 @@ final class Sw5LibMethodDependencyBuilder {
      * @param classNode Class node to extract methods from.
      * @return Map with child + parent relations.
      */
-    public static Map<MethodNode, MethodNode> buildMethodDependencyMap(ClassNode classNode) {
+    public static Map<MethodNode, MethodNode> buildMethodDependencyMap(final ClassNode classNode) {
         return classNode.methods.stream()
-                // Filter methods which have Parent annotation.
-                .filter(methodNode -> methodNode.visibleAnnotations != null)
-                .filter(methodNode -> methodNode.visibleAnnotations.stream()
-                                            .anyMatch(ann -> ann.desc.equals(ANNOTATION_PARENT)))
-                // Create mapping between child- and parent-method.
-                .collect(Collectors.toMap(
-                    childMethodNode -> childMethodNode,
-                    childMethodNode -> {
-                        AnnotationNode annotationNode = childMethodNode.visibleAnnotations.stream()
-                                .filter(ann -> ann.desc.equals(ANNOTATION_PARENT)
-                                                && !ann.values.isEmpty()
-                                                && ann.values.get(0).equals(ANNOTATION_PARENT_VALUE_METHOD))
-                                .findAny()
-                                .orElseThrow();
-                        String wantedMethodName = (String) annotationNode.values.get(1);
-                        return classNode.methods.stream()
-                                .filter(methodNode -> methodNode.name.equals(wantedMethodName))
-                                .findAny()
-                                .orElseThrow();
-                    }));
+            // Filter methods which have Parent annotation.
+            .filter(methodNode -> methodNode.visibleAnnotations != null)
+            .filter(methodNode -> methodNode.visibleAnnotations.stream()
+                .anyMatch(ann -> ann.desc.equals(ANNOTATION_PARENT)))
+            // Create mapping between child- and parent-method.
+            .collect(Collectors.toMap(
+                childMethodNode -> childMethodNode,
+                childMethodNode -> {
+                    final AnnotationNode annotationNode = childMethodNode.visibleAnnotations.stream()
+                        .filter(ann ->
+                            ann.desc.equals(ANNOTATION_PARENT)
+                            && !ann.values.isEmpty()
+                            && ann.values.get(0).equals(ANNOTATION_PARENT_VALUE_METHOD))
+                        .findAny()
+                        .orElseThrow();
+                    final String wantedMethodName = (String) annotationNode.values.get(1);
+                    return classNode.methods.stream()
+                        .filter(methodNode -> methodNode.name.equals(wantedMethodName))
+                        .findAny()
+                        .orElseThrow();
+                }));
     }
 
 }

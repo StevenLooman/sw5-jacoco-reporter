@@ -24,11 +24,11 @@ final class Sw5LibMethodNameExtractor {
     private Sw5LibMethodNameExtractor() {
     }
 
-    static String keyForClassMethodName(String javaClassName, String javaMethodName) {
+    static String keyForClassMethodName(final String javaClassName, final String javaMethodName) {
         return javaClassName.replace("/", ".") + "." + javaMethodName;
     }
 
-    static String fullMagikMethodName(String exemplarName, String methodName) {
+    static String fullMagikMethodName(final String exemplarName, final String methodName) {
         return exemplarName + "." + methodName;
     }
 
@@ -37,7 +37,7 @@ final class Sw5LibMethodNameExtractor {
      * @param methodInsnNode {@link MethodInsnNode} to extract from.
      * @return Java name / Magik name entry.
      */
-    static Map.Entry<String, String> extractMethodName(MethodInsnNode methodInsnNode) {
+    static Map.Entry<String, String> extractMethodName(final MethodInsnNode methodInsnNode) {
         final List<LdcInsnNode> ldcNodes = Sw5LibMethodNameExtractor.getLdcNodes(methodInsnNode);
         if (ldcNodes.size() != LDC_EXPECTED_SIZE) {
             throw new IllegalStateException();
@@ -66,7 +66,7 @@ final class Sw5LibMethodNameExtractor {
      * @param methodInsn {@link MethodInsnNode} to extract from.
      * @return Collection with {@link LdcInsnNode}s.
      */
-    private static List<LdcInsnNode> getLdcNodes(MethodInsnNode methodInsn) {
+    private static List<LdcInsnNode> getLdcNodes(final MethodInsnNode methodInsn) {
         AbstractInsnNode current = methodInsn.getPrevious();
 
         // Skip over ICONST instructions.
@@ -75,7 +75,7 @@ final class Sw5LibMethodNameExtractor {
         }
 
         // Get all LDC instructions.
-        List<LdcInsnNode> ldcNodes = new ArrayList<>();
+        final List<LdcInsnNode> ldcNodes = new ArrayList<>();
         while (current != null && current.getOpcode() == Opcodes.LDC) {
             final LdcInsnNode ldcNode = (LdcInsnNode) current;
             ldcNodes.add(ldcNode);

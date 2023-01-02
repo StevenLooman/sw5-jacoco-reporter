@@ -19,9 +19,9 @@ public final class ClassNodeUtils {
      */
     static MethodNode getMethodNodeFromClassNode(final ClassNode classNode, final String methodName) {
         return classNode.methods.stream()
-                .filter(methodNode -> methodNode.name.equals(methodName))
-                .findAny()
-                .orElseThrow();
+            .filter(methodNode -> methodNode.name.equals(methodName))
+            .findAny()
+            .orElseThrow();
     }
 
 }

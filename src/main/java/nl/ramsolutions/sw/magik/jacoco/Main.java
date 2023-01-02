@@ -29,38 +29,38 @@ public final class Main {
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(Option.builder()
-                .longOpt(OPTION_HELP)
-                .desc("Show this help")
-                .build());
+            .longOpt(OPTION_HELP)
+            .desc("Show this help")
+            .build());
         OPTIONS.addOption(Option.builder()
-                .longOpt(OPTION_FILTER_PRIMARY)
-                .desc("Filter primary classes").build());
+            .longOpt(OPTION_FILTER_PRIMARY)
+            .desc("Filter primary classes").build());
         OPTIONS.addOption(Option.builder()
-                .longOpt(OPTION_PRODUCT_DIR)
-                .desc("Product directory")
-                .numberOfArgs(Option.UNLIMITED_VALUES)
-                .required()
-                .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
-                .build());
+            .longOpt(OPTION_PRODUCT_DIR)
+            .desc("Product directory")
+            .numberOfArgs(Option.UNLIMITED_VALUES)
+            .required()
+            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .build());
         OPTIONS.addOption(Option.builder()
-                .longOpt(OPTION_JACOCO_FILE)
-                .desc("Path to jacoco.exec")
-                .hasArg()
-                .required()
-                .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
-                .build());
+            .longOpt(OPTION_JACOCO_FILE)
+            .desc("Path to jacoco.exec")
+            .hasArg()
+            .required()
+            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .build());
         OPTIONS.addOption(Option.builder()
-                .longOpt(OPTION_HTML)
-                .desc("Output HTML report to directory")
-                .hasArg()
-                .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
-                .build());
+            .longOpt(OPTION_HTML)
+            .desc("Output HTML report to directory")
+            .hasArg()
+            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .build());
         OPTIONS.addOption(Option.builder()
-                .longOpt(OPTION_XML)
-                .desc("Output XML report to file")
-                .hasArg()
-                .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
-                .build());
+            .longOpt(OPTION_XML)
+            .desc("Output XML report to file")
+            .hasArg()
+            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .build());
     }
 
     private Main() {
@@ -78,7 +78,7 @@ public final class Main {
 
     private static boolean showHelp(final CommandLine commandLine) {
         return commandLine.hasOption(OPTION_HELP)
-               || !commandLine.hasOption(OPTION_HTML) && !commandLine.hasOption(OPTION_XML);
+            || !commandLine.hasOption(OPTION_HTML) && !commandLine.hasOption(OPTION_XML);
     }
 
     /**

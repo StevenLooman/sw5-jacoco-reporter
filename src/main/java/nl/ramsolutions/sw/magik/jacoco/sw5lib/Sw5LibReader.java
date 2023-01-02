@@ -34,7 +34,7 @@ public class Sw5LibReader {
      * Constructor.
      * @param productDir Product directory.
      */
-    public Sw5LibReader(Path productDir) throws IOException {
+    public Sw5LibReader(final Path productDir) throws IOException {
         this.readProductLibs(productDir);
     }
 
@@ -44,8 +44,8 @@ public class Sw5LibReader {
      */
     public Collection<ClassNode> getExecutableClassNodes() {
         return this.namedClasses.values().stream()
-                .filter(classNode -> classNode.interfaces.contains(INTERFACE_EXECUTABLE_MAGIK))
-                .collect(Collectors.toList());
+            .filter(classNode -> classNode.interfaces.contains(INTERFACE_EXECUTABLE_MAGIK))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -54,11 +54,11 @@ public class Sw5LibReader {
      */
     public Collection<ClassNode> getSubsidiaryClassNodes() {
         return this.namedClasses.values().stream()
-                .filter(classNode -> classNode.visibleAnnotations.stream()
-                        .anyMatch(annotation ->
-                                annotation.desc.equals(ANNOTATION_CODE_TYPE)
-                                && annotation.values.get(1).equals(ANNOTATION_CODE_TYPE_SUBSIDIARY)))
-                .collect(Collectors.toSet());
+            .filter(classNode -> classNode.visibleAnnotations.stream()
+                .anyMatch(annotation ->
+                    annotation.desc.equals(ANNOTATION_CODE_TYPE)
+                    && annotation.values.get(1).equals(ANNOTATION_CODE_TYPE_SUBSIDIARY)))
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -67,12 +67,12 @@ public class Sw5LibReader {
      * @return {@link ClassNode}, if found.
      */
     @CheckForNull
-    public ClassNode getClassByName(String className) {
+    public ClassNode getClassByName(final String className) {
         return this.namedClasses.get(className);
     }
 
-    private void readProductLibs(Path productDir) throws IOException {
-        Path libsDir = productDir.resolve(DIRECTORY_LIBS);
+    private void readProductLibs(final Path productDir) throws IOException {
+        final Path libsDir = productDir.resolve(DIRECTORY_LIBS);
         Stream<Path> libPaths = Files.find(
             libsDir,
             Integer.MAX_VALUE,
@@ -81,7 +81,7 @@ public class Sw5LibReader {
         libPaths.close();
     }
 
-    private void readNamedClassesSafe(Path archive) {
+    private void readNamedClassesSafe(final Path archive) {
         try {
             this.readNamedClasses(archive);
         } catch (IOException exception) {
@@ -89,30 +89,30 @@ public class Sw5LibReader {
         }
     }
 
-    private void readNamedClasses(Path archive) throws IOException {
-        File file = archive.toFile();
+    private void readNamedClasses(final Path archive) throws IOException {
+        final File file = archive.toFile();
         try (ZipFile zipFile = new ZipFile(file)) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            final Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                String name = entry.getName();
+                final ZipEntry entry = entries.nextElement();
+                final String name = entry.getName();
                 if (!name.startsWith("magik/")
                     && !name.endsWith(".class")) {
                     continue;
                 }
 
-                int size = (int) entry.getSize();
-                byte[] bytecode = new byte[size];
+                final int size = (int) entry.getSize();
+                final byte[] bytecode = new byte[size];
                 try (InputStream inputStream = zipFile.getInputStream(entry)) {
                     // Get bytecode.
-                    int read = inputStream.read(bytecode);
+                    final int read = inputStream.read(bytecode);
                     if (read != size) {
                         throw new IOException("Did not read all");
                     }
 
                     // Read class.
-                    ClassReader classReader = new ClassReader(bytecode);
-                    ClassNode classNode = new ClassNode(Opcodes.ASM8);
+                    final ClassReader classReader = new ClassReader(bytecode);
+                    final ClassNode classNode = new ClassNode(Opcodes.ASM8);
                     classReader.accept(classNode, 0);
 
                     // Store it.

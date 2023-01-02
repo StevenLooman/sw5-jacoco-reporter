@@ -14,7 +14,7 @@ public class MagikNames implements ILanguageNames {
     private final Sw5LibAnalyzer libAnalyzer;
     private final JavaNames javaNames;
 
-    public MagikNames(Sw5LibReader libReader) {
+    public MagikNames(final Sw5LibReader libReader) {
         this.libAnalyzer = new Sw5LibAnalyzer(libReader);
         this.javaNames = new JavaNames();
     }
@@ -28,7 +28,7 @@ public class MagikNames implements ILanguageNames {
     public String getClassName(
             final String vmname,
             final String vmsignature,
-            String vmsuperclass,
+            final String vmsuperclass,
             final String[] vminterfaces) {
         return this.javaNames.getClassName(vmname, vmsignature, vmsuperclass, vminterfaces);
     }

@@ -90,8 +90,8 @@ public class MethodCoverageMerger {
     }
 
     private IMethodCoverage mergeMethodCoverage(
-            IMethodCoverage parentMethodCoverage,
-            IMethodCoverage childMethodCoverage) {
+            final IMethodCoverage parentMethodCoverage,
+            final IMethodCoverage childMethodCoverage) {
         final String name = parentMethodCoverage.getName();
         final String desc = parentMethodCoverage.getDesc();
         final String signature = parentMethodCoverage.getSignature();
@@ -104,20 +104,21 @@ public class MethodCoverageMerger {
 
     /**
      * Build map with key as {@link MethodNode} and value as {@link IMethodCoverage}.
-     * @param classCoverage IClassCoverage
+     * @param classCoverage Class coverage
      * @param classNode Class node to extract methods form.
      * @return Map with {@link MethodNode} mapped to {@link IMethodCoverage}.
      */
     private Map<MethodNode, IMethodCoverage> buildMethodCoverageMap(
-            final IClassCoverage classCoverage, final ClassNode classNode) {
+            final IClassCoverage classCoverage,
+            final ClassNode classNode) {
         return classCoverage.getMethods().stream()
-                .collect(Collectors.toMap(
-                    methodCoverage -> {
-                        String methodName = methodCoverage.getName();
-                        return ClassNodeUtils.getMethodNodeFromClassNode(classNode, methodName);
-                    },
-                    Objects::requireNonNull
-                ));
+            .collect(Collectors.toMap(
+                methodCoverage -> {
+                    final String methodName = methodCoverage.getName();
+                    return ClassNodeUtils.getMethodNodeFromClassNode(classNode, methodName);
+                },
+                Objects::requireNonNull
+            ));
     }
 
 }

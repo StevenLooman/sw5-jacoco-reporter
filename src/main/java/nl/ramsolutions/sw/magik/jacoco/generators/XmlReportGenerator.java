@@ -40,7 +40,7 @@ public class XmlReportGenerator extends BaseReportGenerator {
     @Override
     protected void createReport(final IBundleCoverage bundleCoverage) throws IOException {
         final XMLFormatter xmlFormatter = new XMLFormatter();
-        File outputFile = this.getOutputFile();
+        final File outputFile = this.getOutputFile();
         try (FileOutputStream output = new FileOutputStream(outputFile)) {
             final IReportVisitor visitor = xmlFormatter.createVisitor(output);
 

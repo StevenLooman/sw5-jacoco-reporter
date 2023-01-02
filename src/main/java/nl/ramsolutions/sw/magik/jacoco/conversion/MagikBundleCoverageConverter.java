@@ -56,14 +56,14 @@ public class MagikBundleCoverageConverter {
     private IPackageCoverage convert(final IPackageCoverage packageCoverage, final boolean filterPrimaryClasses) {
         final String name = packageCoverage.getName();
         final Collection<IClassCoverage> classes = packageCoverage.getClasses().stream()
-                .map(this::convert)
-                .collect(Collectors.toList());
+            .map(this::convert)
+            .collect(Collectors.toList());
         final Collection<IClassCoverage> filteredClasses = filterPrimaryClasses
-                ? this.filterPrimaryClassCoverages(classes)
-                : classes;
+            ? this.filterPrimaryClassCoverages(classes)
+            : classes;
         final Collection<ISourceFileCoverage> sourceFiles = packageCoverage.getSourceFiles().stream()
-                .map(this::convert)
-                .collect(Collectors.toList());
+            .map(this::convert)
+            .collect(Collectors.toList());
         return new PackageCoverageImpl(name, filteredClasses, sourceFiles);
     }
 
@@ -92,15 +92,17 @@ public class MagikBundleCoverageConverter {
         return sourceFileCoverage;
     }
 
-    private Collection<IClassCoverage> filterPrimaryClassCoverages(final Collection<IClassCoverage> classes) {
-        Collection<ClassNode> executableMagikClassNodes = this.libReader.getExecutableClassNodes();
-        return classes.stream()
-                .filter(classCoverage -> {
-                    final ClassNode classNode =
-                        this.libReader.getClassByName(classCoverage.getName() + ".class");
-                    return !executableMagikClassNodes.contains(classNode);
-                })
-                .collect(Collectors.toSet());
+    private Collection<IClassCoverage> filterPrimaryClassCoverages(final Collection<IClassCoverage> classCoverages) {
+        return classCoverages.stream()
+            .filter(this::isPrimaryClass)
+            .collect(Collectors.toSet());
+    }
+
+    private boolean isPrimaryClass(final IClassCoverage classCoverage) {
+        final Collection<ClassNode> executableMagikClassNodes = this.libReader.getExecutableClassNodes();
+        final ClassNode classNode =
+            this.libReader.getClassByName(classCoverage.getName() + ".class");
+        return !executableMagikClassNodes.contains(classNode);
     }
 
 }

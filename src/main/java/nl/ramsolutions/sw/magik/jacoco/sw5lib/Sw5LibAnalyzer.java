@@ -31,7 +31,7 @@ public final class Sw5LibAnalyzer {
      *
      * @param libReader Library reader used for analysis.
      */
-    public Sw5LibAnalyzer(Sw5LibReader libReader) {
+    public Sw5LibAnalyzer(final Sw5LibReader libReader) {
         this.libReader = libReader;
     }
 
@@ -41,17 +41,17 @@ public final class Sw5LibAnalyzer {
      */
     public Map<String, String> extractAllMethodNames() {
         return this.libReader.getExecutableClassNodes().stream()
-                .map(classNode -> {
-                    MethodNode executeMethodNode = this.getExecuteMethod(classNode);
-                    return this.extractMethodNames(executeMethodNode);
-                })
-                .flatMap(mapping -> mapping.entrySet().stream())
-                .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue));
+            .map(classNode -> {
+                final MethodNode executeMethodNode = this.getExecuteMethod(classNode);
+                return this.extractMethodNames(executeMethodNode);
+            })
+            .flatMap(mapping -> mapping.entrySet().stream())
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue));
     }
 
-    public Map<MethodNode, MethodNode> buildMethodDependencyMap(ClassNode classNode) {
+    public Map<MethodNode, MethodNode> buildMethodDependencyMap(final ClassNode classNode) {
         return Sw5LibMethodDependencyBuilder.buildMethodDependencyMap(classNode);
     }
 
@@ -61,28 +61,30 @@ public final class Sw5LibAnalyzer {
      * @param javaMethodName Java method name.
      * @return Key.
      */
-    public String keyForClassMethodName(String javaClassName, String javaMethodName) {
+    public String keyForClassMethodName(final String javaClassName, final String javaMethodName) {
         return Sw5LibMethodNameExtractor.keyForClassMethodName(javaClassName, javaMethodName);
     }
 
-    private MethodNode getExecuteMethod(ClassNode classNode) {
+    private MethodNode getExecuteMethod(final ClassNode classNode) {
         return classNode.methods.stream()
-                .filter(method -> method.visibleAnnotations.stream()
-                                        .anyMatch(ann -> ann.desc.equals(ANNOTATION_CODE_TYPE)
-                                                         && ann.values.equals(ANNOTATION_VALUE_TOP_LEVEL)))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No execute() method found"));
+            .filter(method -> method.visibleAnnotations.stream()
+                .anyMatch(ann ->
+                    ann.desc.equals(ANNOTATION_CODE_TYPE)
+                    && ann.values.equals(ANNOTATION_VALUE_TOP_LEVEL)))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("No execute() method found"));
     }
 
-    private Map<String, String> extractMethodNames(MethodNode executeMethod) {
+    private Map<String, String> extractMethodNames(final MethodNode executeMethod) {
         // Get all INVOKESTATIC instructions which define a method,
         // and extract methods from it.
         final InsnList instructions = executeMethod.instructions;
         return Arrays.stream(instructions.toArray())
             .filter(insn -> insn.getOpcode() == Opcodes.INVOKESTATIC)
             .map(MethodInsnNode.class::cast)
-            .filter(methodInsn -> methodInsn.owner.equals(METHOD_DEFINITION_OWNER)
-                                  && methodInsn.name.equals(METHOD_DEFINITION_NAME))
+            .filter(methodInsn ->
+                methodInsn.owner.equals(METHOD_DEFINITION_OWNER)
+                && methodInsn.name.equals(METHOD_DEFINITION_NAME))
             .map(Sw5LibMethodNameExtractor::extractMethodName)
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
