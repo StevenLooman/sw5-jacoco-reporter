@@ -1,13 +1,5 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -15,6 +7,16 @@ import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.internal.analysis.MethodCoverageImpl;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import javax.annotation.CheckForNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Merges {@code IMethodCoverage}s, such as {{__loopbody__}}, in {@code IClassCoverage}.

@@ -1,10 +1,11 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Smallworld/Magik dependency builder.

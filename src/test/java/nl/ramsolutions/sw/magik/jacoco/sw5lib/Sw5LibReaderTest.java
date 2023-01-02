@@ -1,12 +1,13 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import org.junit.jupiter.api.Test;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.objectweb.asm.tree.ClassNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

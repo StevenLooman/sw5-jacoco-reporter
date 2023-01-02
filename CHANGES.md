@@ -1,9 +1,10 @@
 Changes
 =======
 
-1.0.1 (unreleased)
+1.1.0 (unreleased)
 
 - Fix entry point
+- Update dependencies
 
 
 1.0.0 (2021-08-29)

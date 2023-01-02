@@ -1,5 +1,11 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.ClassNode;
+
+import javax.annotation.CheckForNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,10 +19,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.annotation.CheckForNull;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
 
 /**
  * Magik lib reader.

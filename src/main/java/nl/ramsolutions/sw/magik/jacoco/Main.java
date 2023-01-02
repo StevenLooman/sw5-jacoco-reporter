@@ -1,7 +1,5 @@
 package nl.ramsolutions.sw.magik.jacoco;
 
-import java.io.File;
-import java.io.IOException;
 import nl.ramsolutions.sw.magik.jacoco.generators.HtmlReportGenerator;
 import nl.ramsolutions.sw.magik.jacoco.generators.XmlReportGenerator;
 import org.apache.commons.cli.CommandLine;
@@ -12,6 +10,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PatternOptionBuilder;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Main entry point.
@@ -40,26 +41,26 @@ public final class Main {
             .desc("Product directory")
             .numberOfArgs(Option.UNLIMITED_VALUES)
             .required()
-            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .type(PatternOptionBuilder.FILE_VALUE)
             .build());
         OPTIONS.addOption(Option.builder()
             .longOpt(OPTION_JACOCO_FILE)
             .desc("Path to jacoco.exec")
             .hasArg()
             .required()
-            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .type(PatternOptionBuilder.FILE_VALUE)
             .build());
         OPTIONS.addOption(Option.builder()
             .longOpt(OPTION_HTML)
             .desc("Output HTML report to directory")
             .hasArg()
-            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .type(PatternOptionBuilder.FILE_VALUE)
             .build());
         OPTIONS.addOption(Option.builder()
             .longOpt(OPTION_XML)
             .desc("Output XML report to file")
             .hasArg()
-            .type(PatternOptionBuilder.EXISTING_FILE_VALUE)
+            .type(PatternOptionBuilder.FILE_VALUE)
             .build());
     }
 

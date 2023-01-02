@@ -1,10 +1,11 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
-import java.util.Map;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.report.ILanguageNames;
 import org.jacoco.report.JavaNames;
+
+import java.util.Map;
 
 /**
  * Magik names extractor for JaCoCo report generator.

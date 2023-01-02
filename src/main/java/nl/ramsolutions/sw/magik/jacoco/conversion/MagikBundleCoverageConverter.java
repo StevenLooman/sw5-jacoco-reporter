@@ -1,8 +1,5 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -13,6 +10,10 @@ import org.jacoco.core.internal.analysis.BundleCoverageImpl;
 import org.jacoco.core.internal.analysis.ClassCoverageImpl;
 import org.jacoco.core.internal.analysis.PackageCoverageImpl;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Convert native JaCoCo/JVM coverage data to Magik coverage data.

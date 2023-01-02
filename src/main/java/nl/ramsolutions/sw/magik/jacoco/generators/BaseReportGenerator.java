@@ -1,7 +1,5 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
-import java.io.File;
-import java.io.IOException;
 import nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.Analyzer;
@@ -9,6 +7,9 @@ import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.tools.ExecFileLoader;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Base report generator.

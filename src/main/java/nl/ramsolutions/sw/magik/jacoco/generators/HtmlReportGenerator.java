@@ -1,9 +1,5 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.SessionInfo;
@@ -12,6 +8,11 @@ import org.jacoco.report.FileMultiReportOutput;
 import org.jacoco.report.IReportVisitor;
 import org.jacoco.report.ISourceFileLocator;
 import org.jacoco.report.html.HTMLFormatter;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * HTML report generaotr.

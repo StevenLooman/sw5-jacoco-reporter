@@ -1,5 +1,9 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
+import org.jacoco.report.InputStreamSourceFileLocator;
+
+import javax.annotation.CheckForNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,8 +12,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import javax.annotation.CheckForNull;
-import org.jacoco.report.InputStreamSourceFileLocator;
 
 /**
  * {@link InputStreamSourceFileLocator} for Smallworld/Magik.

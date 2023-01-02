@@ -1,9 +1,10 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

@@ -1,9 +1,10 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
