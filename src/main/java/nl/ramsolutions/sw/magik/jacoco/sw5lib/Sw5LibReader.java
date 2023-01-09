@@ -42,7 +42,7 @@ public class Sw5LibReader {
 
     /**
      * Get executable Magik classes, i.e., source files without method definitions.
-     * @return Primary {@link ClassNode}s.
+     * @return Executable {@link ClassNode}s.
      */
     public Collection<ClassNode> getExecutableClassNodes() {
         return this.namedClasses.values().stream()

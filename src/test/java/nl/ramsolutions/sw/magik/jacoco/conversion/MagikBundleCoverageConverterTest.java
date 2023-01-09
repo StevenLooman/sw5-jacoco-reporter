@@ -78,10 +78,11 @@ class MagikBundleCoverageConverterTest {
     @Test
     void testMergeMethods() throws IOException {
         final Sw5LibReader libReader = MagikBundleCoverageConverterTest.getLibReader();
-        final MagikBundleCoverageConverter converter = new MagikBundleCoverageConverter(libReader);
-
         final IBundleCoverage bundleCoverageOrig = MagikBundleCoverageConverterTest.getBundleCoverage();
-        final IBundleCoverage bundleCoverage = converter.convert(bundleCoverageOrig, false);
+        final MagikBundleCoverageConverter converter =
+            new MagikBundleCoverageConverter(libReader, bundleCoverageOrig, false);
+
+        final IBundleCoverage bundleCoverage = converter.convert();
 
         final IPackageCoverage packageCoverage0 = List.copyOf(bundleCoverage.getPackages()).get(0);
         assertThat(packageCoverage0.getClasses()).hasSize(4);  // 4 classes, nothing merged.
@@ -94,18 +95,18 @@ class MagikBundleCoverageConverterTest {
     }
 
     @Test
-    void testMergeRemovePrimary() throws IOException {
+    void testMergeRemoveExecutable() throws IOException {
         final Sw5LibReader libReader = MagikBundleCoverageConverterTest.getLibReader();
-        final MagikBundleCoverageConverter converter = new MagikBundleCoverageConverter(libReader);
-
         final IBundleCoverage bundleCoverageOrig = MagikBundleCoverageConverterTest.getBundleCoverage();
+        final MagikBundleCoverageConverter converter =
+            new MagikBundleCoverageConverter(libReader, bundleCoverageOrig, true);
 
         final IPackageCoverage packageCoverageOrig0 = List.copyOf(bundleCoverageOrig.getPackages()).get(0);
         assertThat(packageCoverageOrig0.getClasses()).hasSize(4);  // 4 classes.
 
-        final IBundleCoverage bundleCoverage = converter.convert(bundleCoverageOrig, true);
+        final IBundleCoverage bundleCoverage = converter.convert();
         final IPackageCoverage packageCoverage0 = List.copyOf(bundleCoverage.getPackages()).get(0);
-        assertThat(packageCoverage0.getClasses()).hasSize(2);  // 2 classes, primary classes have been removed.
+        assertThat(packageCoverage0.getClasses()).hasSize(2);  // 2 classes, executable classes are removed.
     }
 
 }

@@ -210,6 +210,9 @@
                       <maximum>${jacoco.unit-tests.limit.class-complexity}</maximum>
                     </limit>
                   </limits>
+                  <excludes>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter</exclude>
+                  </excludes>
                 </rule>
                 <rule>
                   <element>METHOD</element>

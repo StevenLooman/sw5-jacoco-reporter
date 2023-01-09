@@ -1,15 +1,22 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
+import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
+import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.analysis.ILine;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.analysis.IPackageCoverage;
 import org.jacoco.core.analysis.ISourceFileCoverage;
 import org.jacoco.core.internal.analysis.BundleCoverageImpl;
 import org.jacoco.core.internal.analysis.ClassCoverageImpl;
+import org.jacoco.core.internal.analysis.MethodCoverageImpl;
 import org.jacoco.core.internal.analysis.PackageCoverageImpl;
+import org.jacoco.core.internal.analysis.SourceFileCoverageImpl;
 import org.objectweb.asm.tree.ClassNode;
+
+import javax.annotation.CheckForNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,90 +27,189 @@ import java.util.stream.Collectors;
  *
  * <p>
  * Conversion includes:
- * - Methods are merged (__loopbody_ into parent method, etc)
- * - Methods are renamed to Magik-names, where applicable
- * - Primary classes are filtered, when enabled
+ * - Methods are merged (__loopbody__ into parent method, etc).
+ * - Methods are renamed to Magik-names, where applicable.
+ * - Executable classes are filtered, when enabled.
  * </p>
  */
 public class MagikBundleCoverageConverter {
 
     private final Sw5LibReader libReader;
+    private final Sw5LibAnalyzer libAnalyzer;
+    private final IBundleCoverage bundleCoverage;
     private final MethodCoverageMerger methodCoverageMerger;
+    private final boolean filterExecutableClasses;
 
     /**
      * Constructor.
      * @param libReader Lib reader.
      */
-    public MagikBundleCoverageConverter(final Sw5LibReader libReader) {
+    public MagikBundleCoverageConverter(
+            final Sw5LibReader libReader,
+            final IBundleCoverage bundleCoverage,
+            final boolean filterExecutableClasses) {
         this.libReader = libReader;
+        this.bundleCoverage = bundleCoverage;
         this.methodCoverageMerger = new MethodCoverageMerger(this.libReader);
+        this.filterExecutableClasses = filterExecutableClasses;
+
+        libAnalyzer = new Sw5LibAnalyzer(this.libReader);
     }
 
     /**
      * Run the conversion of the {@link IBundleCoverage}.
      * @param bundleCoverage Original {@link IBundleCoverage}.
-     * @param filterPrimaryClasses Switch to filter primary classes.
+     * @param filterExecutableClasses Switch to filter executable classes.
      * @return Converted {@link IBundleCoverage}.
      */
-    public IBundleCoverage convert(final IBundleCoverage bundleCoverage, final boolean filterPrimaryClasses) {
-        final List<IPackageCoverage> packages = bundleCoverage.getPackages().stream()
-            .map(packageCoverage -> this.convert(packageCoverage, filterPrimaryClasses))
-            .collect(Collectors.toList());
-
+    public IBundleCoverage convert() {
         final String name = bundleCoverage.getName();
-        return new BundleCoverageImpl(name, packages);
+        final List<IPackageCoverage> newPackages = bundleCoverage.getPackages().stream()
+            .map(this::convert)
+            .collect(Collectors.toList());
+        final BundleCoverageImpl newBundleCoverage = new BundleCoverageImpl(name, newPackages);
+
+        newBundleCoverage.increment(newPackages);
+
+        return newBundleCoverage;
     }
 
-    private IPackageCoverage convert(final IPackageCoverage packageCoverage, final boolean filterPrimaryClasses) {
+    private PackageCoverageImpl convert(final IPackageCoverage packageCoverage) {
         final String name = packageCoverage.getName();
-        final Collection<IClassCoverage> classes = packageCoverage.getClasses().stream()
+        final List<IClassCoverage> classCoverages = packageCoverage.getClasses().stream()
+            .filter(classCoverage -> {
+                if (filterExecutableClasses) {
+                    return !this.isExecutableClass(classCoverage);
+                }
+
+                return true;
+            })
             .map(this::convert)
             .collect(Collectors.toList());
-        final Collection<IClassCoverage> filteredClasses = filterPrimaryClasses
-            ? this.filterPrimaryClassCoverages(classes)
-            : classes;
-        final Collection<ISourceFileCoverage> sourceFiles = packageCoverage.getSourceFiles().stream()
+        final List<ISourceFileCoverage> sourceFileCoverages = packageCoverage.getSourceFiles().stream()
             .map(this::convert)
             .collect(Collectors.toList());
-        return new PackageCoverageImpl(name, filteredClasses, sourceFiles);
+        final PackageCoverageImpl newPackageCoverage =
+            new PackageCoverageImpl(name, classCoverages, sourceFileCoverages);
+
+        newPackageCoverage.increment(classCoverages);
+
+        return newPackageCoverage;
     }
 
-    private IClassCoverage convert(final IClassCoverage classCoverage) {
+    private ClassCoverageImpl convert(final IClassCoverage classCoverage) {
         // Create new class coverage.
         final String name = classCoverage.getName();
         final long id = classCoverage.getId();
         final boolean noMatch = classCoverage.isNoMatch();
         final ClassCoverageImpl newClassCoverage = new ClassCoverageImpl(name, id, noMatch);
 
-        // Merge "sub-methods" into methods.
-        final Collection<IMethodCoverage> methodCoverages = this.methodCoverageMerger.run(classCoverage);
-        methodCoverages.forEach(newClassCoverage::addMethod);
+        // Merge "sub-methods" into methods. Convert methods.
+        final Collection<IMethodCoverage> mergedMethodCoverages = this.methodCoverageMerger.run(classCoverage);
+        mergedMethodCoverages.stream()
+            .map(mc -> this.convert(classCoverage, mc))
+            .forEach(newClassCoverage::addMethod);
 
+        // Copy other things.
         final String[] interfaceNames = classCoverage.getInterfaceNames();
         newClassCoverage.setInterfaces(interfaceNames);
-
-        // Store source file name.
         final String sourceFileName = classCoverage.getSourceFileName();
         newClassCoverage.setSourceFileName(sourceFileName);
 
         return newClassCoverage;
     }
 
+    private MethodCoverageImpl convert(final IClassCoverage classCoverage, final IMethodCoverage methodCoverage) {
+        final String name = this.getMagikMethodName(classCoverage, methodCoverage);  // methodCoverage.getName();
+        final String desc = "";  // methodCoverage.getDesc();
+        final String signature = null;  // methodCoverage.getSignature();
+        final MethodCoverageImpl newMethodCoverage = new MethodCoverageImpl(name, desc, signature);
+
+        newMethodCoverage.increment(methodCoverage);
+
+        return newMethodCoverage;
+    }
+
     private ISourceFileCoverage convert(final ISourceFileCoverage sourceFileCoverage) {
-        return sourceFileCoverage;
+        if (!this.filterExecutableClasses) {
+            return sourceFileCoverage;
+        }
+
+        // Create a copy of the SourceFileCoverage, but strip everything present on the executable class.
+        final String name = sourceFileCoverage.getName();
+        final String packageName = sourceFileCoverage.getPackageName();
+        final SourceFileCoverageImpl newSourceFileCoverage = new SourceFileCoverageImpl(name, packageName);
+
+        // Find non-executable ClassCoverage.
+        final IClassCoverage classCoverage = this.getNoneExecutableClassCoverage(sourceFileCoverage);
+        if (classCoverage == null) {
+            // No lines to add.
+            return newSourceFileCoverage;
+        }
+
+        this.copyCounters(sourceFileCoverage, classCoverage, newSourceFileCoverage);
+
+        return newSourceFileCoverage;
     }
 
-    private Collection<IClassCoverage> filterPrimaryClassCoverages(final Collection<IClassCoverage> classCoverages) {
-        return classCoverages.stream()
-            .filter(this::isPrimaryClass)
-            .collect(Collectors.toSet());
+    private void copyCounters(
+            final ISourceFileCoverage sourceFileCoverage,
+            final IClassCoverage classCoverage,
+            final SourceFileCoverageImpl newSourceFileCoverage) {
+        // Copy only lines which are not in the non-executable ClassCoverage.
+        for (int nr = sourceFileCoverage.getFirstLine(); nr < sourceFileCoverage.getLastLine(); ++nr) {
+            final ILine classCoverageLine = classCoverage.getLine(nr);
+            if (classCoverageLine == null) {
+                continue;
+            }
+
+            final ILine line = sourceFileCoverage.getLine(nr);
+            if (line != null) {
+                final ICounter branchCounter = line.getBranchCounter();
+                final ICounter instructionCounter = line.getInstructionCounter();
+                newSourceFileCoverage.increment(instructionCounter, branchCounter, nr);
+            }
+        }
     }
 
-    private boolean isPrimaryClass(final IClassCoverage classCoverage) {
+    @CheckForNull
+    private IClassCoverage getNoneExecutableClassCoverage(final ISourceFileCoverage sourceFileCoverage) {
+        final String name = sourceFileCoverage.getName();
+        return this.bundleCoverage.getPackages().stream()
+            .flatMap(packageCoverage -> packageCoverage.getClasses().stream())
+            .filter(cc -> cc.getSourceFileName().equals(name))
+            .filter(cc -> !this.isExecutableClass(cc))
+            .findFirst()
+            .orElse(null);
+    }
+
+    private String getMagikMethodName(final IClassCoverage classCoverage, final IMethodCoverage methodCoverage) {
+        final String javaClassName = classCoverage.getName();
+        final String javaMethodName = methodCoverage.getName();
+        final String magikMethodName = this.libAnalyzer.getMagikMethodName(javaClassName, javaMethodName);
+        return magikMethodName;
+    }
+
+    /**
+     * Test if this class is an executable class.
+     *
+     * <p>
+     * Executable class are executed upon loading
+     * of the libraries/jars when Smallworld loads the module. The defined Magik methods on exemplars are stored
+     * on non-executable classes.
+     * </p>
+     * @param classCoverage
+     * @return
+     */
+    private boolean isExecutableClass(final IClassCoverage classCoverage) {
         final Collection<ClassNode> executableMagikClassNodes = this.libReader.getExecutableClassNodes();
-        final ClassNode classNode =
-            this.libReader.getClassByName(classCoverage.getName() + ".class");
-        return !executableMagikClassNodes.contains(classNode);
+        final ClassNode classNode = this.getClassNode(classCoverage);
+        return executableMagikClassNodes.contains(classNode);
+    }
+
+    private ClassNode getClassNode(final IClassCoverage classCoverage) {
+        final String className = classCoverage.getName() + ".class";
+        return this.libReader.getClassByName(className);
     }
 
 }

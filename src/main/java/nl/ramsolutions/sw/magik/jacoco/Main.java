@@ -20,48 +20,48 @@ import java.io.IOException;
 public final class Main {
 
     private static final Options OPTIONS;
-    private static final String OPTION_HELP = "help";
-    private static final String OPTION_PRODUCT_DIR = "product-dir";
-    private static final String OPTION_JACOCO_FILE = "jacoco-file";
-    private static final String OPTION_FILTER_PRIMARY = "filter-primary";
-    private static final String OPTION_HTML = "html";
-    private static final String OPTION_XML = "xml";
+    private static final Option OPTION_HELP = Option.builder()
+        .longOpt("help")
+        .desc("Show this help")
+        .build();
+    private static final Option OPTION_PRODUCT_DIR = Option.builder()
+        .longOpt("product-dir")
+        .desc("Product directory")
+        .numberOfArgs(Option.UNLIMITED_VALUES)
+        .required()
+        .type(PatternOptionBuilder.FILE_VALUE)
+        .build();
+    private static final Option OPTION_JACOCO_FILE = Option.builder()
+        .longOpt("jacoco-file")
+        .desc("Path to jacoco.exec")
+        .hasArg()
+        .required()
+        .type(PatternOptionBuilder.FILE_VALUE)
+        .build();
+    private static final Option OPTION_FILTER_EXECUTABLE = Option.builder()
+        .longOpt("filter-executable")
+        .desc("Filter executable classes").build();
+    private static final Option OPTION_HTML = Option.builder()
+        .longOpt("html")
+        .desc("Output HTML report to directory")
+        .hasArg()
+        .type(PatternOptionBuilder.FILE_VALUE)
+        .build();
+    private static final Option OPTION_XML = Option.builder()
+        .longOpt("xml")
+        .desc("Output XML report to file")
+        .hasArg()
+        .type(PatternOptionBuilder.FILE_VALUE)
+        .build();
 
     static {
         OPTIONS = new Options();
-        OPTIONS.addOption(Option.builder()
-            .longOpt(OPTION_HELP)
-            .desc("Show this help")
-            .build());
-        OPTIONS.addOption(Option.builder()
-            .longOpt(OPTION_FILTER_PRIMARY)
-            .desc("Filter primary classes").build());
-        OPTIONS.addOption(Option.builder()
-            .longOpt(OPTION_PRODUCT_DIR)
-            .desc("Product directory")
-            .numberOfArgs(Option.UNLIMITED_VALUES)
-            .required()
-            .type(PatternOptionBuilder.FILE_VALUE)
-            .build());
-        OPTIONS.addOption(Option.builder()
-            .longOpt(OPTION_JACOCO_FILE)
-            .desc("Path to jacoco.exec")
-            .hasArg()
-            .required()
-            .type(PatternOptionBuilder.FILE_VALUE)
-            .build());
-        OPTIONS.addOption(Option.builder()
-            .longOpt(OPTION_HTML)
-            .desc("Output HTML report to directory")
-            .hasArg()
-            .type(PatternOptionBuilder.FILE_VALUE)
-            .build());
-        OPTIONS.addOption(Option.builder()
-            .longOpt(OPTION_XML)
-            .desc("Output XML report to file")
-            .hasArg()
-            .type(PatternOptionBuilder.FILE_VALUE)
-            .build());
+        OPTIONS.addOption(OPTION_HELP);
+        OPTIONS.addOption(OPTION_FILTER_EXECUTABLE);
+        OPTIONS.addOption(OPTION_PRODUCT_DIR);
+        OPTIONS.addOption(OPTION_JACOCO_FILE);
+        OPTIONS.addOption(OPTION_HTML);
+        OPTIONS.addOption(OPTION_XML);
     }
 
     private Main() {
@@ -111,17 +111,17 @@ public final class Main {
 
         final File productDir = (File) commandLine.getParsedOptionValue(OPTION_PRODUCT_DIR);
         final File executionDataFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_FILE);
-        final boolean filterPrimaryClasses = commandLine.hasOption(OPTION_FILTER_PRIMARY);
+        final boolean filterExecutableClasses = commandLine.hasOption(OPTION_FILTER_EXECUTABLE);
 
         if (commandLine.hasOption(OPTION_HTML)) {
             final File outputDir = (File) commandLine.getParsedOptionValue(OPTION_HTML);
             final HtmlReportGenerator htmlReportGenerator =
-                new HtmlReportGenerator(productDir, executionDataFile, outputDir, filterPrimaryClasses);
+                new HtmlReportGenerator(productDir, executionDataFile, outputDir, filterExecutableClasses);
             htmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_XML)) {
             final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_XML);
             final XmlReportGenerator xmlReportGenerator =
-                new XmlReportGenerator(productDir, executionDataFile, outputFile, filterPrimaryClasses);
+                new XmlReportGenerator(productDir, executionDataFile, outputFile, filterExecutableClasses);
             xmlReportGenerator.run();
         }
     }

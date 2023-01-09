@@ -12,33 +12,51 @@ It would be easier if the internal method names are converted to Magik method na
 This tool provides a means to convert back to the original Magik method names and optionally remove the additionally generated classes are removed/ignored.
 
 
+## Compiling the Magik sources
+
+To be able to determine which lines were hit during the tests, it is required to compile the modules. You can do this by calling the method `sw:sw_product.compile_all_modules()` of your product(s). This will result in a `libs/` directory contaning a jar for each module. E.g.,
+
+```
+Magik> prd_dir << "..."
+Magik> system.rmdir(prd_dir + "/libs", _true, _true)  # Remove any existing `libs/` directory first!
+...
+Magik> prd << smallworld_product.add_product(prd_dir)
+sw_product(...)
+Magik> prd.compile_all_modules()
+...
+Magik> quit()
+```
+
+Stop the session and start a new session again. This is to ensure Smallworld uses the compiled code from the `libs/` directory instead of the results which were compiled in memory of the session. The results in memory of the session do not contain the line-data for each line of code.
+
+
 ## Usage
 
 Options:
 
-- --help
+- `--help`
   - Show help.
-- --product-dir \[path_to_directory\]
+- `--product-dir \[path_to_directory\]`
   - Path to your product.
-- --jacoco-file \[path_to_file\]
+- `--jacoco-file \[path_to_file\]`
   - Path to the `jacoco.exec` file.
-- --html \[path_to_directory\]
+- `--html \[path_to_directory\]`
   - Path to the directory to generate the HTML report in.
-- --xml \[path_to_file\]
+- `--xml \[path_to_file\]`
   - Path to the file to generate the XML at.
-- --filter-primary
-  - Filter primary classes, i.e., the class which does not hold any Magik methods.
+- `--filter-executable`
+  - Filter executable classes, i.e., the class which does not hold any Magik methods.
 
 To generate a HTML report:
 
 ```
-$ java -jar sw5-jacoco-reporter.jar --product-dir sw_xsd_loader --jacoco-file sw_xsd_loader/jacoco.exec --html sw_xsd_loader/coveragereport
+$ java -jar sw5-jacoco-reporter.jar --product-dir ... --jacoco-file .../jacoco.exec --html .../coveragereport
 ```
 
 To generate a XML report:
 
 ```
-$ java -jar sw5-jacoco-reporter.jar --product-dir sw_xsd_loader --jacoco-file sw_xsd_loader/jacoco.exec --xml sw_xsd_loader/coveragereport.xml
+$ java -jar sw5-jacoco-reporter.jar --product-dir ... --jacoco-file .../jacoco.exec --xml .../coveragereport.xml
 ```
 
 

@@ -30,7 +30,11 @@ final class Sw5LibMethodNameExtractor {
     }
 
     static String fullMagikMethodName(final String exemplarName, final String methodName) {
-        return exemplarName + "." + methodName;
+        if (methodName.startsWith("[")) {
+            return String.format("%s%s", exemplarName, methodName);
+        }
+
+        return String.format("%s.%s", exemplarName, methodName);
     }
 
     /**

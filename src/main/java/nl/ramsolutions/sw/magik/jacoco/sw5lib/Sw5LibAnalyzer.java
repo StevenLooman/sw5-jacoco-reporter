@@ -6,6 +6,8 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import javax.annotation.CheckForNull;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ public final class Sw5LibAnalyzer {
     private static final String METHOD_DEFINITION_NAME = "createMethod";
 
     private final Sw5LibReader libReader;
+    private Map<String, String> methodNameMapping;
 
     /**
      * Constructor.
@@ -36,24 +39,40 @@ public final class Sw5LibAnalyzer {
         this.libReader = libReader;
     }
 
+    public Map<MethodNode, MethodNode> buildMethodDependencyMap(final ClassNode classNode) {
+        return Sw5LibMethodDependencyBuilder.buildMethodDependencyMap(classNode);
+    }
+
+    /**
+     * Get the Magik method from a Java class/method combination.
+     * @param javaClassName Name of Java class.
+     * @param javaMethodName Name of Java method.
+     * @return Magik method name, if known.
+     */
+    @CheckForNull
+    public String getMagikMethodName(final String javaClassName, final String javaMethodName) {
+        final Map<String, String> methodNames = this.extractAllMethodNames();
+        final String completeJavaName = this.keyForClassMethodName(javaClassName, javaMethodName);
+        final String magikName = methodNames.get(completeJavaName);
+        return magikName;
+    }
+
     /**
      * Create a mapping from Java class/method names to Magik exemplar/method names.
      * @return Mapping from Java class/method to Magik exemplar/method names.
      */
-    public Map<String, String> extractAllMethodNames() {
-        return this.libReader.getExecutableClassNodes().stream()
-            .map(classNode -> {
-                final MethodNode executeMethodNode = this.getExecuteMethod(classNode);
-                return this.extractMethodNames(executeMethodNode);
-            })
-            .flatMap(mapping -> mapping.entrySet().stream())
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue));
-    }
+    private Map<String, String> extractAllMethodNames() {
+        if (this.methodNameMapping == null) {
+            this.methodNameMapping = this.libReader.getExecutableClassNodes().stream()
+                .map(this::getExecuteMethod)
+                .map(this::extractMethodNames)
+                .flatMap(mapping -> mapping.entrySet().stream())
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue));
+        }
 
-    public Map<MethodNode, MethodNode> buildMethodDependencyMap(final ClassNode classNode) {
-        return Sw5LibMethodDependencyBuilder.buildMethodDependencyMap(classNode);
+        return this.methodNameMapping;
     }
 
     /**
@@ -62,7 +81,7 @@ public final class Sw5LibAnalyzer {
      * @param javaMethodName Java method name.
      * @return Key.
      */
-    public String keyForClassMethodName(final String javaClassName, final String javaMethodName) {
+    private String keyForClassMethodName(final String javaClassName, final String javaMethodName) {
         return Sw5LibMethodNameExtractor.keyForClassMethodName(javaClassName, javaMethodName);
     }
 

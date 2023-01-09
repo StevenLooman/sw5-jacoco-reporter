@@ -28,14 +28,14 @@ public class XmlReportGenerator extends BaseReportGenerator {
      * @param productDirectory File to product directory.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report file (XML).
-     * @param filterPrimaryClasses Filter primary classes.
+     * @param filterExecutableClasses Filter executable classes.
      */
     public XmlReportGenerator(
             final File productDirectory,
             final File executionDataFile,
             final File outputFile,
-            final boolean filterPrimaryClasses) {
-        super(productDirectory, executionDataFile, outputFile, filterPrimaryClasses);
+            final boolean filterExecutableClasses) {
+        super(productDirectory, executionDataFile, outputFile, filterExecutableClasses);
     }
 
     @Override

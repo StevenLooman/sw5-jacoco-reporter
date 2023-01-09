@@ -29,14 +29,14 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
      * @param productDirectory File to product directory.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param reportDirectory File to report directory (HTML).
-     * @param filterPrimaryClasses Filter primary classes.
+     * @param filterExecutableClasses Filter executable classes.
      */
     public HtmlReportGenerator(
             final File productDirectory,
             final File executionDataFile,
             final File reportDirectory,
-            final boolean filterPrimaryClasses) {
-        super(productDirectory, executionDataFile, reportDirectory, filterPrimaryClasses);
+            final boolean filterExecutableClasses) {
+        super(productDirectory, executionDataFile, reportDirectory, filterExecutableClasses);
     }
 
     @Override

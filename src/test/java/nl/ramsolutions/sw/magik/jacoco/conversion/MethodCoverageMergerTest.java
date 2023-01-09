@@ -51,10 +51,11 @@ class MethodCoverageMergerTest {
     @Test
     void testMergeMethods() throws IOException {
         final Sw5LibReader libReader = MethodCoverageMergerTest.getLibReader();
-        final MagikBundleCoverageConverter converter = new MagikBundleCoverageConverter(libReader);
-
         final IBundleCoverage bundleCoverageOrig = MethodCoverageMergerTest.getBundleCoverage();
-        final IBundleCoverage bundleCoverage = converter.convert(bundleCoverageOrig, false);
+        final MagikBundleCoverageConverter converter =
+            new MagikBundleCoverageConverter(libReader, bundleCoverageOrig, false);
+
+        final IBundleCoverage bundleCoverage = converter.convert();
 
         final IPackageCoverage packageCoverage0 = List.copyOf(bundleCoverage.getPackages()).get(0);
         final IClassCoverage classCoverage0 = packageCoverage0.getClasses().stream()

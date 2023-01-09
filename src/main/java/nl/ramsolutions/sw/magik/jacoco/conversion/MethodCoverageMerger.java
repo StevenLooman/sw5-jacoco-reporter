@@ -19,11 +19,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Merges {@code IMethodCoverage}s, such as {{__loopbody__}}, in {@code IClassCoverage}.
+ * Merges {@link IMethodCoverage}s, such as {@code __loopbody__}, in {@link IClassCoverage}.
  *
  * <p>
- * Given a {@code IClassCoverage}, iterates over the methods and sees if this is a "sub-method",
- * such as a __loopbody__ or a __proc__ method, and merges the methods.
+ * Given a {@link IClassCoverage}, iterates over the methods and sees if this is a "sub-method",
+ * such as a {@code __loopbody__} or a {@code __proc__} method, and merges the methods.
  * </p>
  */
 public class MethodCoverageMerger {
@@ -35,7 +35,7 @@ public class MethodCoverageMerger {
     }
 
     /**
-     * Run the merge, return the new {@code IMethodCoverage}s.
+     * Run the merge, return the new {@link IMethodCoverage}s.
      */
     public Collection<IMethodCoverage> run(final IClassCoverage classCoverage) {
         // Find relevant class for classCoverage.
@@ -46,13 +46,15 @@ public class MethodCoverageMerger {
 
         // Gather needed data.
         final Sw5LibAnalyzer libAnalyzer = new Sw5LibAnalyzer(this.libReader);
-        final Map<MethodNode, MethodNode> methodDependencyMap =
-            libAnalyzer.buildMethodDependencyMap(classNode);
+        final Map<MethodNode, MethodNode> methodDependencyMap = libAnalyzer.buildMethodDependencyMap(classNode);
         final Map<MethodNode, IMethodCoverage> methodCoverageMap =
             this.buildMethodCoverageMap(classCoverage, classNode);
 
-        // Merge {{IMethodCoverage}}s for all dependencies.
-        return this.mergeMethods(classNode, methodDependencyMap, methodCoverageMap);
+        // Merge IMethodCoverage for all dependencies.
+        final Collection<IMethodCoverage> mergedMethods =
+            this.mergeMethods(classNode, methodDependencyMap, methodCoverageMap);
+
+        return mergedMethods;
     }
 
     private Collection<IMethodCoverage> mergeMethods(
@@ -76,8 +78,7 @@ public class MethodCoverageMerger {
             final IMethodCoverage newMethodCoverage =
                 this.mergeMethodCoverage(parentMethodCoverage, childMethodCoverage);
 
-            // Store new MethodCoverage at parent (overwrite),
-            // remove child.
+            // Store new MethodCoverage at parent (overwrite), remove child.
             methodCoverageMap.put(parentNode, newMethodCoverage);
             methodCoverageMap.remove(childNode);
         }

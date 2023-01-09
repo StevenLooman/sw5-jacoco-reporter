@@ -5,6 +5,9 @@ Changes
 
 - Fix entry point
 - Update dependencies
+- Fix method names in XML
+- Rename parameter `--filter-primary` to `--filter-executable`
+- Refactoring
 
 
 1.0.0 (2021-08-29)
