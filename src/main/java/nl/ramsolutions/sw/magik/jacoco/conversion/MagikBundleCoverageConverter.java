@@ -122,7 +122,7 @@ public class MagikBundleCoverageConverter {
     private MethodCoverageImpl convert(final IClassCoverage classCoverage, final IMethodCoverage methodCoverage) {
         final String name = this.getMagikMethodName(classCoverage, methodCoverage);  // methodCoverage.getName();
         final String desc = "";  // methodCoverage.getDesc();
-        final String signature = null;  // methodCoverage.getSignature();
+        final String signature = methodCoverage.getSignature();
         final MethodCoverageImpl newMethodCoverage = new MethodCoverageImpl(name, desc, signature);
 
         newMethodCoverage.increment(methodCoverage);

@@ -10,6 +10,7 @@ import org.jacoco.report.xml.XMLFormatter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,17 +26,17 @@ public class XmlReportGenerator extends BaseReportGenerator {
      * The product is expected to contain the {@literal libs} directory containing the compiled product.
      * </p>
      *
-     * @param productDirectory File to product directory.
+     * @param productPaths Product directories.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report file (XML).
      * @param filterExecutableClasses Filter executable classes.
      */
     public XmlReportGenerator(
-            final File productDirectory,
+            final List<Path> productPaths,
             final File executionDataFile,
             final File outputFile,
             final boolean filterExecutableClasses) {
-        super(productDirectory, executionDataFile, outputFile, filterExecutableClasses);
+        super(productPaths, executionDataFile, outputFile, filterExecutableClasses);
     }
 
     @Override

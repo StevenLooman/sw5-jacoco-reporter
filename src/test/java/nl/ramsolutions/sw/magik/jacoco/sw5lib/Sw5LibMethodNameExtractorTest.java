@@ -7,6 +7,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,11 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Sw5LibMethodNameExtractorTest {
 
-    private static final Path PRODUCT_DIR = Path.of("src/test/resources/fixture_product");
+    private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
+    private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
     private static final String EXEUCATBLE_CLASS_NAME = "magik/fixture_product/fixture_module/char16_vector_31";
 
     static Sw5LibReader getLibReader() throws IOException {
-        return new Sw5LibReader(PRODUCT_DIR);
+        return new Sw5LibReader(PRODUCT_PATHS);
     }
 
     @Test

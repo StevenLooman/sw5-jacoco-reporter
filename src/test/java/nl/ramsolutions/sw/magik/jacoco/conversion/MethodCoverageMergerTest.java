@@ -23,11 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("checkstyle:MagicNumber")
 class MethodCoverageMergerTest {
 
-    private static final Path PRODUCT_DIR = Path.of("src/test/resources/fixture_product");
+    private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
+    private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
     private static final String CLASS_COVERAGE_NAME = "magik/fixture_product/fixture_module/char16_vector_32";
 
     static Sw5LibReader getLibReader() throws IOException {
-        return new Sw5LibReader(PRODUCT_DIR);
+        return new Sw5LibReader(PRODUCT_PATHS);
     }
 
     /**
@@ -37,13 +38,13 @@ class MethodCoverageMergerTest {
      */
     static IBundleCoverage getBundleCoverage() throws IOException {
         final ExecFileLoader execFileLoader = new ExecFileLoader();
-        final Path execFile = PRODUCT_DIR.resolve("jacoco.exec");
+        final Path execFile = PRODUCT_PATH.resolve("jacoco.exec");
         execFileLoader.load(execFile.toFile());
 
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final ExecutionDataStore dataStore = execFileLoader.getExecutionDataStore();
         final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
-        final File libsDirectory = new File(PRODUCT_DIR.toFile(), "libs");
+        final File libsDirectory = new File(PRODUCT_PATH.toFile(), "libs");
         analyzer.analyzeAll(libsDirectory);
         return coverageBuilder.getBundle("Title");
     }

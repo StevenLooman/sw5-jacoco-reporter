@@ -11,6 +11,7 @@ import org.jacoco.report.html.HTMLFormatter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,17 +27,17 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
      * The product is expected to contain the {@literal libs} directory containing the compiled product.
      * </p>
      *
-     * @param productDirectory File to product directory.
+     * @param productPaths Product directories.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param reportDirectory File to report directory (HTML).
      * @param filterExecutableClasses Filter executable classes.
      */
     public HtmlReportGenerator(
-            final File productDirectory,
+            final List<Path> productPaths,
             final File executionDataFile,
             final File reportDirectory,
             final boolean filterExecutableClasses) {
-        super(productDirectory, executionDataFile, reportDirectory, filterExecutableClasses);
+        super(productPaths, executionDataFile, reportDirectory, filterExecutableClasses);
     }
 
     @Override

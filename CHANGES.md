@@ -7,6 +7,9 @@ Changes
 - Update dependencies
 - Fix method names in XML
 - Rename parameter `--filter-primary` to `--filter-executable`
+- Rename parameter `--product-dir` to `--product-path`
+- Support multiple product dirs
+- Support procs
 - Refactoring
 
 

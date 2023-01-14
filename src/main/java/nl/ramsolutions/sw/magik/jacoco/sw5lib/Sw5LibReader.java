@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,10 +35,10 @@ public class Sw5LibReader {
 
     /**
      * Constructor.
-     * @param productDir Product directory.
+     * @param productDirs Product directories.
      */
-    public Sw5LibReader(final Path productDir) throws IOException {
-        this.readProductLibs(productDir);
+    public Sw5LibReader(final List<Path> productDirs) throws IOException {
+        this.readProductLibs(productDirs);
     }
 
     /**
@@ -73,20 +74,22 @@ public class Sw5LibReader {
         return this.namedClasses.get(className);
     }
 
-    private void readProductLibs(final Path productDir) throws IOException {
-        final Path libsDir = productDir.resolve(DIRECTORY_LIBS);
-        Stream<Path> libPaths = Files.find(
-            libsDir,
-            Integer.MAX_VALUE,
-            (path, basicFileAttributes) -> path.getFileName().toString().toLowerCase().endsWith(".jar"));
-        libPaths.forEach(this::readNamedClassesSafe);
-        libPaths.close();
+    private void readProductLibs(final List<Path> productDirs) throws IOException {
+        for (final Path productDir : productDirs) {
+            final Path libsDir = productDir.resolve(DIRECTORY_LIBS);
+            final Stream<Path> libPaths = Files.find(
+                libsDir,
+                Integer.MAX_VALUE,
+                (path, basicFileAttributes) -> path.getFileName().toString().toLowerCase().endsWith(".jar"));
+            libPaths.forEach(this::readNamedClassesSafe);
+            libPaths.close();
+        }
     }
 
     private void readNamedClassesSafe(final Path archive) {
         try {
             this.readNamedClasses(archive);
-        } catch (IOException exception) {
+        } catch (final IOException exception) {
             throw new IllegalStateException(exception);
         }
     }
@@ -104,16 +107,19 @@ public class Sw5LibReader {
                 }
 
                 final int size = (int) entry.getSize();
-                final byte[] bytecode = new byte[size];
+                final byte[] buffer = new byte[size];
                 try (InputStream inputStream = zipFile.getInputStream(entry)) {
                     // Get bytecode.
-                    final int read = inputStream.read(bytecode);
-                    if (read != size) {
-                        throw new IOException("Did not read all");
+                    int start = 0;
+                    int read = 0;
+                    while (size - start != 0) {
+                        final int left = size - start;
+                        read = inputStream.read(buffer, start, left);
+                        start += read;
                     }
 
                     // Read class.
-                    final ClassReader classReader = new ClassReader(bytecode);
+                    final ClassReader classReader = new ClassReader(buffer);
                     final ClassNode classNode = new ClassNode(Opcodes.ASM8);
                     classReader.accept(classNode, 0);
 

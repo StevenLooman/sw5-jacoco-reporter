@@ -38,7 +38,7 @@ final class Sw5LibMethodNameExtractor {
     }
 
     /**
-     * Extract the exemplar/method name from a INVOKESTATIC/createMethod() call.
+     * Extract the exemplar/method name from a static MagikObjectUtils.createMethod() call.
      * @param methodInsnNode {@link MethodInsnNode} to extract from.
      * @return Java name / Magik name entry.
      */

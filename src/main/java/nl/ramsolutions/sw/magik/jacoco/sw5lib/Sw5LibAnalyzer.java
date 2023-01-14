@@ -3,12 +3,16 @@ package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import javax.annotation.CheckForNull;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,6 +30,7 @@ public final class Sw5LibAnalyzer {
     private static final List<String> ANNOTATION_VALUE_TOP_LEVEL = List.of("value", "TopLevel");
     private static final String METHOD_DEFINITION_OWNER = "com/gesmallworld/magik/language/utils/MagikObjectUtils";
     private static final String METHOD_DEFINITION_NAME = "createMethod";
+    private static final String PROC = "proc";
 
     private final Sw5LibReader libReader;
     private Map<String, String> methodNameMapping;
@@ -39,7 +44,7 @@ public final class Sw5LibAnalyzer {
         this.libReader = libReader;
     }
 
-    public Map<MethodNode, MethodNode> buildMethodDependencyMap(final ClassNode classNode) {
+    public Map<MethodNode, MethodNode> getMethodDependencyMap(final ClassNode classNode) {
         return Sw5LibMethodDependencyBuilder.buildMethodDependencyMap(classNode);
     }
 
@@ -63,13 +68,25 @@ public final class Sw5LibAnalyzer {
      */
     private Map<String, String> extractAllMethodNames() {
         if (this.methodNameMapping == null) {
-            this.methodNameMapping = this.libReader.getExecutableClassNodes().stream()
+            final Map<String, String> methodMapping = this.libReader.getExecutableClassNodes().stream()
                 .map(this::getExecuteMethod)
                 .map(this::extractMethodNames)
                 .flatMap(mapping -> mapping.entrySet().stream())
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
                     Map.Entry::getValue));
+
+            final Map<String, String> procMapping = this.libReader.getExecutableClassNodes().stream()
+                .map(this::getExecuteMethod)
+                .map(this::extractProcNames)
+                .flatMap(mapping -> mapping.entrySet().stream())
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue));
+
+            this.methodNameMapping = new HashMap<>(methodMapping.size() + procMapping.size());
+            this.methodNameMapping.putAll(methodMapping);
+            this.methodNameMapping.putAll(procMapping);
         }
 
         return this.methodNameMapping;
@@ -87,17 +104,21 @@ public final class Sw5LibAnalyzer {
 
     private MethodNode getExecuteMethod(final ClassNode classNode) {
         return classNode.methods.stream()
-            .filter(method -> method.visibleAnnotations.stream()
-                .anyMatch(ann ->
-                    ann.desc.equals(ANNOTATION_CODE_TYPE)
-                    && ann.values.equals(ANNOTATION_VALUE_TOP_LEVEL)))
+            .filter(this::isExecuteMethod)
             .findFirst()
             .orElseThrow(() -> new IllegalStateException("No execute() method found"));
     }
 
+    private boolean isExecuteMethod(final MethodNode methodNode) {
+        return methodNode.visibleAnnotations.stream()
+            .anyMatch(ann ->
+                ann.desc.equals(ANNOTATION_CODE_TYPE)
+                && ann.values.equals(ANNOTATION_VALUE_TOP_LEVEL));
+    }
+
     private Map<String, String> extractMethodNames(final MethodNode executeMethod) {
-        // Get all INVOKESTATIC instructions which define a method,
-        // and extract methods from it.
+        // Get all static MagikObjectUtils.createMethod() calls which define a method,
+        // and extract method names from those.
         final InsnList instructions = executeMethod.instructions;
         return Arrays.stream(instructions.toArray())
             .filter(insn -> insn.getOpcode() == Opcodes.INVOKESTATIC)
@@ -106,6 +127,19 @@ public final class Sw5LibAnalyzer {
                 methodInsn.owner.equals(METHOD_DEFINITION_OWNER)
                 && methodInsn.name.equals(METHOD_DEFINITION_NAME))
             .map(Sw5LibMethodNameExtractor::extractMethodName)
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue));
+    }
+
+    private Map<String, String> extractProcNames(final MethodNode executeMethod) {
+        // Extract procs.
+        final InsnList instructions = executeMethod.instructions;
+        return Arrays.stream(instructions.toArray())
+            .filter(insn -> insn.getOpcode() == Opcodes.INVOKEDYNAMIC)
+            .map(InvokeDynamicInsnNode.class::cast)
+            .filter(invokeDynamicInsn -> invokeDynamicInsn.name.equals(PROC))
+            .map(Sw5LibProcNameExtractor::extractProcName)
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue));

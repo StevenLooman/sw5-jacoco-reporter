@@ -46,7 +46,7 @@ public class MethodCoverageMerger {
 
         // Gather needed data.
         final Sw5LibAnalyzer libAnalyzer = new Sw5LibAnalyzer(this.libReader);
-        final Map<MethodNode, MethodNode> methodDependencyMap = libAnalyzer.buildMethodDependencyMap(classNode);
+        final Map<MethodNode, MethodNode> methodDependencyMap = libAnalyzer.getMethodDependencyMap(classNode);
         final Map<MethodNode, IMethodCoverage> methodCoverageMap =
             this.buildMethodCoverageMap(classCoverage, classNode);
 

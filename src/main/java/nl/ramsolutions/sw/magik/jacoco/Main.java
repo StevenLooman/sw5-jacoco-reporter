@@ -13,6 +13,10 @@ import org.apache.commons.cli.PatternOptionBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Main entry point.
@@ -24,9 +28,9 @@ public final class Main {
         .longOpt("help")
         .desc("Show this help")
         .build();
-    private static final Option OPTION_PRODUCT_DIR = Option.builder()
-        .longOpt("product-dir")
-        .desc("Product directory")
+    private static final Option OPTION_PRODUCT_PATH = Option.builder()
+        .longOpt("product-path")
+        .desc("Product path")
         .numberOfArgs(Option.UNLIMITED_VALUES)
         .required()
         .type(PatternOptionBuilder.FILE_VALUE)
@@ -58,7 +62,7 @@ public final class Main {
         OPTIONS = new Options();
         OPTIONS.addOption(OPTION_HELP);
         OPTIONS.addOption(OPTION_FILTER_EXECUTABLE);
-        OPTIONS.addOption(OPTION_PRODUCT_DIR);
+        OPTIONS.addOption(OPTION_PRODUCT_PATH);
         OPTIONS.addOption(OPTION_JACOCO_FILE);
         OPTIONS.addOption(OPTION_HTML);
         OPTIONS.addOption(OPTION_XML);
@@ -109,19 +113,21 @@ public final class Main {
             return;
         }
 
-        final File productDir = (File) commandLine.getParsedOptionValue(OPTION_PRODUCT_DIR);
+        final List<Path> productPaths = Stream.of(commandLine.getOptionValues(OPTION_PRODUCT_PATH))
+            .map(Path::of)
+            .collect(Collectors.toList());
         final File executionDataFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_FILE);
         final boolean filterExecutableClasses = commandLine.hasOption(OPTION_FILTER_EXECUTABLE);
 
         if (commandLine.hasOption(OPTION_HTML)) {
             final File outputDir = (File) commandLine.getParsedOptionValue(OPTION_HTML);
             final HtmlReportGenerator htmlReportGenerator =
-                new HtmlReportGenerator(productDir, executionDataFile, outputDir, filterExecutableClasses);
+                new HtmlReportGenerator(productPaths, executionDataFile, outputDir, filterExecutableClasses);
             htmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_XML)) {
             final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_XML);
             final XmlReportGenerator xmlReportGenerator =
-                new XmlReportGenerator(productDir, executionDataFile, outputFile, filterExecutableClasses);
+                new XmlReportGenerator(productPaths, executionDataFile, outputFile, filterExecutableClasses);
             xmlReportGenerator.run();
         }
     }

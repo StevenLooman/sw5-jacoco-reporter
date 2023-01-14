@@ -11,13 +11,17 @@ import org.jacoco.core.tools.ExecFileLoader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Base report generator.
  */
 public abstract class BaseReportGenerator {
 
-    private final File productDirectory;
+    private static final String LIBS_DIR = "libs";
+    private static final String DEFAULT_NAME = "Smallworld product";
+
+    private final List<Path> productPaths;
     private final File outputFile;
     private final File executionDataFile;
     private final boolean filterExecutableClasses;
@@ -37,11 +41,11 @@ public abstract class BaseReportGenerator {
      * @param filterExecutableClasses Filter executable classes.
      */
     protected BaseReportGenerator(
-            final File productDirectory,
+            final List<Path> productPaths,
             final File executionDataFile,
             final File outputFile,
             final boolean filterExecutableClasses) {
-        this.productDirectory = productDirectory;
+        this.productPaths = productPaths;
         this.executionDataFile = executionDataFile;
         this.outputFile = outputFile;
         this.filterExecutableClasses = filterExecutableClasses;
@@ -56,7 +60,7 @@ public abstract class BaseReportGenerator {
     }
 
     protected MagikDirectorySourceFileLocator getLocator() {
-        return new MagikDirectorySourceFileLocator(this.productDirectory);
+        return new MagikDirectorySourceFileLocator(this.productPaths);
     }
 
     protected MagikNames getMagikNames() {
@@ -87,16 +91,17 @@ public abstract class BaseReportGenerator {
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final ExecutionDataStore dataStore = this.execFileLoader.getExecutionDataStore();
         final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
-        final File libsDirectory = new File(productDirectory, "libs");
-        analyzer.analyzeAll(libsDirectory);
-        final String name = this.productDirectory.getName();
+        for (final Path productPath : this.productPaths) {
+            final File libsDirectory = new File(productPath.toFile(), LIBS_DIR);
+            analyzer.analyzeAll(libsDirectory);
+        }
+        final String name = DEFAULT_NAME;  // TODO: Make this configurable through a command line param?
         final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(name);
 
         // Merge method coverages (Magik), filter executable classes if needed.
         final MagikBundleCoverageConverter bundleCoverageConverter =
             new MagikBundleCoverageConverter(this.libReader, bundleCoverage, this.filterExecutableClasses);
-        final IBundleCoverage newBundleCoverage = bundleCoverageConverter.convert();
-        return newBundleCoverage;
+        return bundleCoverageConverter.convert();
     }
 
     private void loadExecutionData() throws IOException {
@@ -104,8 +109,7 @@ public abstract class BaseReportGenerator {
     }
 
     private void loadSw5Libs() throws IOException {
-        final Path productPath = this.productDirectory.toPath();
-        this.libReader = new Sw5LibReader(productPath);
+        this.libReader = new Sw5LibReader(this.productPaths);
     }
 
 }
