@@ -105,7 +105,7 @@ public abstract class BaseReportGenerator {
     }
 
     private void loadExecutionData() throws IOException {
-        this.execFileLoader.load(executionDataFile);
+        this.execFileLoader.load(this.executionDataFile);
     }
 
     private void loadSw5Libs() throws IOException {

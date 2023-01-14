@@ -10,6 +10,7 @@ Changes
 - Rename parameter `--product-dir` to `--product-path`
 - Support multiple product dirs
 - Support procs
+- Properly discard lines from executable classes
 - Refactoring
 
 

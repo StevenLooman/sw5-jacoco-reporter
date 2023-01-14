@@ -55,7 +55,7 @@ public class MagikBundleCoverageConverter {
         this.methodCoverageMerger = new MethodCoverageMerger(this.libReader);
         this.discardExecutableClasses = discardExecutableClasses;
 
-        libAnalyzer = new Sw5LibAnalyzer(this.libReader);
+        this.libAnalyzer = new Sw5LibAnalyzer(this.libReader);
     }
 
     /**
@@ -65,8 +65,8 @@ public class MagikBundleCoverageConverter {
      * @return Converted {@link IBundleCoverage}.
      */
     public IBundleCoverage convert() {
-        final String name = bundleCoverage.getName();
-        final List<IPackageCoverage> newPackages = bundleCoverage.getPackages().stream()
+        final String name = this.bundleCoverage.getName();
+        final List<IPackageCoverage> newPackages = this.bundleCoverage.getPackages().stream()
             .map(this::convert)
             .collect(Collectors.toList());
         final BundleCoverageImpl newBundleCoverage = new BundleCoverageImpl(name, newPackages);
@@ -79,13 +79,7 @@ public class MagikBundleCoverageConverter {
     private PackageCoverageImpl convert(final IPackageCoverage packageCoverage) {
         final String name = packageCoverage.getName();
         final List<IClassCoverage> classCoverages = packageCoverage.getClasses().stream()
-            .filter(classCoverage -> {
-                if (this.discardExecutableClasses) {
-                    return !this.isExecutableClass(classCoverage);
-                }
-
-                return true;
-            })
+            .filter(this::filterClassCoverage)
             .map(this::convert)
             .collect(Collectors.toList());
         final List<ISourceFileCoverage> sourceFileCoverages = packageCoverage.getSourceFiles().stream()
@@ -142,40 +136,45 @@ public class MagikBundleCoverageConverter {
         final String packageName = sourceFileCoverage.getPackageName();
         final SourceFileCoverageImpl newSourceFileCoverage = new SourceFileCoverageImpl(name, packageName);
 
-        // Find non-executable ClassCoverage.
-        final IClassCoverage classCoverage = this.getNoneExecutableClassCoverage(sourceFileCoverage);
+        // Find subsidiary/non-executable ClassCoverage.
+        final IClassCoverage classCoverage = this.getSubsidiaryClassCoverage(sourceFileCoverage);
         if (classCoverage == null) {
             // No lines to add.
             return newSourceFileCoverage;
         }
 
-        this.copyCounters(sourceFileCoverage, classCoverage, newSourceFileCoverage);
+        this.filterAndCopyCounters(sourceFileCoverage, classCoverage, newSourceFileCoverage);
 
         return newSourceFileCoverage;
     }
 
-    private void copyCounters(
+    private boolean filterClassCoverage(final IClassCoverage classCoverage) {
+        if (this.discardExecutableClasses) {
+            return !this.isExecutableClass(classCoverage);
+        }
+
+        return true;
+    }
+
+    private void filterAndCopyCounters(
             final ISourceFileCoverage sourceFileCoverage,
             final IClassCoverage classCoverage,
             final SourceFileCoverageImpl newSourceFileCoverage) {
-        // Copy only lines which are not in the non-executable ClassCoverage.
+        // Only copy lines which are not in the non-executable ClassCoverage.
         for (int nr = sourceFileCoverage.getFirstLine(); nr < sourceFileCoverage.getLastLine(); ++nr) {
             final ILine classCoverageLine = classCoverage.getLine(nr);
             if (classCoverageLine == null) {
                 continue;
             }
 
-            final ILine line = sourceFileCoverage.getLine(nr);
-            if (line != null) {
-                final ICounter branchCounter = line.getBranchCounter();
-                final ICounter instructionCounter = line.getInstructionCounter();
-                newSourceFileCoverage.increment(instructionCounter, branchCounter, nr);
-            }
+            final ICounter branchCounter = classCoverageLine.getBranchCounter();
+            final ICounter instructionCounter = classCoverageLine.getInstructionCounter();
+            newSourceFileCoverage.increment(instructionCounter, branchCounter, nr);
         }
     }
 
     @CheckForNull
-    private IClassCoverage getNoneExecutableClassCoverage(final ISourceFileCoverage sourceFileCoverage) {
+    private IClassCoverage getSubsidiaryClassCoverage(final ISourceFileCoverage sourceFileCoverage) {
         final String name = sourceFileCoverage.getName();
         return this.bundleCoverage.getPackages().stream()
             .flatMap(packageCoverage -> packageCoverage.getClasses().stream())
