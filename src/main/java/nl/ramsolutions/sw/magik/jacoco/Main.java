@@ -42,9 +42,9 @@ public final class Main {
         .required()
         .type(PatternOptionBuilder.FILE_VALUE)
         .build();
-    private static final Option OPTION_FILTER_EXECUTABLE = Option.builder()
-        .longOpt("filter-executable")
-        .desc("Filter executable classes").build();
+    private static final Option OPTION_DISCARD_EXECUTABLE = Option.builder()
+        .longOpt("discard-executable")
+        .desc("Discard executable classes").build();
     private static final Option OPTION_HTML = Option.builder()
         .longOpt("html")
         .desc("Output HTML report to directory")
@@ -61,7 +61,7 @@ public final class Main {
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(OPTION_HELP);
-        OPTIONS.addOption(OPTION_FILTER_EXECUTABLE);
+        OPTIONS.addOption(OPTION_DISCARD_EXECUTABLE);
         OPTIONS.addOption(OPTION_PRODUCT_PATH);
         OPTIONS.addOption(OPTION_JACOCO_FILE);
         OPTIONS.addOption(OPTION_HTML);
@@ -117,17 +117,17 @@ public final class Main {
             .map(Path::of)
             .collect(Collectors.toList());
         final File executionDataFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_FILE);
-        final boolean filterExecutableClasses = commandLine.hasOption(OPTION_FILTER_EXECUTABLE);
+        final boolean discardExecutableClasses = commandLine.hasOption(OPTION_DISCARD_EXECUTABLE);
 
         if (commandLine.hasOption(OPTION_HTML)) {
             final File outputDir = (File) commandLine.getParsedOptionValue(OPTION_HTML);
             final HtmlReportGenerator htmlReportGenerator =
-                new HtmlReportGenerator(productPaths, executionDataFile, outputDir, filterExecutableClasses);
+                new HtmlReportGenerator(productPaths, executionDataFile, outputDir, discardExecutableClasses);
             htmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_XML)) {
             final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_XML);
             final XmlReportGenerator xmlReportGenerator =
-                new XmlReportGenerator(productPaths, executionDataFile, outputFile, filterExecutableClasses);
+                new XmlReportGenerator(productPaths, executionDataFile, outputFile, discardExecutableClasses);
             xmlReportGenerator.run();
         }
     }

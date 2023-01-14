@@ -24,7 +24,7 @@ public abstract class BaseReportGenerator {
     private final List<Path> productPaths;
     private final File outputFile;
     private final File executionDataFile;
-    private final boolean filterExecutableClasses;
+    private final boolean discardExecutableClasses;
     private final ExecFileLoader execFileLoader = new ExecFileLoader();
     private Sw5LibReader libReader;
 
@@ -38,17 +38,17 @@ public abstract class BaseReportGenerator {
      * @param productDirectory File to product directory.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report directory.
-     * @param filterExecutableClasses Filter executable classes.
+     * @param discardExecutableClasses Discard executable classes.
      */
     protected BaseReportGenerator(
             final List<Path> productPaths,
             final File executionDataFile,
             final File outputFile,
-            final boolean filterExecutableClasses) {
+            final boolean discardExecutableClasses) {
         this.productPaths = productPaths;
         this.executionDataFile = executionDataFile;
         this.outputFile = outputFile;
-        this.filterExecutableClasses = filterExecutableClasses;
+        this.discardExecutableClasses = discardExecutableClasses;
     }
 
     protected File getOutputFile() {
@@ -98,9 +98,9 @@ public abstract class BaseReportGenerator {
         final String name = DEFAULT_NAME;  // TODO: Make this configurable through a command line param?
         final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(name);
 
-        // Merge method coverages (Magik), filter executable classes if needed.
+        // Merge method coverages (Magik), discard executable classes if needed.
         final MagikBundleCoverageConverter bundleCoverageConverter =
-            new MagikBundleCoverageConverter(this.libReader, bundleCoverage, this.filterExecutableClasses);
+            new MagikBundleCoverageConverter(this.libReader, bundleCoverage, this.discardExecutableClasses);
         return bundleCoverageConverter.convert();
     }
 

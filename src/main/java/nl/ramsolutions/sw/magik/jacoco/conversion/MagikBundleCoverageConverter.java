@@ -38,20 +38,22 @@ public class MagikBundleCoverageConverter {
     private final Sw5LibAnalyzer libAnalyzer;
     private final IBundleCoverage bundleCoverage;
     private final MethodCoverageMerger methodCoverageMerger;
-    private final boolean filterExecutableClasses;
+    private final boolean discardExecutableClasses;
 
     /**
      * Constructor.
      * @param libReader Lib reader.
+     * @param bundleCoverage Bundle coverage.
+     * @param discardExecutableClasses Discard executable classes.
      */
     public MagikBundleCoverageConverter(
             final Sw5LibReader libReader,
             final IBundleCoverage bundleCoverage,
-            final boolean filterExecutableClasses) {
+            final boolean discardExecutableClasses) {
         this.libReader = libReader;
         this.bundleCoverage = bundleCoverage;
         this.methodCoverageMerger = new MethodCoverageMerger(this.libReader);
-        this.filterExecutableClasses = filterExecutableClasses;
+        this.discardExecutableClasses = discardExecutableClasses;
 
         libAnalyzer = new Sw5LibAnalyzer(this.libReader);
     }
@@ -59,7 +61,7 @@ public class MagikBundleCoverageConverter {
     /**
      * Run the conversion of the {@link IBundleCoverage}.
      * @param bundleCoverage Original {@link IBundleCoverage}.
-     * @param filterExecutableClasses Switch to filter executable classes.
+     * @param discardExecutableClasses Switch to discard executable classes.
      * @return Converted {@link IBundleCoverage}.
      */
     public IBundleCoverage convert() {
@@ -78,7 +80,7 @@ public class MagikBundleCoverageConverter {
         final String name = packageCoverage.getName();
         final List<IClassCoverage> classCoverages = packageCoverage.getClasses().stream()
             .filter(classCoverage -> {
-                if (filterExecutableClasses) {
+                if (this.discardExecutableClasses) {
                     return !this.isExecutableClass(classCoverage);
                 }
 
@@ -131,7 +133,7 @@ public class MagikBundleCoverageConverter {
     }
 
     private ISourceFileCoverage convert(final ISourceFileCoverage sourceFileCoverage) {
-        if (!this.filterExecutableClasses) {
+        if (!this.discardExecutableClasses) {
             return sourceFileCoverage;
         }
 

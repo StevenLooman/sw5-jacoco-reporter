@@ -44,8 +44,8 @@ Options:
   - Path to the directory to generate the HTML report in.
 - `--xml \[path_to_file\]`
   - Path to the file to generate the XML at.
-- `--filter-executable`
-  - Filter executable classes, i.e., the class which does not hold any Magik methods.
+- `--discard-executable`
+  - Discard executable classes, i.e., the class which does not hold any Magik methods.
 
 To generate a HTML report:
 

@@ -6,7 +6,7 @@ Changes
 - Fix entry point
 - Update dependencies
 - Fix method names in XML
-- Rename parameter `--filter-primary` to `--filter-executable`
+- Rename parameter `--filter-primary` to `--discard-executable`
 - Rename parameter `--product-dir` to `--product-path`
 - Support multiple product dirs
 - Support procs
