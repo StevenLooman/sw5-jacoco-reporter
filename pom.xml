@@ -212,7 +212,6 @@
                   </limits>
                   <excludes>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter</exclude>
-                    <exclude>nl.ramsolutions.sw.magik.jacoco.generators.MagikDirectorySourceFileLocator</exclude>
                   </excludes>
                 </rule>
                 <rule>

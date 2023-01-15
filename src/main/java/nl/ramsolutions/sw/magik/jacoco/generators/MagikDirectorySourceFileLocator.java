@@ -15,8 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
@@ -99,7 +97,7 @@ public class MagikDirectorySourceFileLocator extends InputStreamSourceFileLocato
                 })
                 .collect(Collectors.toList());
             for (final Path path : productDefPaths) {
-                if (MagikDirectorySourceFileLocator.definitionFileHasName(path, productName)) {
+                if (DefinitionFileReader.definitionFileHasName(path, productName)) {
                     return path.getParent();
                 }
             }
@@ -107,23 +105,6 @@ public class MagikDirectorySourceFileLocator extends InputStreamSourceFileLocato
 
         // Nothing found.
         return null;
-    }
-
-    private static boolean definitionFileHasName(final Path definitionFilePath, final String name) throws IOException {
-        final List<String> lines = Files.readAllLines(definitionFilePath);
-        final Optional<String> optDefLine = lines.stream()
-            .map(line -> line.trim())
-            .filter(line -> !line.startsWith("#") && !line.isBlank())
-            .findFirst();
-        if (!optDefLine.isPresent()) {
-            return false;
-        }
-
-        final String line = optDefLine.get();
-        try (Scanner scanner = new Scanner(line)) {
-            final String definitionName = scanner.next();
-            return definitionName.equalsIgnoreCase(name);
-        }
     }
 
 }
