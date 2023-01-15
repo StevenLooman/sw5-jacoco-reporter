@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * Conversion includes:
  * - Methods are merged (__loopbody__ into parent method, etc).
  * - Methods are renamed to Magik-names, where applicable.
- * - Executable classes are filtered, when enabled.
+ * - Executable classes are discarded, when enabled.
  * </p>
  */
 public class MagikBundleCoverageConverter {
@@ -60,9 +60,7 @@ public class MagikBundleCoverageConverter {
 
     /**
      * Run the conversion of the {@link IBundleCoverage}.
-     * @param bundleCoverage Original {@link IBundleCoverage}.
-     * @param discardExecutableClasses Switch to discard executable classes.
-     * @return Converted {@link IBundleCoverage}.
+     * @return Filtered and converted {@link IBundleCoverage}.
      */
     public IBundleCoverage convert() {
         final String name = this.bundleCoverage.getName();
@@ -116,7 +114,10 @@ public class MagikBundleCoverageConverter {
     }
 
     private MethodCoverageImpl convert(final IClassCoverage classCoverage, final IMethodCoverage methodCoverage) {
-        final String name = this.getMagikMethodName(classCoverage, methodCoverage);  // methodCoverage.getName();
+        final String javaClassName = classCoverage.getName();
+        final String javaMethodName = methodCoverage.getName();
+        final String name =
+            this.libAnalyzer.getMagikMethodName(javaClassName, javaMethodName);  // methodCoverage.getName();
         final String desc = "";  // methodCoverage.getDesc();
         final String signature = methodCoverage.getSignature();
         final MethodCoverageImpl newMethodCoverage = new MethodCoverageImpl(name, desc, signature);
@@ -143,7 +144,17 @@ public class MagikBundleCoverageConverter {
             return newSourceFileCoverage;
         }
 
-        this.filterAndCopyCounters(sourceFileCoverage, classCoverage, newSourceFileCoverage);
+        // Only copy lines which are not in the non-executable ClassCoverage.
+        for (int nr = sourceFileCoverage.getFirstLine(); nr < sourceFileCoverage.getLastLine(); ++nr) {
+            final ILine classCoverageLine = classCoverage.getLine(nr);
+            if (classCoverageLine == null) {
+                continue;
+            }
+
+            final ICounter branchCounter = classCoverageLine.getBranchCounter();
+            final ICounter instructionCounter = classCoverageLine.getInstructionCounter();
+            newSourceFileCoverage.increment(instructionCounter, branchCounter, nr);
+        }
 
         return newSourceFileCoverage;
     }
@@ -156,23 +167,6 @@ public class MagikBundleCoverageConverter {
         return true;
     }
 
-    private void filterAndCopyCounters(
-            final ISourceFileCoverage sourceFileCoverage,
-            final IClassCoverage classCoverage,
-            final SourceFileCoverageImpl newSourceFileCoverage) {
-        // Only copy lines which are not in the non-executable ClassCoverage.
-        for (int nr = sourceFileCoverage.getFirstLine(); nr < sourceFileCoverage.getLastLine(); ++nr) {
-            final ILine classCoverageLine = classCoverage.getLine(nr);
-            if (classCoverageLine == null) {
-                continue;
-            }
-
-            final ICounter branchCounter = classCoverageLine.getBranchCounter();
-            final ICounter instructionCounter = classCoverageLine.getInstructionCounter();
-            newSourceFileCoverage.increment(instructionCounter, branchCounter, nr);
-        }
-    }
-
     @CheckForNull
     private IClassCoverage getSubsidiaryClassCoverage(final ISourceFileCoverage sourceFileCoverage) {
         final String name = sourceFileCoverage.getName();
@@ -182,13 +176,6 @@ public class MagikBundleCoverageConverter {
             .filter(cc -> !this.isExecutableClass(cc))
             .findFirst()
             .orElse(null);
-    }
-
-    private String getMagikMethodName(final IClassCoverage classCoverage, final IMethodCoverage methodCoverage) {
-        final String javaClassName = classCoverage.getName();
-        final String javaMethodName = methodCoverage.getName();
-        final String magikMethodName = this.libAnalyzer.getMagikMethodName(javaClassName, javaMethodName);
-        return magikMethodName;
     }
 
     /**
@@ -204,13 +191,9 @@ public class MagikBundleCoverageConverter {
      */
     private boolean isExecutableClass(final IClassCoverage classCoverage) {
         final Collection<ClassNode> executableMagikClassNodes = this.libReader.getExecutableClassNodes();
-        final ClassNode classNode = this.getClassNode(classCoverage);
-        return executableMagikClassNodes.contains(classNode);
-    }
-
-    private ClassNode getClassNode(final IClassCoverage classCoverage) {
         final String className = classCoverage.getName() + ".class";
-        return this.libReader.getClassByName(className);
+        final ClassNode classNode = this.libReader.getClassByName(className);
+        return executableMagikClassNodes.contains(classNode);
     }
 
 }

@@ -211,7 +211,6 @@
                     </limit>
                   </limits>
                   <excludes>
-                    <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter</exclude>
                   </excludes>
                 </rule>
                 <rule>
