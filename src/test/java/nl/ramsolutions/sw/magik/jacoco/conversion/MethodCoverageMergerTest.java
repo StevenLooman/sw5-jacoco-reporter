@@ -25,7 +25,7 @@ class MethodCoverageMergerTest {
 
     private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
     private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
-    private static final String CLASS_COVERAGE_NAME = "magik/fixture_product/fixture_module/char16_vector_32";
+    private static final String CLASS_CHAR16_VECTOR = "magik/fixture_product/fixture_module/char16_vector_36";
 
     static Sw5LibReader getLibReader() throws IOException {
         return new Sw5LibReader(PRODUCT_PATHS);
@@ -60,9 +60,9 @@ class MethodCoverageMergerTest {
 
         final IPackageCoverage packageCoverage0 = List.copyOf(bundleCoverage.getPackages()).get(0);
         final IClassCoverage classCoverage0 = packageCoverage0.getClasses().stream()
-                .filter(classCoverage -> classCoverage.getName().equals(CLASS_COVERAGE_NAME))
-                .findAny()
-                .orElseThrow();
+            .filter(classCoverage -> classCoverage.getName().equals(CLASS_CHAR16_VECTOR))
+            .findAny()
+            .orElseThrow();
         assertThat(classCoverage0.getMethods()).hasSize(3);  // __loopbody method is merged.
     }
 

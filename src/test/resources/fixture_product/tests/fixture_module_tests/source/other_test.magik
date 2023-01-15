@@ -27,3 +27,23 @@ _method other_test.test_float_plus_100()
     _self.assert_equals(expected, actual)
 _endmethod
 $
+
+_pragma(classify_level=debug, topic={xsd_loader})
+_method other_test.test_symbol_with_suffix()
+    _local val << :abc
+
+    _local expected << :abc_suffix
+    _local actual << val.with_suffix()
+
+    _self.assert_equals(expected, actual)
+_endmethod
+$
+
+_pragma(classify_level=debug, topic={xsd_loader})
+_method other_test.test_call_prc_with_name()
+    _local expected << :from_prc_with_name
+    _local actual << prc_with_name()
+
+    _self.assert_equals(expected, actual)
+_endmethod
+$

@@ -20,7 +20,8 @@ class Sw5LibMethodNameExtractorTest {
 
     private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
     private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
-    private static final String EXEUCATBLE_CLASS_NAME = "magik/fixture_product/fixture_module/char16_vector_31";
+    private static final String EXEUCATBLE_CLASS_CHAR16_VECTOR =
+        "magik/fixture_product/fixture_module/char16_vector_35";
 
     static Sw5LibReader getLibReader() throws IOException {
         return new Sw5LibReader(PRODUCT_PATHS);
@@ -30,17 +31,17 @@ class Sw5LibMethodNameExtractorTest {
     void testExtractMethodName() throws IOException {
         final Sw5LibReader libReader = Sw5LibMethodNameExtractorTest.getLibReader();
         final ClassNode classNode = libReader.getExecutableClassNodes().stream()
-                .filter(classNode_ -> classNode_.name.equals(EXEUCATBLE_CLASS_NAME))
-                .findAny()
-                .orElseThrow();
+            .filter(classNode_ -> classNode_.name.equals(EXEUCATBLE_CLASS_CHAR16_VECTOR))
+            .findAny()
+            .orElseThrow();
         final MethodNode methodNode = classNode.methods.stream()
-                .filter(method -> method.name.equals("execute"))
-                .findFirst()
-                .orElseThrow();
+            .filter(method -> method.name.equals("execute"))
+            .findFirst()
+            .orElseThrow();
 
         final MethodInsnNode methodInsn = (MethodInsnNode) methodNode.instructions.get(14);
         final Entry<String, String> extractMethodName = Sw5LibMethodNameExtractor.extractMethodName(methodInsn);
-        final String javaMethodName = "magik.fixture_product.fixture_module.char16_vector_32.char16_vector__method1";
+        final String javaMethodName = "magik.fixture_product.fixture_module.char16_vector_36.char16_vector__method1";
         final String magikMethodName = "char16_vector.method1()";
         assertThat(extractMethodName).isEqualTo(Map.entry(javaMethodName, magikMethodName));
     }

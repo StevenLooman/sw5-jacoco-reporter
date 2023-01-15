@@ -19,6 +19,13 @@ class Sw5LibReaderTest {
 
     private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
     private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
+    private static final String EXECUTABLE_CLASS_CHAR16_VECTOR =
+        "magik/fixture_product/fixture_module/char16_vector_35";
+    private static final String EXECUTABLE_CLASS_OTHER = "magik/fixture_product/fixture_module/other_48";
+    private static final String EXECUTABLE_CLASS_NAME_DOES_NOT_EXIST =
+        "magik/fixture_product/fixture_module/does_not_exist_99";
+    private static final String CLASS_CHAR16_VECTOR = "magik/fixture_product/fixture_module/char16_vector_36";
+    private static final String CLASS_OTHER = "magik/fixture_product/fixture_module/other_49";
 
     static Sw5LibReader getLibReader() throws IOException {
         return new Sw5LibReader(PRODUCT_PATHS);
@@ -29,12 +36,12 @@ class Sw5LibReaderTest {
         final Sw5LibReader libReader = Sw5LibReaderTest.getLibReader();
         final Collection<ClassNode> executableClassNodes = libReader.getExecutableClassNodes();
         assertThat(executableClassNodes).hasSize(2);
-        Set<String> classNodeNames = executableClassNodes.stream()
-                .map(classNode -> classNode.name)
-                .collect(Collectors.toSet());
+        final Set<String> classNodeNames = executableClassNodes.stream()
+            .map(classNode -> classNode.name)
+            .collect(Collectors.toSet());
         assertThat(classNodeNames).containsOnly(
-            "magik/fixture_product/fixture_module/char16_vector_31",
-            "magik/fixture_product/fixture_module/other_38");
+            EXECUTABLE_CLASS_CHAR16_VECTOR,
+            EXECUTABLE_CLASS_OTHER);
     }
 
     @Test
@@ -42,22 +49,21 @@ class Sw5LibReaderTest {
         final Sw5LibReader libReader = Sw5LibReaderTest.getLibReader();
         final Collection<ClassNode> executableClassNodes = libReader.getSubsidiaryClassNodes();
         assertThat(executableClassNodes).hasSize(2);
-        Set<String> classNodeNames = executableClassNodes.stream()
-                .map(classNode -> classNode.name)
-                .collect(Collectors.toSet());
+        final Set<String> classNodeNames = executableClassNodes.stream()
+            .map(classNode -> classNode.name)
+            .collect(Collectors.toSet());
         assertThat(classNodeNames).containsOnly(
-            "magik/fixture_product/fixture_module/char16_vector_32",
-            "magik/fixture_product/fixture_module/other_39");
+            CLASS_CHAR16_VECTOR,
+            CLASS_OTHER);
     }
 
     @Test
     void testGetClassByName() throws IOException {
         final Sw5LibReader libReader = Sw5LibReaderTest.getLibReader();
-        ClassNode classNode = libReader.getClassByName("magik/fixture_product/fixture_module/char16_vector_31.class");
+        final ClassNode classNode = libReader.getClassByName(EXECUTABLE_CLASS_CHAR16_VECTOR + ".class");
         assertThat(classNode).isNotNull();
 
-        ClassNode classNodeUnexisting =
-            libReader.getClassByName("magik/fixture_product/fixture_module/does_not_exist_99.class");
+        final ClassNode classNodeUnexisting = libReader.getClassByName(EXECUTABLE_CLASS_NAME_DOES_NOT_EXIST + ".class");
         assertThat(classNodeUnexisting).isNull();
     }
 

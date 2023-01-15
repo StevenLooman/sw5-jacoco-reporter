@@ -18,7 +18,7 @@ class Sw5LibMethodDependencyBuilderTest {
 
     private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
     private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
-    private static final String CLASS_NODE_NAME = "magik/fixture_product/fixture_module/char16_vector_32.class";
+    private static final String CLASS_NODE_NAME = "magik/fixture_product/fixture_module/char16_vector_36.class";
 
     static Sw5LibReader getLibReader() throws IOException {
         return new Sw5LibReader(PRODUCT_PATHS);
@@ -31,11 +31,11 @@ class Sw5LibMethodDependencyBuilderTest {
 
         final Map<MethodNode, MethodNode> buildMethodDependencyMap =
             Sw5LibMethodDependencyBuilder.buildMethodDependencyMap(classNode);
-        MethodNode loopbodyMethodNode = classNode.methods.stream()
-                .filter(methodNode -> methodNode.name.equals("__loopbody_"))
-                .findAny()
-                .orElseThrow();
-        MethodNode parentNode = buildMethodDependencyMap.get(loopbodyMethodNode);
+        final MethodNode loopbodyMethodNode = classNode.methods.stream()
+            .filter(methodNode -> methodNode.name.equals("__loopbody_"))
+            .findAny()
+            .orElseThrow();
+        final MethodNode parentNode = buildMethodDependencyMap.get(loopbodyMethodNode);
         assertThat(parentNode).isNotNull();
         assertThat(parentNode.name).isEqualTo("char16_vector__method1");
     }

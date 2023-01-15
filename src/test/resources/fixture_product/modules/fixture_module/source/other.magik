@@ -9,3 +9,24 @@ _method float.plus_100()
 	_return _self + 100
 _endmethod
 $
+
+_method symbol.with_suffix()
+	_local embedded_prc <<
+		_proc(symb)
+			_return symb + :_suffix
+		_endproc
+	_return embedded_prc(_self)
+_endmethod
+$
+
+_global prc_with_name <<
+	_proc@name()
+		_return :from_prc_with_name
+	_endproc
+$
+
+_global prc_without_name <<
+	_proc()
+		_return :from_prc_without_name
+	_endproc
+$
