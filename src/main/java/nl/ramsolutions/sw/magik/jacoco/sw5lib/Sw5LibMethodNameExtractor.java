@@ -3,13 +3,17 @@ package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Utility class to extract method name from INVOKESTATIC/createMethod() calls.
@@ -21,6 +25,8 @@ final class Sw5LibMethodNameExtractor {
     private static final int LDC_INDEX_MAGIK_METHOD = 1;
     private static final int LDC_INDEX_JAVA_TYPE = 2;
     private static final int LDC_INDEX_JAVA_METHOD_NAME = 3;
+    private static final String METHOD_DEFINITION_OWNER = "com/gesmallworld/magik/language/utils/MagikObjectUtils";
+    private static final String METHOD_DEFINITION_NAME = "createMethod";
 
     private Sw5LibMethodNameExtractor() {
     }
@@ -89,6 +95,27 @@ final class Sw5LibMethodNameExtractor {
         }
         Collections.reverse(ldcNodes);
         return ldcNodes;
+    }
+
+    /**
+     * Extract Magik method names.
+     * @param executeMethod Execute method from primary class.
+     * @return Map keyed on Java names, and the corresponding Magik names.
+     */
+    static Map<String, String> extractMethodNames(final MethodNode executeMethod) {
+        // Get all static MagikObjectUtils.createMethod() calls which define a method,
+        // and extract method names from those.
+        final InsnList instructions = executeMethod.instructions;
+        return Arrays.stream(instructions.toArray())
+            .filter(insn -> insn.getOpcode() == Opcodes.INVOKESTATIC)
+            .map(MethodInsnNode.class::cast)
+            .filter(methodInsn ->
+                methodInsn.owner.equals(METHOD_DEFINITION_OWNER)
+                && methodInsn.name.equals(METHOD_DEFINITION_NAME))
+            .map(Sw5LibMethodNameExtractor::extractMethodName)
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue));
     }
 
 }

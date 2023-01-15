@@ -213,7 +213,6 @@
                   <excludes>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter</exclude>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.generators.MagikDirectorySourceFileLocator</exclude>
-                    <exclude>nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer</exclude>
                   </excludes>
                 </rule>
                 <rule>
