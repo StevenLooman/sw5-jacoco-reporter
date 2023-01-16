@@ -19,12 +19,12 @@ import java.util.List;
 public abstract class BaseReportGenerator {
 
     private static final String LIBS_DIR = "libs";
-    private static final String DEFAULT_NAME = "Smallworld product";
 
     private final List<Path> productPaths;
     private final File outputFile;
     private final File executionDataFile;
     private final boolean discardExecutableClasses;
+    private final String bundleName;
     private final ExecFileLoader execFileLoader = new ExecFileLoader();
     private Sw5LibReader libReader;
 
@@ -39,16 +39,19 @@ public abstract class BaseReportGenerator {
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report directory.
      * @param discardExecutableClasses Discard executable classes.
+     * @param bundleName Name of the bundle.
      */
     protected BaseReportGenerator(
             final List<Path> productPaths,
             final File executionDataFile,
             final File outputFile,
-            final boolean discardExecutableClasses) {
+            final boolean discardExecutableClasses,
+            final String bundleName) {
         this.productPaths = productPaths;
         this.executionDataFile = executionDataFile;
         this.outputFile = outputFile;
         this.discardExecutableClasses = discardExecutableClasses;
+        this.bundleName = bundleName;
     }
 
     protected File getOutputFile() {
@@ -95,8 +98,7 @@ public abstract class BaseReportGenerator {
             final File libsDirectory = new File(productPath.toFile(), LIBS_DIR);
             analyzer.analyzeAll(libsDirectory);
         }
-        final String name = DEFAULT_NAME;  // TODO: Make this configurable through a command line param?
-        final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(name);
+        final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(this.bundleName);
 
         // Merge method coverages (Magik), discard executable classes if needed.
         final MagikBundleCoverageConverter bundleCoverageConverter =

@@ -6,11 +6,12 @@ Changes
 - Fix entry point
 - Update dependencies
 - Fix method names in XML
-- Rename parameter `--filter-primary` to `--discard-executable`
-- Rename parameter `--product-dir` to `--product-path`
+- Rename option `--filter-primary` to `--discard-executable`
+- Rename option `--product-dir` to `--product-path`
 - Support multiple product dirs
 - Support procs
 - Properly discard lines from executable classes
+- Make bundle name configurable with option `--bundle-name`
 - Refactoring
 
 

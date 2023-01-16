@@ -30,13 +30,15 @@ public class XmlReportGenerator extends BaseReportGenerator {
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report file (XML).
      * @param discardExecutableClasses Discard executable classes.
+     * @param bundleName Name of the bundle.
      */
     public XmlReportGenerator(
             final List<Path> productPaths,
             final File executionDataFile,
             final File outputFile,
-            final boolean discardExecutableClasses) {
-        super(productPaths, executionDataFile, outputFile, discardExecutableClasses);
+            final boolean discardExecutableClasses,
+            final String bundleName) {
+        super(productPaths, executionDataFile, outputFile, discardExecutableClasses, bundleName);
     }
 
     @Override

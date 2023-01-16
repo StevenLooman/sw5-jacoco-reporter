@@ -23,6 +23,8 @@ import java.util.stream.Stream;
  */
 public final class Main {
 
+    private static final String DEFAULT_BUNDLE_NAME = "Smallworld product";
+
     private static final Options OPTIONS;
     private static final Option OPTION_HELP = Option.builder()
         .longOpt("help")
@@ -57,6 +59,12 @@ public final class Main {
         .hasArg()
         .type(PatternOptionBuilder.FILE_VALUE)
         .build();
+    private static final Option OPTION_BUNDLE_NAME = Option.builder()
+        .longOpt("bundle-name")
+        .desc("Name of the bundle, defaults to 'Smallworld product'")
+        .hasArg()
+        .type(PatternOptionBuilder.STRING_VALUE)
+        .build();
 
     static {
         OPTIONS = new Options();
@@ -66,6 +74,7 @@ public final class Main {
         OPTIONS.addOption(OPTION_JACOCO_FILE);
         OPTIONS.addOption(OPTION_HTML);
         OPTIONS.addOption(OPTION_XML);
+        OPTIONS.addOption(OPTION_BUNDLE_NAME);
     }
 
     private Main() {
@@ -118,16 +127,27 @@ public final class Main {
             .collect(Collectors.toList());
         final File executionDataFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_FILE);
         final boolean discardExecutableClasses = commandLine.hasOption(OPTION_DISCARD_EXECUTABLE);
+        final String bundleName = commandLine.hasOption(OPTION_BUNDLE_NAME)
+            ? commandLine.getOptionValue(OPTION_BUNDLE_NAME)
+            : DEFAULT_BUNDLE_NAME;
 
         if (commandLine.hasOption(OPTION_HTML)) {
             final File outputDir = (File) commandLine.getParsedOptionValue(OPTION_HTML);
-            final HtmlReportGenerator htmlReportGenerator =
-                new HtmlReportGenerator(productPaths, executionDataFile, outputDir, discardExecutableClasses);
+            final HtmlReportGenerator htmlReportGenerator = new HtmlReportGenerator(
+                productPaths,
+                executionDataFile,
+                outputDir,
+                discardExecutableClasses,
+                bundleName);
             htmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_XML)) {
             final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_XML);
-            final XmlReportGenerator xmlReportGenerator =
-                new XmlReportGenerator(productPaths, executionDataFile, outputFile, discardExecutableClasses);
+            final XmlReportGenerator xmlReportGenerator = new XmlReportGenerator(
+                productPaths,
+                executionDataFile,
+                outputFile,
+                discardExecutableClasses,
+                bundleName);
             xmlReportGenerator.run();
         }
     }
