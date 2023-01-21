@@ -1,12 +1,11 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import nl.ramsolutions.sw.magik.jacoco.TestData;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,26 +15,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Sw5LibMethodDependencyBuilderTest {
 
-    private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
-    private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
-    private static final String CLASS_NODE_NAME = "magik/fixture_product/fixture_module/char16_vector_36.class";
-
     static Sw5LibReader getLibReader() throws IOException {
-        return new Sw5LibReader(PRODUCT_PATHS);
+        return new Sw5LibReader(TestData.PRODUCT_PATHS);
     }
 
     @Test
     void testBuildDependencyMap() throws IOException {
         final Sw5LibReader libReader = Sw5LibMethodDependencyBuilderTest.getLibReader();
-        final ClassNode classNode = libReader.getClassByName(CLASS_NODE_NAME);
+        final ClassNode classNode = libReader.getClassByName(TestData.CLASS_CHAR16_VECTOR);
 
-        final Map<MethodNode, MethodNode> buildMethodDependencyMap =
-            Sw5LibMethodDependencyBuilder.buildMethodDependencyMap(classNode);
+        final Map<MethodNode, MethodNode> nethodDependencyMap =
+            Sw5LibDependencyBuilder.buildMethodDependencyMap(classNode, classNode);
         final MethodNode loopbodyMethodNode = classNode.methods.stream()
             .filter(methodNode -> methodNode.name.equals("__loopbody_"))
             .findAny()
             .orElseThrow();
-        final MethodNode parentNode = buildMethodDependencyMap.get(loopbodyMethodNode);
+        final MethodNode parentNode = nethodDependencyMap.get(loopbodyMethodNode);
         assertThat(parentNode).isNotNull();
         assertThat(parentNode.name).isEqualTo("char16_vector__method1");
     }

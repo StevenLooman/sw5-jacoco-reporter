@@ -1,4 +1,4 @@
-smallworld_product.add_product(".../munit/munit")
+smallworld_product.add_product(".../munit")
 $
 
 smallworld_product.add_product(".")

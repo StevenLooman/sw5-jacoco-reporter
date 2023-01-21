@@ -6,6 +6,8 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.NoSuchElementException;
 
+import nl.ramsolutions.sw.magik.jacoco.ClassNodeHelper;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,7 +26,7 @@ class ClassNodeUtilsTest {
         final MethodNode methodNode1 = new MethodNode(0, "m1", "", "", new String[0]);
         classNode.methods.add(methodNode1);
 
-        final MethodNode actual = ClassNodeUtils.getMethodNodeFromClassNode(classNode, "m1");
+        final MethodNode actual = ClassNodeHelper.getMethodNodeFromClassNode(classNode, "m1");
         assertThat(actual).isEqualTo(methodNode1);
     }
 
@@ -33,7 +35,7 @@ class ClassNodeUtilsTest {
         final ClassNode classNode = new ClassNode();
 
         assertThatThrownBy(
-            () -> ClassNodeUtils.getMethodNodeFromClassNode(classNode, "m99"))
+            () -> ClassNodeHelper.getMethodNodeFromClassNode(classNode, "m99"))
                 .isInstanceOf(NoSuchElementException.class);
     }
 

@@ -19,6 +19,8 @@ _method symbol.with_suffix()
 _endmethod
 $
 
+_package user
+
 _global prc_with_name <<
 	_proc@name()
 		_return :from_prc_with_name
@@ -29,4 +31,22 @@ _global prc_without_name <<
 	_proc()
 		_return :from_prc_without_name
 	_endproc
+$
+
+_block
+	_for i _over 1.upto(10)
+	_loop
+		show(i)
+	_endloop
+_endblock
+$
+
+_block
+	_local p <<
+		_proc(arg)
+			show(arg)
+		_endproc
+	p(1)
+	p(2)
+_endblock
 $

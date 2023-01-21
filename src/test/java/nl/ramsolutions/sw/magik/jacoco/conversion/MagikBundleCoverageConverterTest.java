@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
+import nl.ramsolutions.sw.magik.jacoco.TestData;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -24,12 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("checkstyle:MagicNumber")
 class MagikBundleCoverageConverterTest {
 
-    private static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
-    private static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
-    private static final String CLASS_CHAR16_VECTOR = "magik/fixture_product/fixture_module/char16_vector_36";
-
     static Sw5LibReader getLibReader() throws IOException {
-        return new Sw5LibReader(PRODUCT_PATHS);
+        return new Sw5LibReader(TestData.PRODUCT_PATHS);
     }
 
     /**
@@ -39,13 +36,13 @@ class MagikBundleCoverageConverterTest {
      */
     static IBundleCoverage getBundleCoverage() throws IOException {
         final ExecFileLoader execFileLoader = new ExecFileLoader();
-        final Path execFile = PRODUCT_PATH.resolve("jacoco.exec");
+        final Path execFile = TestData.PRODUCT_PATH.resolve("jacoco.exec");
         execFileLoader.load(execFile.toFile());
 
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final ExecutionDataStore dataStore = execFileLoader.getExecutionDataStore();
         final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
-        final File libsDirectory = new File(PRODUCT_PATH.toFile(), "libs");
+        final File libsDirectory = new File(TestData.PRODUCT_PATH.toFile(), "libs");
         analyzer.analyzeAll(libsDirectory);
         return coverageBuilder.getBundle("Title");
     }
@@ -63,11 +60,11 @@ class MagikBundleCoverageConverterTest {
         assertThat(packageCoverage0.getClasses()).hasSize(4);
 
         final IClassCoverage classCoverage0 = packageCoverage0.getClasses().stream()
-            .filter(classCoverage -> classCoverage.getName().equals(CLASS_CHAR16_VECTOR))
+            .filter(classCoverage -> classCoverage.getName().equals(TestData.CLASS_CHAR16_VECTOR))
             .findAny()
             .orElseThrow();
         assertThat(classCoverage0).isNotNull();
-        assertThat(classCoverage0.getName()).isEqualTo(CLASS_CHAR16_VECTOR);
+        assertThat(classCoverage0.getName()).isEqualTo(TestData.CLASS_CHAR16_VECTOR);
         assertThat(classCoverage0.getMethods()).hasSize(4);  // 3 methods + loopbody
 
         final List<IMethodCoverage> methodCoverages = List.copyOf(classCoverage0.getMethods());
@@ -89,7 +86,7 @@ class MagikBundleCoverageConverterTest {
         assertThat(packageCoverage0.getClasses()).hasSize(4);  // 4 classes, nothing merged.
 
         final IClassCoverage classCoverage0 = packageCoverage0.getClasses().stream()
-            .filter(classCoverage -> classCoverage.getName().equals(CLASS_CHAR16_VECTOR))
+            .filter(classCoverage -> classCoverage.getName().equals(TestData.CLASS_CHAR16_VECTOR))
             .findAny()
             .orElseThrow();
         assertThat(classCoverage0.getMethods()).hasSize(3);  // __loopbody method is merged.
