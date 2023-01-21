@@ -12,7 +12,7 @@ $
 
 _method symbol.with_suffix()
 	_local embedded_prc <<
-		_proc(symb)
+		_proc(symb)  # proc___
 			_return symb + :_suffix
 		_endproc
 	_return embedded_prc(_self)
@@ -22,29 +22,64 @@ $
 _package user
 
 _global prc_with_name <<
-	_proc@name()
+	_proc@name()  # proc__name_
 		_return :from_prc_with_name
 	_endproc
 $
 
 _global prc_without_name <<
-	_proc()
+	_proc()  # proc___2
 		_return :from_prc_without_name
 	_endproc
 $
 
 _block
 	_for i _over 1.upto(10)
-	_loop
+	_loop  # __loopbody_
 		show(i)
 	_endloop
 _endblock
 $
 
 _block
+	_for i _over 1.upto(5)  # __loopbody_2
+	_loop
+		_for j _over 5.upto(10)  # __loopbody_3
+		_loop
+			show(i, j)
+		_endloop
+	_endloop
+_endblock
+$
+
+_block
 	_local p <<
-		_proc(arg)
+		_proc(arg)  # proc___3
 			show(arg)
+		_endproc
+	p(1)
+	p(2)
+_endblock
+$
+
+_block
+	_local p <<
+		_proc(arg)  # proc___4
+			show(arg)
+		_endproc
+	p(1)
+	p(2)
+_endblock
+$
+
+_block
+	_local p <<
+		_proc(arg)  # proc___5
+			_local q <<
+				_proc(arg)  # proc___6
+					show(arg)
+				_endproc
+			q(arg)
 		_endproc
 	p(1)
 	p(2)

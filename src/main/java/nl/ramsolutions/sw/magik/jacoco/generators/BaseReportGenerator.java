@@ -1,12 +1,16 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
 import nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter;
+import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.tools.ExecFileLoader;
+import org.jacoco.report.DirectorySourceFileLocator;
+import org.jacoco.report.ISourceFileLocator;
+import org.jacoco.report.MultiSourceFileLocator;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,14 +23,16 @@ import java.util.List;
 public abstract class BaseReportGenerator {
 
     private static final String LIBS_DIR = "libs";
+    private static final int TAB_WIDTH = 8;
 
     private final List<Path> productPaths;
+    private final List<Path> sourcePaths;
     private final File outputFile;
     private final File executionDataFile;
-    private final boolean discardExecutableClasses;
+    private final boolean discardExecutable;
     private final String bundleName;
     private final ExecFileLoader execFileLoader = new ExecFileLoader();
-    private Sw5LibReader libReader;
+    private Sw5LibAnalyzer libAnalyzer;
 
     /**
      * Constructor.
@@ -35,22 +41,25 @@ public abstract class BaseReportGenerator {
      * The product is expected to contain the {@literal libs} directory containing the compiled product.
      * </p>
      *
-     * @param productDirectory File to product directory.
+     * @param productPaths Paths to Smallworld product directories.
+     * @param sourcePaths Paths to regular (Java) source directories.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report directory.
-     * @param discardExecutableClasses Discard executable classes.
+     * @param discardExecutable Discard executable.
      * @param bundleName Name of the bundle.
      */
     protected BaseReportGenerator(
             final List<Path> productPaths,
+            final List<Path> sourcePaths,
             final File executionDataFile,
             final File outputFile,
-            final boolean discardExecutableClasses,
+            final boolean discardExecutable,
             final String bundleName) {
         this.productPaths = productPaths;
+        this.sourcePaths = sourcePaths;
         this.executionDataFile = executionDataFile;
         this.outputFile = outputFile;
-        this.discardExecutableClasses = discardExecutableClasses;
+        this.discardExecutable = discardExecutable;
         this.bundleName = bundleName;
     }
 
@@ -62,12 +71,24 @@ public abstract class BaseReportGenerator {
         return this.execFileLoader;
     }
 
-    protected MagikDirectorySourceFileLocator getLocator() {
-        return new MagikDirectorySourceFileLocator(this.productPaths);
+    protected ISourceFileLocator getLocator() {
+        final MultiSourceFileLocator locator = new MultiSourceFileLocator(TAB_WIDTH);
+
+        // Add Smallworld product source file locator.
+        this.productPaths.stream()
+            .map(productPath -> new MagikProductSourceFileLocator(productPath))
+            .forEach(locator::add);
+
+        // Add all regular/Java locators.
+        this.sourcePaths.stream()
+            .map(sourcePath -> new DirectorySourceFileLocator(sourcePath.toFile(), null, TAB_WIDTH))
+            .forEach(locator::add);
+
+        return locator;
     }
 
     protected MagikNames getMagikNames() {
-        return new MagikNames(this.libReader);
+        return new MagikNames();
     }
 
     /**
@@ -100,9 +121,9 @@ public abstract class BaseReportGenerator {
         }
         final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(this.bundleName);
 
-        // Merge method coverages (Magik), discard executable classes if needed.
+        // Merge method coverages (Magik), discard executable parts if needed.
         final MagikBundleCoverageConverter bundleCoverageConverter =
-            new MagikBundleCoverageConverter(this.libReader, bundleCoverage, this.discardExecutableClasses);
+            new MagikBundleCoverageConverter(this.libAnalyzer, bundleCoverage, this.discardExecutable);
         return bundleCoverageConverter.convert();
     }
 
@@ -111,7 +132,8 @@ public abstract class BaseReportGenerator {
     }
 
     private void loadSw5Libs() throws IOException {
-        this.libReader = new Sw5LibReader(this.productPaths);
+        final Sw5LibReader libReader = new Sw5LibReader(this.productPaths);
+        this.libAnalyzer = new Sw5LibAnalyzer(libReader);
     }
 
 }

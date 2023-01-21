@@ -21,10 +21,6 @@ final class Sw5LibProcNameExtractor {
     private Sw5LibProcNameExtractor() {
     }
 
-    static String keyForClassMethodName(final String javaClassName, final String javaMethodName) {
-        return javaClassName.replace("/", ".") + "." + javaMethodName;
-    }
-
     static String magikProcName(final String procName) {
         final String fixedName = procName.isBlank()
             ? ANONYMOUS_PROC
@@ -44,18 +40,18 @@ final class Sw5LibProcNameExtractor {
         final String javaMethodName = (String) bsmArgs[1];
         final String procName = (String) bsmArgs[2];
 
-        final String key = Sw5LibProcNameExtractor.keyForClassMethodName(javaTypeName, javaMethodName);
+        final String key = Sw5LibAnalyzer.keyForClassMethodName(javaTypeName, javaMethodName);
         final String magikProcName = Sw5LibProcNameExtractor.magikProcName(procName);
         return Map.entry(key, magikProcName);
     }
 
     /**
      * Extract Magik proc names.
-     * @param executeMethod Execute method from primary class.
+     * @param methodNode MethodNode which might create procedures.
      * @return Map keyed on Java names, and the corresponding Magik names.
      */
-    static Map<String, String> extractProcNames(final MethodNode executeMethod) {
-        final InsnList instructions = executeMethod.instructions;
+    static Map<String, String> extractProcNames(final MethodNode methodNode) {
+        final InsnList instructions = methodNode.instructions;
         return Arrays.stream(instructions.toArray())
             .filter(insn -> insn.getOpcode() == Opcodes.INVOKEDYNAMIC)
             .map(InvokeDynamicInsnNode.class::cast)

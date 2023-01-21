@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -27,9 +28,6 @@ import java.util.zip.ZipFile;
 public class Sw5LibReader {
 
     private static final String DIRECTORY_LIBS = "libs";
-    private static final String ANNOTATION_CODE_TYPE = "Lcom/gesmallworld/magik/commons/runtime/annotations/CodeType;";
-    private static final String ANNOTATION_CODE_TYPE_SUBSIDIARY = "Subsidiary";
-    private static final String INTERFACE_EXECUTABLE_MAGIK = "com/gesmallworld/magik/language/utils/ExecutableMagik";
 
     private final Map<String, ClassNode> namedClasses = new HashMap<>();
 
@@ -42,13 +40,13 @@ public class Sw5LibReader {
     }
 
     /**
-     * Get executable Magik classes, i.e., source files without method definitions.
-     * @return Executable {@link ClassNode}s.
+     * Get primary Magik classes, i.e., source files without method definitions.
+     * @return Primary {@link ClassNode}s.
      */
-    public Collection<ClassNode> getExecutableClassNodes() {
+    public Collection<ClassNode> getPrimaryClassNodes() {
         return this.namedClasses.values().stream()
-            .filter(classNode -> classNode.interfaces.contains(INTERFACE_EXECUTABLE_MAGIK))
-            .collect(Collectors.toList());
+            .filter(ClassNodeHelper::isPrimaryClassNode)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -57,10 +55,7 @@ public class Sw5LibReader {
      */
     public Collection<ClassNode> getSubsidiaryClassNodes() {
         return this.namedClasses.values().stream()
-            .filter(classNode -> classNode.visibleAnnotations.stream()
-                .anyMatch(annotation ->
-                    annotation.desc.equals(ANNOTATION_CODE_TYPE)
-                    && annotation.values.get(1).equals(ANNOTATION_CODE_TYPE_SUBSIDIARY)))
+            .filter(ClassNodeHelper::isSubsidiaryClassNode)
             .collect(Collectors.toSet());
     }
 

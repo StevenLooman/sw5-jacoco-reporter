@@ -1,6 +1,5 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
-import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.report.ILanguageNames;
 import org.jacoco.report.JavaNames;
 
@@ -11,7 +10,7 @@ public class MagikNames implements ILanguageNames {
 
     private final JavaNames javaNames;
 
-    public MagikNames(final Sw5LibReader libReader) {
+    public MagikNames() {
         this.javaNames = new JavaNames();
     }
 

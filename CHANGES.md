@@ -1,7 +1,11 @@
 Changes
 =======
 
-1.1.1 (unreleased)
+2.0.0 (unreleased)
+
+- Merge primary with subsidiary classes
+- Better separation of lines hit from primary classes, while constructs are stored on subsidiary classes
+- Refactoring
 
 
 1.1.0 (2022-01-19)

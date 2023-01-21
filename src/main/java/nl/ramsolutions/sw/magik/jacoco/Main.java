@@ -14,6 +14,7 @@ import org.apache.commons.cli.PatternOptionBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,9 +33,15 @@ public final class Main {
         .build();
     private static final Option OPTION_PRODUCT_PATH = Option.builder()
         .longOpt("product-path")
-        .desc("Product path")
+        .desc("Smallworld Product path")
         .numberOfArgs(Option.UNLIMITED_VALUES)
         .required()
+        .type(PatternOptionBuilder.FILE_VALUE)
+        .build();
+    private static final Option OPTION_SOURCE_PATH = Option.builder()
+        .longOpt("source-path")
+        .desc("Regular (Java) source path")
+        .numberOfArgs(Option.UNLIMITED_VALUES)
         .type(PatternOptionBuilder.FILE_VALUE)
         .build();
     private static final Option OPTION_JACOCO_FILE = Option.builder()
@@ -69,9 +76,10 @@ public final class Main {
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(OPTION_HELP);
-        OPTIONS.addOption(OPTION_DISCARD_EXECUTABLE);
         OPTIONS.addOption(OPTION_PRODUCT_PATH);
+        OPTIONS.addOption(OPTION_SOURCE_PATH);
         OPTIONS.addOption(OPTION_JACOCO_FILE);
+        OPTIONS.addOption(OPTION_DISCARD_EXECUTABLE);
         OPTIONS.addOption(OPTION_HTML);
         OPTIONS.addOption(OPTION_XML);
         OPTIONS.addOption(OPTION_BUNDLE_NAME);
@@ -125,8 +133,13 @@ public final class Main {
         final List<Path> productPaths = Stream.of(commandLine.getOptionValues(OPTION_PRODUCT_PATH))
             .map(Path::of)
             .collect(Collectors.toList());
+        final List<Path> sourcePaths = commandLine.hasOption(OPTION_SOURCE_PATH)
+            ? Stream.of(commandLine.getOptionValues(OPTION_SOURCE_PATH))
+                .map(Path::of)
+                .collect(Collectors.toList())
+            : Collections.emptyList();
         final File executionDataFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_FILE);
-        final boolean discardExecutableClasses = commandLine.hasOption(OPTION_DISCARD_EXECUTABLE);
+        final boolean discardExecutable = commandLine.hasOption(OPTION_DISCARD_EXECUTABLE);
         final String bundleName = commandLine.hasOption(OPTION_BUNDLE_NAME)
             ? commandLine.getOptionValue(OPTION_BUNDLE_NAME)
             : DEFAULT_BUNDLE_NAME;
@@ -135,18 +148,20 @@ public final class Main {
             final File outputDir = (File) commandLine.getParsedOptionValue(OPTION_HTML);
             final HtmlReportGenerator htmlReportGenerator = new HtmlReportGenerator(
                 productPaths,
+                sourcePaths,
                 executionDataFile,
                 outputDir,
-                discardExecutableClasses,
+                discardExecutable,
                 bundleName);
             htmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_XML)) {
             final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_XML);
             final XmlReportGenerator xmlReportGenerator = new XmlReportGenerator(
                 productPaths,
+                sourcePaths,
                 executionDataFile,
                 outputFile,
-                discardExecutableClasses,
+                discardExecutable,
                 bundleName);
             xmlReportGenerator.run();
         }

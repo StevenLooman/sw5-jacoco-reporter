@@ -18,35 +18,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * {@link InputStreamSourceFileLocator} for Smallworld/Magik.
+ * {@link InputStreamSourceFileLocator} for Smallworld/Magik, or fallback to regular.
  */
-public class MagikDirectorySourceFileLocator extends InputStreamSourceFileLocator {
+public class MagikProductSourceFileLocator extends InputStreamSourceFileLocator {
 
     private static final int TAB_WIDTH = 8;
     private static final Charset DEFAULT_ENCODING = StandardCharsets.ISO_8859_1;
     private static final String PACKAGE_MAGIK_PREFIX = "magik/";
     private static final String PRODUCT_DEF = "product.def";
 
-    private final List<Path> productPaths;
+    private final Path productPath;
 
     /**
      * Constructor.
-     * @param productPaths Directory to Smallworld products.
-     * @param tabWidth Width of tab.
+     * @param productPath Directory to Smallworld product.
      */
-    public MagikDirectorySourceFileLocator(final List<Path> productPaths, final int tabWidth) {
-        super(null, tabWidth);
-        this.productPaths = List.copyOf(productPaths);
+    public MagikProductSourceFileLocator(final Path productPath) {
+        super(null, TAB_WIDTH);
+        this.productPath = productPath;
     }
 
-    /**
-     * Constructor.
-     * @param productPaths Directory to Smallworld products.
-     */
-    public MagikDirectorySourceFileLocator(final List<Path> productPaths) {
-        this(productPaths, TAB_WIDTH);
-    }
-
+    @CheckForNull
     @Override
     public Reader getSourceFile(final String packageName, final String fileName) throws IOException {
         if (packageName.startsWith(PACKAGE_MAGIK_PREFIX)) {
@@ -69,7 +61,7 @@ public class MagikDirectorySourceFileLocator extends InputStreamSourceFileLocato
             return new InputStreamReader(in, DEFAULT_ENCODING);
         }
 
-        return super.getSourceFile(packageName, fileName);
+        return null;
     }
 
     @CheckForNull
@@ -86,20 +78,19 @@ public class MagikDirectorySourceFileLocator extends InputStreamSourceFileLocato
     private Path resolvePackagePath(final String packageName) throws IOException {
         final String[] parts = packageName.split("/");
         final String productName = parts[1];
-        for (final Path productPath : this.productPaths) {
-            // Find all product.defs under productPath.
-            final List<Path> productDefPaths = Files.find(
-                productPath,
-                Integer.MAX_VALUE,
-                (path, attrs) -> {
-                    final String filename = path.getFileName().toString();
-                    return filename.equalsIgnoreCase(PRODUCT_DEF);
-                })
-                .collect(Collectors.toList());
-            for (final Path path : productDefPaths) {
-                if (DefinitionFileReader.definitionFileHasName(path, productName)) {
-                    return path.getParent();
-                }
+
+        // Find all product.defs under productPath.
+        final List<Path> productDefPaths = Files.find(
+            productPath,
+            Integer.MAX_VALUE,
+            (path, attrs) -> {
+                final String filename = path.getFileName().toString();
+                return filename.equalsIgnoreCase(PRODUCT_DEF);
+            })
+            .collect(Collectors.toList());
+        for (final Path path : productDefPaths) {
+            if (DefinitionFileReader.definitionFileHasName(path, productName)) {
+                return path.getParent();
             }
         }
 

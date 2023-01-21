@@ -16,45 +16,42 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Sw5LibReaderTest {
 
-    static Sw5LibReader getLibReader() throws IOException {
-        return new Sw5LibReader(TestData.PRODUCT_PATHS);
-    }
-
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
-    void testGetExecutableClassNodes() throws IOException {
-        final Sw5LibReader libReader = Sw5LibReaderTest.getLibReader();
-        final Collection<ClassNode> executableClassNodes = libReader.getExecutableClassNodes();
-        assertThat(executableClassNodes).hasSize(3);
-        final Set<String> classNodeNames = executableClassNodes.stream()
+    void testGetPrimaryClassNodes() throws IOException {
+        final Sw5LibReader libReader = TestData.getLibReader();
+        final Collection<ClassNode> primaryClassNodes = libReader.getPrimaryClassNodes();
+        assertThat(primaryClassNodes).hasSize(3);
+        final Set<String> classNodeNames = primaryClassNodes.stream()
             .map(classNode -> classNode.name)
             .collect(Collectors.toSet());
         assertThat(classNodeNames).containsOnly(
-            TestData.EXECUTABLE_CLASS_CHAR16_VECTOR,
-            TestData.EXECUTABLE_CLASS_MIXED,
-            TestData.EXECUTABLE_CLASS_PRIMARY);
+            TestData.PRIMARY_CLASS_CHAR16_VECTOR,
+            TestData.PRIMARY_CLASS_MIXED,
+            TestData.PRIMARY_CLASS_PRIMARY);
     }
 
     @Test
     void testGetSubsidiaryClassNodes() throws IOException {
-        final Sw5LibReader libReader = Sw5LibReaderTest.getLibReader();
-        final Collection<ClassNode> executableClassNodes = libReader.getSubsidiaryClassNodes();
-        assertThat(executableClassNodes).hasSize(2);
-        final Set<String> classNodeNames = executableClassNodes.stream()
+        final Sw5LibReader libReader = TestData.getLibReader();
+        final Collection<ClassNode> subsidiaryClassNodes = libReader.getSubsidiaryClassNodes();
+        assertThat(subsidiaryClassNodes).hasSize(2);
+        final Set<String> classNodeNames = subsidiaryClassNodes.stream()
             .map(classNode -> classNode.name)
             .collect(Collectors.toSet());
         assertThat(classNodeNames).containsOnly(
-            TestData.CLASS_CHAR16_VECTOR,
-            TestData.CLASS_MIXED);
+            TestData.SUBSIDIARY_CLASS_CHAR16_VECTOR,
+            TestData.SUBSIDIARY_CLASS_MIXED);
     }
 
     @Test
     void testGetClassByName() throws IOException {
-        final Sw5LibReader libReader = Sw5LibReaderTest.getLibReader();
-        final ClassNode classNode = libReader.getClassByName(TestData.EXECUTABLE_CLASS_CHAR16_VECTOR + ".class");
+        final Sw5LibReader libReader = TestData.getLibReader();
+        final ClassNode classNode = libReader.getClassByName(TestData.PRIMARY_CLASS_CHAR16_VECTOR + ".class");
         assertThat(classNode).isNotNull();
 
         final ClassNode classNodeUnexisting =
-            libReader.getClassByName(TestData.EXECUTABLE_CLASS_NAME_DOES_NOT_EXIST + ".class");
+            libReader.getClassByName(TestData.CLASS_DOES_NOT_EXIST + ".class");
         assertThat(classNodeUnexisting).isNull();
     }
 

@@ -1,7 +1,7 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
+import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
-import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
@@ -20,6 +20,9 @@ import javax.annotation.CheckForNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -34,28 +37,28 @@ import java.util.stream.Collectors;
  */
 public class MagikBundleCoverageConverter {
 
-    private final Sw5LibReader libReader;
+    private static final Set<String> PRIMARY_CLASS_METHODS = Set.of(
+        "<init>",
+        "preload",
+        "execute");
+
     private final Sw5LibAnalyzer libAnalyzer;
     private final IBundleCoverage bundleCoverage;
-    private final MethodCoverageMerger methodCoverageMerger;
-    private final boolean discardExecutableClasses;
+    private final boolean discardExecutable;
 
     /**
      * Constructor.
-     * @param libReader Lib reader.
+     * @param libAnalyzer Lib reader.
      * @param bundleCoverage Bundle coverage.
-     * @param discardExecutableClasses Discard executable classes.
+     * @param discardExecutable Discard executable.
      */
     public MagikBundleCoverageConverter(
-            final Sw5LibReader libReader,
+            final Sw5LibAnalyzer libAnalyzer,
             final IBundleCoverage bundleCoverage,
-            final boolean discardExecutableClasses) {
-        this.libReader = libReader;
+            final boolean discardExecutable) {
+        this.libAnalyzer = libAnalyzer;
         this.bundleCoverage = bundleCoverage;
-        this.methodCoverageMerger = new MethodCoverageMerger(this.libReader);
-        this.discardExecutableClasses = discardExecutableClasses;
-
-        this.libAnalyzer = new Sw5LibAnalyzer(this.libReader);
+        this.discardExecutable = discardExecutable;
     }
 
     /**
@@ -76,45 +79,93 @@ public class MagikBundleCoverageConverter {
 
     private PackageCoverageImpl convert(final IPackageCoverage packageCoverage) {
         final String name = packageCoverage.getName();
-        final List<IClassCoverage> classCoverages = packageCoverage.getClasses().stream()
-            .filter(this::filterClassCoverage)
-            .map(this::convert)
+        final Collection<IClassCoverage> classCoverages = packageCoverage.getClasses();
+        final List<IClassCoverage> newClassCoverages = classCoverages.stream()
+            .map(classCoverage -> this.convert(classCoverages, classCoverage))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        final List<ISourceFileCoverage> sourceFileCoverages = packageCoverage.getSourceFiles().stream()
-            .map(this::convert)
+        final List<ISourceFileCoverage> newSourceFileCoverages = packageCoverage.getSourceFiles().stream()
+            .map(sourceFileCoverage -> this.convert(sourceFileCoverage, newClassCoverages))
             .collect(Collectors.toList());
         final PackageCoverageImpl newPackageCoverage =
-            new PackageCoverageImpl(name, classCoverages, sourceFileCoverages);
+            new PackageCoverageImpl(name, newClassCoverages, newSourceFileCoverages);
 
         newPackageCoverage.increment(classCoverages);
 
         return newPackageCoverage;
     }
 
-    private ClassCoverageImpl convert(final IClassCoverage classCoverage) {
+    @CheckForNull
+    private IClassCoverage convert(
+            final Collection<IClassCoverage> classCoverages,
+            final IClassCoverage classCoverage) {
+        final ClassNode classNode = this.getClassNode(classCoverage);
+        if (ClassNodeHelper.isSubsidiaryClassNode(classNode)) {
+            // Subsidiary classes are merged later on.
+            return null;
+        }
+
+        if (!ClassNodeHelper.isPrimaryClassNode(classNode)) {
+            // Let regular classes pass through.
+            return classCoverage;
+        }
+
         // Create new class coverage.
         final String name = classCoverage.getName();
         final long id = classCoverage.getId();
         final boolean noMatch = classCoverage.isNoMatch();
         final ClassCoverageImpl newClassCoverage = new ClassCoverageImpl(name, id, noMatch);
 
-        // Merge "sub-methods" into methods. Convert methods.
-        final Collection<IMethodCoverage> mergedMethodCoverages = this.methodCoverageMerger.run(classCoverage);
-        mergedMethodCoverages.stream()
-            .map(mc -> this.convert(classCoverage, mc))
-            .forEach(newClassCoverage::addMethod);
-
-        // Copy other things.
-        final String[] interfaceNames = classCoverage.getInterfaceNames();
-        newClassCoverage.setInterfaces(interfaceNames);
+        // Skip the interface, but set source filename.
         final String sourceFileName = classCoverage.getSourceFileName();
         newClassCoverage.setSourceFileName(sourceFileName);
+
+        // Get Subsidiary class.
+        final Map<ClassNode, ClassNode> classNodeDependencies = this.libAnalyzer.getClassDependencyMap();
+        final ClassNode subsidiaryClassNode = classNodeDependencies.get(classNode);
+        final IClassCoverage subsidiaryClassCoverage = subsidiaryClassNode != null
+            ? classCoverages.stream()
+                .filter(cc -> cc.getName().equals(subsidiaryClassNode.name))
+                .findAny()
+                .orElse(null)
+            : null;
+
+        // Merge Primary and Subsidiary class methods.
+        final MethodCoverageMerger methodCoverageMerger = new MethodCoverageMerger(this.libAnalyzer);
+        final Collection<IMethodCoverage> mergedMethodCoverages =
+            methodCoverageMerger.run(classCoverage, subsidiaryClassCoverage);
+        mergedMethodCoverages.stream()
+            .map(methodCoverage -> this.convert(classCoverage, subsidiaryClassCoverage, methodCoverage))
+            .filter(Objects::nonNull)
+            .forEach(newClassCoverage::addMethod);
 
         return newClassCoverage;
     }
 
-    private MethodCoverageImpl convert(final IClassCoverage classCoverage, final IMethodCoverage methodCoverage) {
-        final String javaClassName = classCoverage.getName();
+    /**
+     * Convert method coverage.
+     * @param primaryClassCoverage Class Coverage for the (merged) Primary class.
+     * @param methodCoverage Method Coverage.
+     * @return Converted Method Coverage or null.
+     */
+    private IMethodCoverage convert(
+            final IClassCoverage primaryClassCoverage,
+            final IClassCoverage subsidiaryClassCoverage,
+            final IMethodCoverage methodCoverage) {
+        final String methodName = methodCoverage.getName();
+        final boolean isPrimaryClassMethod = PRIMARY_CLASS_METHODS.contains(methodName);
+        if (this.discardExecutable
+            && isPrimaryClassMethod) {
+            return null;
+        }
+
+        if (isPrimaryClassMethod) {
+            // Nothing to discard. Regard this as a regular method.
+            return methodCoverage;
+        }
+
+        // This is a Magik method, which always lives on the subsidiary class.
+        final String javaClassName = subsidiaryClassCoverage.getName();
         final String javaMethodName = methodCoverage.getName();
         final String name =
             this.libAnalyzer.getMagikMethodName(javaClassName, javaMethodName);  // methodCoverage.getName();
@@ -127,26 +178,33 @@ public class MagikBundleCoverageConverter {
         return newMethodCoverage;
     }
 
-    private ISourceFileCoverage convert(final ISourceFileCoverage sourceFileCoverage) {
-        if (!this.discardExecutableClasses) {
+    private ISourceFileCoverage convert(
+            final ISourceFileCoverage sourceFileCoverage,
+            final Collection<IClassCoverage> classCoverages) {
+        if (!this.discardExecutable) {
+            // We are interested in everything. Return it whole.
             return sourceFileCoverage;
         }
 
-        // Create a copy of the SourceFileCoverage, but strip everything present on the executable class.
+        // Create a copy of the SourceFileCoverage, but strip everything present from the executable part.
         final String name = sourceFileCoverage.getName();
         final String packageName = sourceFileCoverage.getPackageName();
         final SourceFileCoverageImpl newSourceFileCoverage = new SourceFileCoverageImpl(name, packageName);
 
-        // Find subsidiary/non-executable ClassCoverage.
-        final IClassCoverage classCoverage = this.getSubsidiaryClassCoverage(sourceFileCoverage);
-        if (classCoverage == null) {
+        // Find newly created ClassCoverage for this file.
+        final String sourceFileName = sourceFileCoverage.getName();
+        final IClassCoverage relatedClassCoverage = classCoverages.stream()
+            .filter(classCoverage -> classCoverage.getSourceFileName().equals(sourceFileName))
+            .findAny()
+            .orElse(null);
+        if (relatedClassCoverage == null) {
             // No lines to add.
             return newSourceFileCoverage;
         }
 
-        // Only copy lines which are not in the non-executable ClassCoverage.
+        // Only copy lines which are not (indirectly) in the primary ClassCoverage.
         for (int nr = sourceFileCoverage.getFirstLine(); nr < sourceFileCoverage.getLastLine(); ++nr) {
-            final ILine classCoverageLine = classCoverage.getLine(nr);
+            final ILine classCoverageLine = relatedClassCoverage.getLine(nr);
             if (classCoverageLine == null) {
                 continue;
             }
@@ -159,41 +217,25 @@ public class MagikBundleCoverageConverter {
         return newSourceFileCoverage;
     }
 
-    private boolean filterClassCoverage(final IClassCoverage classCoverage) {
-        if (this.discardExecutableClasses) {
-            return !this.isExecutableClass(classCoverage);
-        }
-
-        return true;
-    }
-
     @CheckForNull
     private IClassCoverage getSubsidiaryClassCoverage(final ISourceFileCoverage sourceFileCoverage) {
         final String name = sourceFileCoverage.getName();
         return this.bundleCoverage.getPackages().stream()
             .flatMap(packageCoverage -> packageCoverage.getClasses().stream())
-            .filter(cc -> cc.getSourceFileName().equals(name))
-            .filter(cc -> !this.isExecutableClass(cc))
+            .filter(classCoverage -> classCoverage.getSourceFileName().equals(name))
+            .filter(classCoverage -> !this.isPrimaryClassCoverage(classCoverage))
             .findFirst()
             .orElse(null);
     }
 
-    /**
-     * Test if this class is an executable class.
-     *
-     * <p>
-     * Executable class are executed upon loading
-     * of the libraries/jars when Smallworld loads the module. The defined Magik methods on exemplars are stored
-     * on non-executable classes.
-     * </p>
-     * @param classCoverage
-     * @return
-     */
-    private boolean isExecutableClass(final IClassCoverage classCoverage) {
-        final Collection<ClassNode> executableMagikClassNodes = this.libReader.getExecutableClassNodes();
+    private ClassNode getClassNode(final IClassCoverage classCoverage) {
         final String className = classCoverage.getName() + ".class";
-        final ClassNode classNode = this.libReader.getClassByName(className);
-        return executableMagikClassNodes.contains(classNode);
+        return this.libAnalyzer.getClassByName(className);
+    }
+
+    private boolean isPrimaryClassCoverage(final IClassCoverage classCoverage) {
+        final ClassNode classNode = getClassNode(classCoverage);
+        return ClassNodeHelper.isPrimaryClassNode(classNode);
     }
 
 }

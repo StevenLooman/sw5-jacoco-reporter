@@ -15,7 +15,7 @@ public class MagikDirectorySourceFileLocatorTest {
 
     @Test
     void testGetSourceFile() throws IOException {
-        final MagikDirectorySourceFileLocator locator = new MagikDirectorySourceFileLocator(TestData.PRODUCT_PATHS);
+        final MagikProductSourceFileLocator locator = new MagikProductSourceFileLocator(TestData.PRODUCT_PATH);
         final Reader reader = locator.getSourceFile(PACKAGE_NAME, FILENAME);
         assertThat(reader).isNotNull();
     }

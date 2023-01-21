@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Utility class to extract method name from INVOKESTATIC/createMethod() calls.
+ * Utility class to extract defined Magik method names via INVOKESTATIC/createMethod() calls.
  */
 final class Sw5LibMethodNameExtractor {
 
@@ -31,11 +31,7 @@ final class Sw5LibMethodNameExtractor {
     private Sw5LibMethodNameExtractor() {
     }
 
-    static String keyForClassMethodName(final String javaClassName, final String javaMethodName) {
-        return javaClassName.replace("/", ".") + "." + javaMethodName;
-    }
-
-    static String fullMagikMethodName(final String exemplarName, final String methodName) {
+    private static String fullMagikMethodName(final String exemplarName, final String methodName) {
         if (methodName.startsWith("[")) {
             return String.format("%s%s", exemplarName, methodName);
         }
@@ -48,7 +44,7 @@ final class Sw5LibMethodNameExtractor {
      * @param methodInsnNode {@link MethodInsnNode} to extract from.
      * @return Java name / Magik name entry.
      */
-    static Map.Entry<String, String> extractMethodName(final MethodInsnNode methodInsnNode) {
+    private static Map.Entry<String, String> extractMethodName(final MethodInsnNode methodInsnNode) {
         final List<LdcInsnNode> ldcNodes = Sw5LibMethodNameExtractor.getLdcNodes(methodInsnNode);
         if (ldcNodes.size() != LDC_EXPECTED_SIZE) {
             throw new IllegalStateException();
@@ -62,7 +58,7 @@ final class Sw5LibMethodNameExtractor {
 
         // Build key + full magik method name.
         final String javaTypeName = javaType.getClassName();
-        final String key = Sw5LibMethodNameExtractor.keyForClassMethodName(javaTypeName, javaMethodName);
+        final String key = Sw5LibAnalyzer.keyForClassMethodName(javaTypeName, javaMethodName);
         final String fullMagikMethod = Sw5LibMethodNameExtractor.fullMagikMethodName(magikExemplar, magikMethod);
         return Map.entry(key, fullMagikMethod);
     }
@@ -99,13 +95,13 @@ final class Sw5LibMethodNameExtractor {
 
     /**
      * Extract Magik method names.
-     * @param executeMethod Execute method from primary class.
+     * @param executeMethodNode Execute method from primary class.
      * @return Map keyed on Java names, and the corresponding Magik names.
      */
-    static Map<String, String> extractMethodNames(final MethodNode executeMethod) {
+    static Map<String, String> extractMethodNames(final MethodNode executeMethodNode) {
         // Get all static MagikObjectUtils.createMethod() calls which define a method,
         // and extract method names from those.
-        final InsnList instructions = executeMethod.instructions;
+        final InsnList instructions = executeMethodNode.instructions;
         return Arrays.stream(instructions.toArray())
             .filter(insn -> insn.getOpcode() == Opcodes.INVOKESTATIC)
             .map(MethodInsnNode.class::cast)

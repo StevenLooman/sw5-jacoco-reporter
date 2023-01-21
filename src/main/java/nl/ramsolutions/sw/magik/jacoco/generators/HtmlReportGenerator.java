@@ -27,19 +27,21 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
      * The product is expected to contain the {@literal libs} directory containing the compiled product.
      * </p>
      *
-     * @param productPaths Product directories.
+     * @param productPaths Paths to Smallworld product directories.
+     * @param sourcePaths Paths to regular (Java) source directories.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param reportDirectory File to report directory (HTML).
-     * @param discardExecutableClasses Discard executable classes.
+     * @param discardExecutable Discard executable.
      * @param bundleName Name of the bundle.
      */
     public HtmlReportGenerator(
             final List<Path> productPaths,
+            final List<Path> sourcePaths,
             final File executionDataFile,
             final File reportDirectory,
-            final boolean discardExecutableClasses,
+            final boolean discardExecutable,
             final String bundleName) {
-        super(productPaths, executionDataFile, reportDirectory, discardExecutableClasses, bundleName);
+        super(productPaths, sourcePaths, executionDataFile, reportDirectory, discardExecutable, bundleName);
     }
 
     @Override

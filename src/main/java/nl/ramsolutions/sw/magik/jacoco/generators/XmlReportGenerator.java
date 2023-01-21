@@ -26,19 +26,21 @@ public class XmlReportGenerator extends BaseReportGenerator {
      * The product is expected to contain the {@literal libs} directory containing the compiled product.
      * </p>
      *
-     * @param productPaths Product directories.
+     * @param productPaths Paths to Smallworld product directories.
+     * @param sourcePaths Paths to regular (Java) source directories.
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report file (XML).
-     * @param discardExecutableClasses Discard executable classes.
+     * @param discardExecutable Discard executable.
      * @param bundleName Name of the bundle.
      */
     public XmlReportGenerator(
             final List<Path> productPaths,
+            final List<Path> sourcePaths,
             final File executionDataFile,
             final File outputFile,
-            final boolean discardExecutableClasses,
+            final boolean discardExecutable,
             final String bundleName) {
-        super(productPaths, executionDataFile, outputFile, discardExecutableClasses, bundleName);
+        super(productPaths, sourcePaths, executionDataFile, outputFile, discardExecutable, bundleName);
     }
 
     @Override
