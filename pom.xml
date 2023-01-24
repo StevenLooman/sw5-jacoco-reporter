@@ -212,6 +212,7 @@
                     </limit>
                   </limits>
                   <excludes>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter</exclude>
                   </excludes>
                 </rule>
                 <rule>
@@ -223,6 +224,9 @@
                       <maximum>${jacoco.unit-tests.limit.method-complexity}</maximum>
                     </limit>
                   </limits>
+                  <excludes>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.Main.main(java.lang.String[])</exclude>
+                  </excludes>
                 </rule>
               </rules>
             </configuration>

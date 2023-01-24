@@ -8,7 +8,7 @@ Changes
 - Refactoring
 
 
-1.1.0 (2022-01-19)
+1.1.0 (2023-01-19)
 
 - Fix entry point
 - Update dependencies
