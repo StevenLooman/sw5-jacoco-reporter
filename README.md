@@ -72,15 +72,15 @@ Options:
 
 - `--help`
   - Show help.
-- `--product-path \[path_to_product_directory\]`
+- `--product-path [path_to_product_directory]`
   - Path to your Smallworld 5 product.
-- `--source-path \[path_to_source_directory\]`
+- `--source-path [path_to_source_directory]`
   - Path to additional regular Java source files.
-- `--jacoco-file \[path_to_file\]`
+- `--jacoco-file [path_to_file]`
   - Path to the `jacoco.exec` file.
-- `--html \[path_to_directory\]`
+- `--html [path_to_directory]`
   - Path to the directory to generate the HTML report in.
-- `--xml \[path_to_file\]`
+- `--xml [path_to_file]`
   - Path to the file to generate the XML at.
 - `--discard-executable`
   - Discard executable classes, i.e., the class which does not hold any Magik methods.
