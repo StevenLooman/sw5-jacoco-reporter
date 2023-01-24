@@ -1,6 +1,9 @@
 Changes
 =======
 
+2.0.1 (unreleased)
+
+
 2.0.0 (2023-01-24)
 
 - Merge primary with subsidiary classes
