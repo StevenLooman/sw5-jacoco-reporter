@@ -73,7 +73,9 @@ Options:
 - `--help`
   - Show help.
 - `--product-path \[path_to_product_directory\]`
-  - Path to your product.
+  - Path to your Smallworld 5 product.
+- `--source-path \[path_to_source_directory\]`
+  - Path to additional regular Java source files.
 - `--jacoco-file \[path_to_file\]`
   - Path to the `jacoco.exec` file.
 - `--html \[path_to_directory\]`
