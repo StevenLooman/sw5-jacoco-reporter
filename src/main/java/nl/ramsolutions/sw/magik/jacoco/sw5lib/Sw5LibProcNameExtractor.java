@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +18,7 @@ final class Sw5LibProcNameExtractor {
 
     private static final String PROC = "proc";
     private static final String ANONYMOUS_PROC = "__anonymous_proc__";
+    private static final int PROC_DEF_NUM_ARGS = 7;
 
     private Sw5LibProcNameExtractor() {
     }
@@ -35,6 +37,11 @@ final class Sw5LibProcNameExtractor {
      */
     static Map.Entry<String, String> extractProcName(final InvokeDynamicInsnNode invokeDynamicInsnNode) {
         final Object[] bsmArgs = invokeDynamicInsnNode.bsmArgs;
+        if (bsmArgs.length != PROC_DEF_NUM_ARGS
+            || !(bsmArgs[0] instanceof Type)) {
+            return null;
+        }
+
         final Type javaType = (Type) bsmArgs[0];
         final String javaTypeName = javaType.getClassName();
         final String javaMethodName = (String) bsmArgs[1];
@@ -57,6 +64,7 @@ final class Sw5LibProcNameExtractor {
             .map(InvokeDynamicInsnNode.class::cast)
             .filter(invokeDynamicInsn -> invokeDynamicInsn.name.equals(PROC))
             .map(Sw5LibProcNameExtractor::extractProcName)
+            .filter(Objects::nonNull)
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue));
