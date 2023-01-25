@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.0.1 (unreleased)
+2.0.1 (2023-01-25)
 
 - Fix extracting proc name crashing on `proc`-method calls
 
