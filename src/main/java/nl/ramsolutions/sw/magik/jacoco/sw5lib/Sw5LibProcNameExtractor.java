@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
  */
 final class Sw5LibProcNameExtractor {
 
-    private static final String PROC = "proc";
+    private static final String PROC_DEFINITION_OWNER = "com/gesmallworld/magik/language/invokers/ConstantBuilder";
+    private static final String PROC_DEFINITION_NAME = "proc";
     private static final String ANONYMOUS_PROC = "__anonymous_proc__";
-    private static final int PROC_DEF_NUM_ARGS = 7;
 
     private Sw5LibProcNameExtractor() {
     }
@@ -37,11 +37,6 @@ final class Sw5LibProcNameExtractor {
      */
     static Map.Entry<String, String> extractProcName(final InvokeDynamicInsnNode invokeDynamicInsnNode) {
         final Object[] bsmArgs = invokeDynamicInsnNode.bsmArgs;
-        if (bsmArgs.length != PROC_DEF_NUM_ARGS
-            || !(bsmArgs[0] instanceof Type)) {
-            return null;
-        }
-
         final Type javaType = (Type) bsmArgs[0];
         final String javaTypeName = javaType.getClassName();
         final String javaMethodName = (String) bsmArgs[1];
@@ -62,7 +57,10 @@ final class Sw5LibProcNameExtractor {
         return Arrays.stream(instructions.toArray())
             .filter(insn -> insn.getOpcode() == Opcodes.INVOKEDYNAMIC)
             .map(InvokeDynamicInsnNode.class::cast)
-            .filter(invokeDynamicInsn -> invokeDynamicInsn.name.equals(PROC))
+            .filter(invokeDynamicInsnNode ->
+                invokeDynamicInsnNode.bsm.getOwner().equals(PROC_DEFINITION_OWNER)
+                && invokeDynamicInsnNode.name.equals(PROC_DEFINITION_NAME)
+            )
             .map(Sw5LibProcNameExtractor::extractProcName)
             .filter(Objects::nonNull)
             .collect(Collectors.toMap(
