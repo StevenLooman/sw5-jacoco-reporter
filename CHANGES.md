@@ -3,6 +3,8 @@ Changes
 
 2.0.2 (unreleased)
 
+- Fix error where JaCoCo coverage for a class, but the class is not known.
+
 
 2.0.1 (2023-01-25)
 

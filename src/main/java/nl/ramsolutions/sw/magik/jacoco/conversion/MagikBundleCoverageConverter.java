@@ -100,6 +100,12 @@ public class MagikBundleCoverageConverter {
             final Collection<IClassCoverage> classCoverages,
             final IClassCoverage classCoverage) {
         final ClassNode classNode = this.getClassNode(classCoverage);
+        if (classNode == null) {
+            // A ClassCoverage we do not have a ClassNode for. Just pass
+            // it through.
+            return classCoverage;
+        }
+
         if (ClassNodeHelper.isSubsidiaryClassNode(classNode)) {
             // Subsidiary classes are merged later on.
             return null;
@@ -228,13 +234,14 @@ public class MagikBundleCoverageConverter {
             .orElse(null);
     }
 
+    @CheckForNull
     private ClassNode getClassNode(final IClassCoverage classCoverage) {
         final String className = classCoverage.getName() + ".class";
         return this.libAnalyzer.getClassByName(className);
     }
 
     private boolean isPrimaryClassCoverage(final IClassCoverage classCoverage) {
-        final ClassNode classNode = getClassNode(classCoverage);
+        final ClassNode classNode = this.getClassNode(classCoverage);
         return ClassNodeHelper.isPrimaryClassNode(classNode);
     }
 
