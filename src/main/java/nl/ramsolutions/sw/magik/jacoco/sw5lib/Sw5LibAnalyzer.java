@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 public final class Sw5LibAnalyzer {
 
     private final Sw5LibReader libReader;
-    private Map<String, String> methodNameMapping;
+    private Map<ClassNode, ClassNode> classDependencyMap;
+    private Map<String, String> methodNameMap;
 
     /**
      * Constructor.
@@ -54,9 +55,14 @@ public final class Sw5LibAnalyzer {
      * @return Mapping keyed on primary class, valued on subsidiary class.
      */
     public Map<ClassNode, ClassNode> getClassDependencyMap() {
-        final Collection<ClassNode> primaryClassNodes = this.libReader.getPrimaryClassNodes();
-        final Collection<ClassNode> subsidiaryClassNodes = this.libReader.getSubsidiaryClassNodes();
-        return Sw5LibDependencyBuilder.buildClassDependencyMap(primaryClassNodes, subsidiaryClassNodes);
+        if (this.classDependencyMap == null) {
+            final Collection<ClassNode> primaryClassNodes = this.libReader.getPrimaryClassNodes();
+            final Collection<ClassNode> subsidiaryClassNodes = this.libReader.getSubsidiaryClassNodes();
+            this.classDependencyMap =
+                Sw5LibDependencyBuilder.buildClassDependencyMap(primaryClassNodes, subsidiaryClassNodes);
+        }
+
+        return this.classDependencyMap;
     }
 
     /**
@@ -67,7 +73,7 @@ public final class Sw5LibAnalyzer {
      */
     @CheckForNull
     public String getMagikMethodName(final String javaClassName, final String javaMethodName) {
-        final Map<String, String> methodNames = this.getMethodNameMapping();
+        final Map<String, String> methodNames = this.getMethodNameMap();
         final String completeJavaName = Sw5LibAnalyzer.keyForClassMethodName(javaClassName, javaMethodName);
         final String magikName = methodNames.get(completeJavaName);
         if (magikName == null) {
@@ -82,8 +88,8 @@ public final class Sw5LibAnalyzer {
      * Create a mapping from Java class/method names to Magik exemplar/method names.
      * @return Mapping from Java class/method to Magik exemplar/method names.
      */
-    private Map<String, String> getMethodNameMapping() {
-        if (this.methodNameMapping == null) {
+    private Map<String, String> getMethodNameMap() {
+        if (this.methodNameMap == null) {
             final Map<String, String> methodMapping = this.libReader.getPrimaryClassNodes().stream()
                 .map(MethodNodeHelper::getExecuteMethod)
                 .map(Sw5LibMethodNameExtractor::extractMethodNames)
@@ -107,13 +113,13 @@ public final class Sw5LibAnalyzer {
                     Map.Entry::getKey,
                     Map.Entry::getValue));
 
-            this.methodNameMapping = new HashMap<>();
-            this.methodNameMapping.putAll(methodMapping);
-            this.methodNameMapping.putAll(procMappingExec);
-            this.methodNameMapping.putAll(procMappingSub);
+            this.methodNameMap = new HashMap<>();
+            this.methodNameMap.putAll(methodMapping);
+            this.methodNameMap.putAll(procMappingExec);
+            this.methodNameMap.putAll(procMappingSub);
         }
 
-        return this.methodNameMapping;
+        return this.methodNameMap;
     }
 
     static String keyForClassMethodName(final String javaClassName, final String javaMethodName) {
