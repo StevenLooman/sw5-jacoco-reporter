@@ -1,23 +1,22 @@
 Changes
 =======
 
-2.0.2 (unreleased)
+2.0.3 (unreleased)
+
+2.0.2 (2023-08-21)
 
 - Fix error where JaCoCo coverage for a class, but the class is not known.
 - Cache class dependecy map, severly speeding up conversion.
 
-
 2.0.1 (2023-01-25)
 
 - Fix extracting proc name crashing on `proc`-method calls
-
 
 2.0.0 (2023-01-24)
 
 - Merge primary with subsidiary classes
 - Better separation of lines hit from primary classes, while constructs are stored on subsidiary classes
 - Refactoring
-
 
 1.1.0 (2023-01-19)
 
@@ -31,7 +30,6 @@ Changes
 - Properly discard lines from executable classes
 - Make bundle name configurable with option `--bundle-name`
 - Refactoring
-
 
 1.0.0 (2021-08-29)
 
