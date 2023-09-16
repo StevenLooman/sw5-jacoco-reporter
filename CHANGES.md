@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.0.3 (unreleased)
+2.1.0 (unreleased)
 
 - Rename `--xml`-parameter to `--jacoco-xml`-parameter, and rename `XmlReportGenerator` to `JacocoXmlReportGenerator`.
 - Add `--sonar-xml` to generate the SonarQube "Generic test coverage report format".
