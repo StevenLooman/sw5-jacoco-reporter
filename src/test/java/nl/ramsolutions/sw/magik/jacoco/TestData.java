@@ -20,6 +20,7 @@ public final class TestData {
 
     public static final Path PRODUCT_PATH = Path.of("src/test/resources/fixture_product");
     public static final List<Path> PRODUCT_PATHS = List.of(PRODUCT_PATH);
+    public static final File JACOCO_EXEC_FILE = Path.of("src/test/resources/fixture_product/jacoco.exec").toFile();
 
     public static final String CLASS_DOES_NOT_EXIST = "magik/fixture_product/fixture_module/does_not_exist_99";
 
