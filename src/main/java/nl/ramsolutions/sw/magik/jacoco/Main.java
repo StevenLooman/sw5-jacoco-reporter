@@ -1,7 +1,7 @@
 package nl.ramsolutions.sw.magik.jacoco;
 
 import nl.ramsolutions.sw.magik.jacoco.generators.HtmlReportGenerator;
-import nl.ramsolutions.sw.magik.jacoco.generators.XmlReportGenerator;
+import nl.ramsolutions.sw.magik.jacoco.generators.JacocoXmlReportGenerator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -60,9 +60,9 @@ public final class Main {
         .hasArg()
         .type(PatternOptionBuilder.FILE_VALUE)
         .build();
-    private static final Option OPTION_XML = Option.builder()
-        .longOpt("xml")
-        .desc("Output XML report to file")
+    private static final Option OPTION_JACOCO_XML = Option.builder()
+        .longOpt("jacoco-xml")
+        .desc("Output JaCoCo XML report to file")
         .hasArg()
         .type(PatternOptionBuilder.FILE_VALUE)
         .build();
@@ -81,7 +81,7 @@ public final class Main {
         OPTIONS.addOption(OPTION_JACOCO_FILE);
         OPTIONS.addOption(OPTION_DISCARD_EXECUTABLE);
         OPTIONS.addOption(OPTION_HTML);
-        OPTIONS.addOption(OPTION_XML);
+        OPTIONS.addOption(OPTION_JACOCO_XML);
         OPTIONS.addOption(OPTION_BUNDLE_NAME);
     }
 
@@ -100,7 +100,8 @@ public final class Main {
 
     private static boolean showHelp(final CommandLine commandLine) {
         return commandLine.hasOption(OPTION_HELP)
-            || !commandLine.hasOption(OPTION_HTML) && !commandLine.hasOption(OPTION_XML);
+            || !commandLine.hasOption(OPTION_HTML)
+               && !commandLine.hasOption(OPTION_JACOCO_XML);
     }
 
     /**
@@ -154,9 +155,9 @@ public final class Main {
                 discardExecutable,
                 bundleName);
             htmlReportGenerator.run();
-        } else if (commandLine.hasOption(OPTION_XML)) {
-            final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_XML);
-            final XmlReportGenerator xmlReportGenerator = new XmlReportGenerator(
+        } else if (commandLine.hasOption(OPTION_JACOCO_XML)) {
+            final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_XML);
+            final JacocoXmlReportGenerator xmlReportGenerator = new JacocoXmlReportGenerator(
                 productPaths,
                 sourcePaths,
                 executionDataFile,

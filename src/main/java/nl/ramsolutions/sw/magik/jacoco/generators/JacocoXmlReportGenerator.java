@@ -3,6 +3,7 @@ package nl.ramsolutions.sw.magik.jacoco.generators;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.SessionInfo;
+import org.jacoco.core.tools.ExecFileLoader;
 import org.jacoco.report.IReportVisitor;
 import org.jacoco.report.ISourceFileLocator;
 import org.jacoco.report.xml.XMLFormatter;
@@ -15,9 +16,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * XML Report generator.
+ * JaCoCo XML Report generator.
  */
-public class XmlReportGenerator extends BaseReportGenerator {
+public class JacocoXmlReportGenerator extends BaseReportGenerator {
 
     /**
      * Constructor.
@@ -33,7 +34,7 @@ public class XmlReportGenerator extends BaseReportGenerator {
      * @param discardExecutable Discard executable.
      * @param bundleName Name of the bundle.
      */
-    public XmlReportGenerator(
+    public JacocoXmlReportGenerator(
             final List<Path> productPaths,
             final List<Path> sourcePaths,
             final File executionDataFile,
@@ -50,8 +51,9 @@ public class XmlReportGenerator extends BaseReportGenerator {
         try (FileOutputStream output = new FileOutputStream(outputFile)) {
             final IReportVisitor visitor = xmlFormatter.createVisitor(output);
 
-            final List<SessionInfo> infos = this.getExecFileLoader().getSessionInfoStore().getInfos();
-            final Collection<ExecutionData> contents = this.getExecFileLoader().getExecutionDataStore().getContents();
+            final ExecFileLoader execFileLoader = this.getExecFileLoader();
+            final List<SessionInfo> infos = execFileLoader.getSessionInfoStore().getInfos();
+            final Collection<ExecutionData> contents = execFileLoader.getExecutionDataStore().getContents();
             visitor.visitInfo(infos, contents);
 
             final ISourceFileLocator locator = this.getLocator();

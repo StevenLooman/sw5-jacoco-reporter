@@ -3,6 +3,8 @@ Changes
 
 2.0.3 (unreleased)
 
+- Rename `--xml`-parameter to `--jacoco-xml`-parameter, and rename `XmlReportGenerator` to `JacocoXmlReportGenerator`.
+
 2.0.2 (2023-08-21)
 
 - Fix error where JaCoCo coverage for a class, but the class is not known.
