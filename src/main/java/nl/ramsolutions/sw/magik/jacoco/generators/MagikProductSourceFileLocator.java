@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +29,7 @@ public class MagikProductSourceFileLocator extends InputStreamSourceFileLocator 
     private static final String PRODUCT_DEF = "product.def";
 
     private final Path productPath;
+    private List<Path> productDefPaths;
 
     /**
      * Constructor.
@@ -76,26 +78,37 @@ public class MagikProductSourceFileLocator extends InputStreamSourceFileLocator 
     }
 
     private Path resolvePackagePath(final String packageName) throws IOException {
+        this.ensureProductDefPaths();
+
         final String[] parts = packageName.split("/");
         final String productName = parts[1];
 
         // Find all product.defs under productPath.
-        final List<Path> productDefPaths = Files.find(
-            productPath,
+        Objects.requireNonNull(this.productDefPaths);
+        for (final Path path : this.productDefPaths) {
+            if (DefinitionFileReader.definitionFileHasName(path, productName)) {
+                final Path parentPath = path.getParent();
+                return parentPath;
+            }
+        }
+
+        // Nothing found.
+        return null;
+    }
+
+    private void ensureProductDefPaths() throws IOException {
+        if (this.productDefPaths != null) {
+            return;
+        }
+
+        this.productDefPaths = Files.find(
+            this.productPath,
             Integer.MAX_VALUE,
             (path, attrs) -> {
                 final String filename = path.getFileName().toString();
                 return filename.equalsIgnoreCase(PRODUCT_DEF);
             })
             .collect(Collectors.toList());
-        for (final Path path : productDefPaths) {
-            if (DefinitionFileReader.definitionFileHasName(path, productName)) {
-                return path.getParent();
-            }
-        }
-
-        // Nothing found.
-        return null;
     }
 
 }
