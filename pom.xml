@@ -213,6 +213,7 @@
                   </limits>
                   <excludes>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.generators.cobertura.CoberturaXmlVisitor</exclude>
                   </excludes>
                 </rule>
                 <rule>
@@ -226,6 +227,7 @@
                   </limits>
                   <excludes>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.Main.main(java.lang.String[])</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.Main.showHelp(org.apache.commons.cli.CommandLine)</exclude>
                   </excludes>
                 </rule>
               </rules>

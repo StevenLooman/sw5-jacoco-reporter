@@ -67,6 +67,10 @@ public abstract class BaseReportGenerator {
         return this.outputFile;
     }
 
+    public List<Path> getSourcePaths() {
+        return this.sourcePaths;
+    }
+
     protected ExecFileLoader getExecFileLoader() {
         return this.execFileLoader;
     }

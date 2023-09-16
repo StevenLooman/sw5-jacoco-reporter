@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco;
 
+import nl.ramsolutions.sw.magik.jacoco.generators.CoberturaXmlReportGenerator;
 import nl.ramsolutions.sw.magik.jacoco.generators.HtmlReportGenerator;
 import nl.ramsolutions.sw.magik.jacoco.generators.JacocoXmlReportGenerator;
 import nl.ramsolutions.sw.magik.jacoco.generators.SonarXmlReportGenerator;
@@ -73,6 +74,12 @@ public final class Main {
         .hasArg()
         .type(PatternOptionBuilder.FILE_VALUE)
         .build();
+    private static final Option OPTION_COBERTURA_XML = Option.builder()
+        .longOpt("cobertura-xml")
+        .desc("Output Cobertura XML report to file")
+        .hasArg()
+        .type(PatternOptionBuilder.FILE_VALUE)
+        .build();
     private static final Option OPTION_BUNDLE_NAME = Option.builder()
         .longOpt("bundle-name")
         .desc("Name of the bundle, defaults to 'Smallworld product'")
@@ -90,6 +97,7 @@ public final class Main {
         OPTIONS.addOption(OPTION_HTML);
         OPTIONS.addOption(OPTION_JACOCO_XML);
         OPTIONS.addOption(OPTION_SONAR_XML);
+        OPTIONS.addOption(OPTION_COBERTURA_XML);
         OPTIONS.addOption(OPTION_BUNDLE_NAME);
     }
 
@@ -110,7 +118,8 @@ public final class Main {
         return commandLine.hasOption(OPTION_HELP)
             || !commandLine.hasOption(OPTION_HTML)
                && !commandLine.hasOption(OPTION_JACOCO_XML)
-               && !commandLine.hasOption(OPTION_SONAR_XML);
+               && !commandLine.hasOption(OPTION_SONAR_XML)
+               && !commandLine.hasOption(OPTION_COBERTURA_XML);
     }
 
     /**
@@ -184,6 +193,16 @@ public final class Main {
                 discardExecutable,
                 bundleName);
             sonarXmlReportGenerator.run();
+        } else if (commandLine.hasOption(OPTION_COBERTURA_XML)) {
+            final File outputFile = (File) commandLine.getParsedOptionValue(OPTION_COBERTURA_XML);
+            final CoberturaXmlReportGenerator coberturaXmlReportGenerator = new CoberturaXmlReportGenerator(
+                productPaths,
+                sourcePaths,
+                executionDataFile,
+                outputFile,
+                discardExecutable,
+                bundleName);
+            coberturaXmlReportGenerator.run();
         }
     }
 
