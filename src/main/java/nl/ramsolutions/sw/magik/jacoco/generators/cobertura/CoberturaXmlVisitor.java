@@ -25,6 +25,9 @@ public class CoberturaXmlVisitor implements IReportVisitor {
     private static final String OUTPUT_ENCODING = "UTF-8";
     private static final String PUBID = "-//COBERTURA//DTD Report 04//EN";
     private static final String SYSTEM = "coverage-04.dtd";
+    private static final String LINE_RATE = "line-rate";
+    private static final String BRANCH_RATE = "branch-rate";
+    private static final String COMPLEXITY = "complexity";
 
     private final OutputStream output;
     private final List<Path> sourcePaths;
@@ -37,6 +40,7 @@ public class CoberturaXmlVisitor implements IReportVisitor {
 
     public void visitInfo(
             final List<SessionInfo> sessionInfos, final Collection<ExecutionData> executionData) throws IOException {
+        // Don't need this.
     }
 
     public void visitBundle(final IBundleCoverage bundle, final ISourceFileLocator locator) throws IOException {
@@ -57,15 +61,15 @@ public class CoberturaXmlVisitor implements IReportVisitor {
 
         final ICounter lineCounter = bundleCoverage.getLineCounter();
         final double lineRate = lineCounter.getCoveredRatio();
-        this.rootElement.attr("line-rate", Double.toString(lineRate));
+        this.rootElement.attr(LINE_RATE, Double.toString(lineRate));
 
         final ICounter branchCounter = bundleCoverage.getBranchCounter();
         final double branchRate = branchCounter.getCoveredRatio();
-        this.rootElement.attr("branch-rate", Double.toString(branchRate));
+        this.rootElement.attr(BRANCH_RATE, Double.toString(branchRate));
 
         final ICounter complexityCounter = bundleCoverage.getComplexityCounter();
         final int complexity = complexityCounter.getTotalCount();
-        this.rootElement.attr("complexity", complexity);
+        this.rootElement.attr(COMPLEXITY, complexity);
 
         final XMLElement sourcesEl = this.rootElement.element("sources");
         if (!this.sourcePaths.isEmpty()) {
@@ -98,15 +102,15 @@ public class CoberturaXmlVisitor implements IReportVisitor {
 
             final ICounter lineCounter = packageCoverage.getLineCounter();
             final double lineRate = lineCounter.getCoveredRatio();
-            packageEl.attr("line-rate", Double.toString(lineRate));
+            packageEl.attr(LINE_RATE, Double.toString(lineRate));
 
             final ICounter branchCounter = packageCoverage.getBranchCounter();
             final double branchRate = branchCounter.getCoveredRatio();
-            packageEl.attr("branch-rate", Double.toString(branchRate));
+            packageEl.attr(BRANCH_RATE, Double.toString(branchRate));
 
             final ICounter complexityCounter = packageCoverage.getComplexityCounter();
             final int complexity = complexityCounter.getTotalCount();
-            packageEl.attr("complexity", complexity);
+            packageEl.attr(COMPLEXITY, complexity);
 
             final XMLElement classesEl = packageEl.element("classes");
             packageCoverage.getClasses().forEach(classCoverage -> this.writeClass(classesEl, classCoverage));
@@ -120,20 +124,21 @@ public class CoberturaXmlVisitor implements IReportVisitor {
             final XMLElement classEl = classesEl.element("class");
             final String className = classCoverage.getName();
             classEl.attr("name", className);
+
             final String filename = classCoverage.getSourceFileName();
             classEl.attr("filename", filename);
 
             final ICounter lineCounter = classCoverage.getLineCounter();
             final double lineRate = lineCounter.getCoveredRatio();
-            classEl.attr("line-rate", Double.toString(lineRate));
+            classEl.attr(LINE_RATE, Double.toString(lineRate));
 
             final ICounter branchCounter = classCoverage.getBranchCounter();
             final double branchRate = branchCounter.getCoveredRatio();
-            classEl.attr("branch-rate", Double.toString(branchRate));
+            classEl.attr(BRANCH_RATE, Double.toString(branchRate));
 
             final ICounter complexityCounter = classCoverage.getComplexityCounter();
             final int complexity = complexityCounter.getTotalCount();
-            classEl.attr("complexity", complexity);
+            classEl.attr(COMPLEXITY, complexity);
 
             final XMLElement methodsEl = classEl.element("methods");
             classCoverage.getMethods().forEach(methodCoverage -> this.writeMethod(methodsEl, methodCoverage));
@@ -157,20 +162,21 @@ public class CoberturaXmlVisitor implements IReportVisitor {
             final XMLElement methodEl = methodsEl.element("method");
             final String methodName = methodCoverage.getName();
             methodEl.attr("name", methodName);
+
             final String signature = "";
             methodEl.attr("signature", signature);
 
             final ICounter lineCounter = methodCoverage.getLineCounter();
             final double lineRate = lineCounter.getCoveredRatio();
-            methodEl.attr("line-rate", Double.toString(lineRate));
+            methodEl.attr(LINE_RATE, Double.toString(lineRate));
 
             final ICounter branchCounter = methodCoverage.getBranchCounter();
             final double branchRate = branchCounter.getCoveredRatio();
-            methodEl.attr("branch-rate", Double.toString(branchRate));
+            methodEl.attr(BRANCH_RATE, Double.toString(branchRate));
 
             final ICounter complexityCounter = methodCoverage.getComplexityCounter();
             final int complexity = complexityCounter.getTotalCount();
-            methodEl.attr("complexity", complexity);
+            methodEl.attr(COMPLEXITY, complexity);
 
             final XMLElement linesEl = methodEl.element("lines");
             final int firstLine = methodCoverage.getFirstLine();

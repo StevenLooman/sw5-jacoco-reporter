@@ -7,6 +7,7 @@ import org.objectweb.asm.tree.MethodNode;
 import javax.annotation.CheckForNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public final class Sw5LibAnalyzer {
                 Sw5LibDependencyBuilder.buildClassDependencyMap(primaryClassNodes, subsidiaryClassNodes);
         }
 
-        return this.classDependencyMap;
+        return Collections.unmodifiableMap(this.classDependencyMap);
     }
 
     /**

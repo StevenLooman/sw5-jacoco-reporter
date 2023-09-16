@@ -102,7 +102,7 @@ final class Sw5LibDependencyBuilder {
             ? ClassNodeHelper.getMethodNodeSafe(providerClassNode, EXECUTE_METHOD)
             : null;
         if (executeMethodNode != null) {
-            final String supplierClassNodeName = supplierClassNode.name.replaceAll("/", ".");
+            final String supplierClassNodeName = supplierClassNode.name.replace("/", ".");
             final Map<String, String> methodNamesMap = Sw5LibMethodNameExtractor.extractMethodNames(executeMethodNode);
             final Map<MethodNode, MethodNode> executableDependencyMap = supplierClassNode.methods.stream()
                 .filter(methodNode -> !subsidiaryDependencyMap.containsKey(methodNode))

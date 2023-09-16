@@ -15,7 +15,7 @@ final class DefinitionFileReader {
     static boolean definitionFileHasName(final Path definitionFilePath, final String name) throws IOException {
         final List<String> lines = Files.readAllLines(definitionFilePath);
         final Optional<String> optDefLine = lines.stream()
-            .map(line -> line.trim())
+            .map(String::trim)
             .filter(line -> !line.startsWith("#") && !line.isBlank())
             .findFirst();
         if (!optDefLine.isPresent()) {

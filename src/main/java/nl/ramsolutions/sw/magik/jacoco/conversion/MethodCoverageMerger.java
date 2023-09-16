@@ -65,10 +65,7 @@ public class MethodCoverageMerger {
         final Map<MethodNode, IMethodCoverage> methodCoverageMap = this.buildMethodCoverageMap(
             primaryClassCoverage, providerClassNode,
             subsidiaryClassCoverage, supplierClassNode);
-        final Collection<IMethodCoverage> mergedMethods =
-            this.mergeMethods(providerClassNode, supplierClassNode, methodDependencyMap, methodCoverageMap);
-
-        return mergedMethods;
+        return this.mergeMethods(providerClassNode, supplierClassNode, methodDependencyMap, methodCoverageMap);
     }
 
     private Collection<IMethodCoverage> mergeMethods(

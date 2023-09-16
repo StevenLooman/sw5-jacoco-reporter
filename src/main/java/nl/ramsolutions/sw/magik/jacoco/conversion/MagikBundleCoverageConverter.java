@@ -141,7 +141,7 @@ public class MagikBundleCoverageConverter {
         final Collection<IMethodCoverage> mergedMethodCoverages =
             methodCoverageMerger.run(classCoverage, subsidiaryClassCoverage);
         mergedMethodCoverages.stream()
-            .map(methodCoverage -> this.convert(classCoverage, subsidiaryClassCoverage, methodCoverage))
+            .map(methodCoverage -> this.convert(subsidiaryClassCoverage, methodCoverage))
             .filter(Objects::nonNull)
             .forEach(newClassCoverage::addMethod);
 
@@ -155,7 +155,6 @@ public class MagikBundleCoverageConverter {
      * @return Converted Method Coverage or null.
      */
     private IMethodCoverage convert(
-            final IClassCoverage primaryClassCoverage,
             final IClassCoverage subsidiaryClassCoverage,
             final IMethodCoverage methodCoverage) {
         final String methodName = methodCoverage.getName();
@@ -174,8 +173,8 @@ public class MagikBundleCoverageConverter {
         final String javaClassName = subsidiaryClassCoverage.getName();
         final String javaMethodName = methodCoverage.getName();
         final String name =
-            this.libAnalyzer.getMagikMethodName(javaClassName, javaMethodName);  // methodCoverage.getName();
-        final String desc = "";  // methodCoverage.getDesc();
+            this.libAnalyzer.getMagikMethodName(javaClassName, javaMethodName);
+        final String desc = "";
         final String signature = methodCoverage.getSignature();
         final MethodCoverageImpl newMethodCoverage = new MethodCoverageImpl(name, desc, signature);
 
@@ -242,6 +241,10 @@ public class MagikBundleCoverageConverter {
 
     private boolean isPrimaryClassCoverage(final IClassCoverage classCoverage) {
         final ClassNode classNode = this.getClassNode(classCoverage);
+        if (classNode == null) {
+            throw new IllegalStateException("ClassNode not found for " + classCoverage.getName());
+        }
+
         return ClassNodeHelper.isPrimaryClassNode(classNode);
     }
 

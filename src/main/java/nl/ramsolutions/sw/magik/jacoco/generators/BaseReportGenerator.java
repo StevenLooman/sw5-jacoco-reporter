@@ -15,6 +15,7 @@ import org.jacoco.report.MultiSourceFileLocator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,7 +69,7 @@ public abstract class BaseReportGenerator {
     }
 
     public List<Path> getSourcePaths() {
-        return this.sourcePaths;
+        return Collections.unmodifiableList(this.sourcePaths);
     }
 
     protected ExecFileLoader getExecFileLoader() {
@@ -80,7 +81,7 @@ public abstract class BaseReportGenerator {
 
         // Add Smallworld product source file locator.
         this.productPaths.stream()
-            .map(productPath -> new MagikProductSourceFileLocator(productPath))
+            .map(MagikProductSourceFileLocator::new)
             .forEach(locator::add);
 
         // Add all regular/Java locators.

@@ -8,7 +8,7 @@ import java.io.Reader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MagikDirectorySourceFileLocatorTest {
+class MagikDirectorySourceFileLocatorTest {
 
     private static final String PACKAGE_NAME = "magik/fixture_product/fixture_module";
     private static final String FILENAME = "modules/fixture_module/source/char16_vector.magik";

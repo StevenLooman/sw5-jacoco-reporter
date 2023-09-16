@@ -19,17 +19,19 @@ public final class AsmBytecodeWriter {
     private AsmBytecodeWriter() {
     }
 
-    public static void printMethods(final ClassNode classNode) throws Exception {
+    public static void printMethods(final ClassNode classNode) {
         classNode.methods
             .forEach(AsmBytecodeWriter::printMethod);
     }
 
     public static void printMethod(final MethodNode methodNode) {
-        System.out.println(methodNode.name);
+        System.out.println(methodNode.name);  // NOSONAR
 
         final InsnList inList = methodNode.instructions;
         for (int i = 0; i < inList.size(); i++) {
-            System.out.print(AsmBytecodeWriter.insnToString(inList.get(i)));
+            final AbstractInsnNode abstractInsnNode = inList.get(i);
+            final String insnString = AsmBytecodeWriter.insnToString(abstractInsnNode);
+            System.out.print(insnString);  // NOSONAR
         }
     }
 

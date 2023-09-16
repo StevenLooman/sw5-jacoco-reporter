@@ -33,6 +33,7 @@ public class SonarXmlVisitor implements IReportVisitor {
 
     public void visitInfo(
             final List<SessionInfo> sessionInfos, final Collection<ExecutionData> executionData) throws IOException {
+        // Don't need this.
     }
 
     public void visitBundle(final IBundleCoverage bundle, final ISourceFileLocator locator) throws IOException {

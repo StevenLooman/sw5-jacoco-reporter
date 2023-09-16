@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * {@link InputStreamSourceFileLocator} for Smallworld/Magik, or fallback to regular.
@@ -87,8 +88,7 @@ public class MagikProductSourceFileLocator extends InputStreamSourceFileLocator 
         Objects.requireNonNull(this.productDefPaths);
         for (final Path path : this.productDefPaths) {
             if (DefinitionFileReader.definitionFileHasName(path, productName)) {
-                final Path parentPath = path.getParent();
-                return parentPath;
+                return path.getParent();
             }
         }
 
@@ -101,14 +101,16 @@ public class MagikProductSourceFileLocator extends InputStreamSourceFileLocator 
             return;
         }
 
-        this.productDefPaths = Files.find(
+        try (Stream<Path> findStream = Files.find(
             this.productPath,
             Integer.MAX_VALUE,
             (path, attrs) -> {
                 final String filename = path.getFileName().toString();
                 return filename.equalsIgnoreCase(PRODUCT_DEF);
-            })
-            .collect(Collectors.toList());
+            })) {
+            this.productDefPaths = findStream
+                .collect(Collectors.toList());
+        }
     }
 
 }
