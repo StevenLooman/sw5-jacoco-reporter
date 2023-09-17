@@ -19,7 +19,7 @@ class CoberturaXmlReportGeneratorTest {
         final List<Path> productPaths = TestData.PRODUCT_PATHS;
         final List<Path> sourcePaths = Collections.emptyList();
         final File executionDataFile = TestData.JACOCO_EXEC_FILE;
-        final File outputFile = Files.createTempFile("cobertura", "xml").toFile();
+        final File outputFile = Files.createTempFile("cobertura", ".xml").toFile();
         final boolean discardExecutable = true;
         final String bundleName = "TestCobertura";
         final CoberturaXmlReportGenerator coberturaXmlReportGenerator = new CoberturaXmlReportGenerator(
