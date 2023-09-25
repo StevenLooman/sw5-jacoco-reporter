@@ -1,6 +1,8 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
 import nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter;
+import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
+import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProductsSourceFileLocator;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.Analyzer;
@@ -80,9 +82,10 @@ public abstract class BaseReportGenerator {
         final MultiSourceFileLocator locator = new MultiSourceFileLocator(TAB_WIDTH);
 
         // Add Smallworld product source file locator.
-        this.productPaths.stream()
-            .map(MagikProductSourceFileLocator::new)
-            .forEach(locator::add);
+        final SmallworldProducts smallworldProducts = new SmallworldProducts(this.productPaths);
+        final SmallworldProductsSourceFileLocator productSourceFileLocator =
+            new SmallworldProductsSourceFileLocator(smallworldProducts);
+        locator.add(productSourceFileLocator);
 
         // Add all regular/Java locators.
         this.sourcePaths.stream()

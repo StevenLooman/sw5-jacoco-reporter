@@ -12,11 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -30,13 +32,19 @@ public class Sw5LibReader {
     private static final String DIRECTORY_LIBS = "libs";
 
     private final Map<String, ClassNode> namedClasses = new HashMap<>();
+    private final List<Path> productPaths;
 
     /**
      * Constructor.
-     * @param productDirs Product directories.
+     * @param productPaths Product directories.
      */
-    public Sw5LibReader(final List<Path> productDirs) throws IOException {
-        this.readProductLibs(productDirs);
+    public Sw5LibReader(final List<Path> productPaths) throws IOException {
+        this.productPaths = productPaths;
+        this.readProductLibs();
+    }
+
+    public List<Path> getProductPaths() {
+        return this.productPaths;
     }
 
     /**
@@ -69,13 +77,14 @@ public class Sw5LibReader {
         return this.namedClasses.get(className);
     }
 
-    private void readProductLibs(final List<Path> productDirs) throws IOException {
-        for (final Path productDir : productDirs) {
+    private void readProductLibs() throws IOException {
+        final BiPredicate<Path, BasicFileAttributes> pred = (path, basicFileAttributes) -> {
+            final String filename = path.getFileName().toString();
+            return filename.toLowerCase().endsWith(".jar");
+        };
+        for (final Path productDir : this.productPaths) {
             final Path libsDir = productDir.resolve(DIRECTORY_LIBS);
-            final Stream<Path> libPaths = Files.find(
-                libsDir,
-                Integer.MAX_VALUE,
-                (path, basicFileAttributes) -> path.getFileName().toString().toLowerCase().endsWith(".jar"));
+            final Stream<Path> libPaths = Files.find(libsDir, Integer.MAX_VALUE, pred);
             libPaths.forEach(this::readNamedClassesSafe);
             libPaths.close();
         }

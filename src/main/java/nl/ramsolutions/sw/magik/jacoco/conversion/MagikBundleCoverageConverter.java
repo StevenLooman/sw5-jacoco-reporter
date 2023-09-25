@@ -1,6 +1,7 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
 import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
+import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -18,6 +19,8 @@ import org.objectweb.asm.tree.ClassNode;
 
 import javax.annotation.CheckForNull;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +48,7 @@ public class MagikBundleCoverageConverter {
     private final Sw5LibAnalyzer libAnalyzer;
     private final IBundleCoverage bundleCoverage;
     private final boolean discardExecutable;
+    private final SmallworldProducts smallworldProducts;
 
     /**
      * Constructor.
@@ -59,6 +63,9 @@ public class MagikBundleCoverageConverter {
         this.libAnalyzer = libAnalyzer;
         this.bundleCoverage = bundleCoverage;
         this.discardExecutable = discardExecutable;
+
+        final List<Path> productPaths = this.libAnalyzer.getProductPaths();
+        this.smallworldProducts = new SmallworldProducts(productPaths);
     }
 
     /**
@@ -123,7 +130,7 @@ public class MagikBundleCoverageConverter {
         final ClassCoverageImpl newClassCoverage = new ClassCoverageImpl(name, id, noMatch);
 
         // Skip the interface, but set source filename.
-        final String sourceFileName = classCoverage.getSourceFileName();
+        final String sourceFileName = this.getSourceFileName(classCoverage);
         newClassCoverage.setSourceFileName(sourceFileName);
 
         // Get Subsidiary class.
@@ -197,7 +204,7 @@ public class MagikBundleCoverageConverter {
         final SourceFileCoverageImpl newSourceFileCoverage = new SourceFileCoverageImpl(name, packageName);
 
         // Find newly created ClassCoverage for this file.
-        final String sourceFileName = sourceFileCoverage.getName();
+        final String sourceFileName = this.getSourceFileName(sourceFileCoverage);
         final IClassCoverage relatedClassCoverage = classCoverages.stream()
             .filter(classCoverage -> classCoverage.getSourceFileName().equals(sourceFileName))
             .findAny()
@@ -220,6 +227,40 @@ public class MagikBundleCoverageConverter {
         }
 
         return newSourceFileCoverage;
+    }
+
+    private String getSourceFileName(final IClassCoverage classCoverage) {
+        final String packageName = classCoverage.getPackageName();
+        final String sourceFileName = classCoverage.getSourceFileName();
+        final Path sourcePath;
+        try {
+            sourcePath = this.smallworldProducts.getSourcePath(packageName, sourceFileName);
+        } catch (final IOException exception) {
+            throw new IllegalStateException(exception);
+        }
+
+        if (sourcePath == null) {
+            return sourceFileName;
+        }
+
+        return sourcePath.toString();
+    }
+
+    private String getSourceFileName(final ISourceFileCoverage sourceFileCoverage) {
+        final String packageName = sourceFileCoverage.getPackageName();
+        final String sourceFileName = sourceFileCoverage.getName();
+        final Path sourcePath;
+        try {
+            sourcePath = this.smallworldProducts.getSourcePath(packageName, sourceFileName);
+        } catch (final IOException exception) {
+            throw new IllegalStateException(exception);
+        }
+
+        if (sourcePath == null) {
+            return sourceFileName;
+        }
+
+        return sourcePath.toString();
     }
 
     @CheckForNull
