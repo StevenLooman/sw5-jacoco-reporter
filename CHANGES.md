@@ -1,6 +1,8 @@
 Changes
 =======
 
+2.1.1 (unreleased)
+
 2.1.0 (2023-09-25)
 
 - Rename `--xml`-parameter to `--jacoco-xml`-parameter, and rename `XmlReportGenerator` to `JacocoXmlReportGenerator`.
