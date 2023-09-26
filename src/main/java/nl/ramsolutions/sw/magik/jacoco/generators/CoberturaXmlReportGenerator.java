@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CoberturaXmlReportGenerator extends BaseReportGenerator {
 
@@ -45,7 +47,10 @@ public class CoberturaXmlReportGenerator extends BaseReportGenerator {
     protected void createReport(final IBundleCoverage bundleCoverage) throws IOException {
         final CoberturaXmlFormatter coberturaXmlFormatter = new CoberturaXmlFormatter();
         final File outputFile = this.getOutputFile();
-        final List<Path> sourcePaths = this.getSourcePaths();
+        final List<Path> sourcePaths = Stream.concat(
+                this.getProductPaths().stream(),
+                this.getSourcePaths().stream())
+            .collect(Collectors.toList());
         try (FileOutputStream output = new FileOutputStream(outputFile)) {
             final IReportVisitor visitor = coberturaXmlFormatter.createVisitor(output, sourcePaths);
 

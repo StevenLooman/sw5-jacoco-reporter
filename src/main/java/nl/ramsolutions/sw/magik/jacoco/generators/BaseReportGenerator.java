@@ -70,7 +70,11 @@ public abstract class BaseReportGenerator {
         return this.outputFile;
     }
 
-    public List<Path> getSourcePaths() {
+    protected List<Path> getProductPaths() {
+        return Collections.unmodifiableList(this.productPaths);
+    }
+
+    protected List<Path> getSourcePaths() {
         return Collections.unmodifiableList(this.sourcePaths);
     }
 
