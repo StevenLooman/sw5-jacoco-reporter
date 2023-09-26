@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -39,12 +40,12 @@ public class Sw5LibReader {
      * @param productPaths Product directories.
      */
     public Sw5LibReader(final List<Path> productPaths) throws IOException {
-        this.productPaths = productPaths;
+        this.productPaths = List.copyOf(productPaths);
         this.readProductLibs();
     }
 
     public List<Path> getProductPaths() {
-        return this.productPaths;
+        return Collections.unmodifiableList(this.productPaths);
     }
 
     /**

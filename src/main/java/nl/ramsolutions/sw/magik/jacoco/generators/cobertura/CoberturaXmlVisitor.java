@@ -56,7 +56,7 @@ public class CoberturaXmlVisitor implements IReportVisitor {
     private void createRootElement(final IBundleCoverage bundleCoverage) throws IOException {
         this.rootElement = new XMLElement("coverage", PUBID, SYSTEM, true, OUTPUT_ENCODING, this.output);
 
-        final int timestamp = 0;  // TOD
+        final int timestamp = 0;  // TODO
         this.rootElement.attr("timestamp", timestamp);
 
         final ICounter lineCounter = bundleCoverage.getLineCounter();
