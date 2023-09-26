@@ -16,6 +16,7 @@ import org.jacoco.report.internal.xml.XMLElement;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -56,7 +57,7 @@ public class CoberturaXmlVisitor implements IReportVisitor {
     private void createRootElement(final IBundleCoverage bundleCoverage) throws IOException {
         this.rootElement = new XMLElement("coverage", PUBID, SYSTEM, true, OUTPUT_ENCODING, this.output);
 
-        final int timestamp = 0;  // TODO
+        final long timestamp = Instant.now().getEpochSecond();
         this.rootElement.attr("timestamp", timestamp);
 
         final ICounter lineCounter = bundleCoverage.getLineCounter();

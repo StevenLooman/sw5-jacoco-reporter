@@ -29,7 +29,7 @@ public class SmallworldProducts {
                     throw new IllegalStateException(exception);
                 }
             })
-            .flatMap(prods -> prods.stream())
+            .flatMap(List::stream)
             .collect(Collectors.toList());
     }
 

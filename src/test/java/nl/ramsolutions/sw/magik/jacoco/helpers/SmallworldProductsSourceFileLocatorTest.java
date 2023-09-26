@@ -21,4 +21,14 @@ class SmallworldProductsSourceFileLocatorTest {
         assertThat(reader).isNotNull();
     }
 
+    @Test
+    void testGetNonMagikSourceFile() throws IOException {
+        final SmallworldProducts smallworldProducts = new SmallworldProducts(TestData.PRODUCT_PATHS);
+        final SmallworldProductsSourceFileLocator locator = new SmallworldProductsSourceFileLocator(smallworldProducts);
+        final Reader reader = locator.getSourceFile(
+            "nl/ramsolutions/sw/magik/jacoco/helpers",
+            "SmallworldProductsSourceFileLocator.java");
+        assertThat(reader).isNull();
+    }
+
 }

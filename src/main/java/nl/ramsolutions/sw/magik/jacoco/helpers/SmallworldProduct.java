@@ -55,7 +55,7 @@ class SmallworldProduct {
 
         final String magik = parts[0];
         final String product = parts[1];
-        // final String moduleName = parts[2];
+        // moduleName: parts[2];
 
         if (!magik.equals(PACKAGE_MAGIK_PREFIX)) {
             throw new IllegalArgumentException("Invalid package name");
