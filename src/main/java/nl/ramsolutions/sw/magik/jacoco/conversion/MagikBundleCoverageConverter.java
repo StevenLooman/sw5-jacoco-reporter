@@ -193,20 +193,20 @@ public class MagikBundleCoverageConverter {
     private ISourceFileCoverage convert(
             final ISourceFileCoverage sourceFileCoverage,
             final Collection<IClassCoverage> classCoverages) {
-        if (!this.discardExecutable) {
-            // We are interested in everything. Return it whole.
-            return sourceFileCoverage;
-        }
-
         // Create a copy of the SourceFileCoverage, but strip everything present from the executable part.
-        final String name = sourceFileCoverage.getName();
+        final String name = this.getSourceFileName(sourceFileCoverage);
         final String packageName = sourceFileCoverage.getPackageName();
         final SourceFileCoverageImpl newSourceFileCoverage = new SourceFileCoverageImpl(name, packageName);
 
+        if (!this.discardExecutable) {
+            // We are interested in everything. Return it whole.
+            newSourceFileCoverage.increment(sourceFileCoverage);
+            return newSourceFileCoverage;
+        }
+
         // Find newly created ClassCoverage for this file.
-        final String sourceFileName = this.getSourceFileName(sourceFileCoverage);
         final IClassCoverage relatedClassCoverage = classCoverages.stream()
-            .filter(classCoverage -> classCoverage.getSourceFileName().equals(sourceFileName))
+            .filter(classCoverage -> classCoverage.getSourceFileName().equals(name))
             .findAny()
             .orElse(null);
         if (relatedClassCoverage == null) {

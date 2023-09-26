@@ -5,6 +5,7 @@ Changes
 
 - Fix resolving magik file paths in sub-products.
 - Fix sources-element in Cobertura-XML by including product paths too.
+- Fix fixing source filenames when using `--discard-executable` option.
 
 2.1.0 (2023-09-25)
 
