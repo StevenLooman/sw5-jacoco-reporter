@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.1.1 (unreleased)
+2.1.1 (2023-09-26)
 
 - Fix resolving magik file paths in sub-products.
 - Fix sources-element in Cobertura-XML by including product paths too.
