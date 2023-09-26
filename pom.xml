@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.ramsolutions</groupId>
   <artifactId>sw5-jacoco-reporter</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2-SNAPSHOT</version>
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>

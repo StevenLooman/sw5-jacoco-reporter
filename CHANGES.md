@@ -1,6 +1,8 @@
 Changes
 =======
 
+2.1.2 (unreleased)
+
 2.1.1 (2023-09-26)
 
 - Fix resolving magik file paths in sub-products.
