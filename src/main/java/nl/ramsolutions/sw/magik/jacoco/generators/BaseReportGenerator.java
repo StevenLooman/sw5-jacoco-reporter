@@ -128,7 +128,7 @@ public abstract class BaseReportGenerator {
         final ExecutionDataStore dataStore = this.execFileLoader.getExecutionDataStore();
         final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
         for (final Path productPath : this.productPaths) {
-            final File libsDirectory = new File(productPath.toFile(), LIBS_DIR);
+            final File libsDirectory = productPath.resolve(LIBS_DIR).toFile();
             analyzer.analyzeAll(libsDirectory);
         }
         final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(this.bundleName);

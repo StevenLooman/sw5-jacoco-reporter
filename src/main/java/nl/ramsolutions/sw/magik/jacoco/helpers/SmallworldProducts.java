@@ -40,7 +40,14 @@ public class SmallworldProducts {
         };
         try (Stream<Path> findStream = Files.find(productPath, Integer.MAX_VALUE, pred)) {
             return findStream
-                .map(Path::getParent)
+                .map(path -> {
+                    final Path parentPath = path.getParent();
+                    if (parentPath == null) {
+                        return Path.of("");
+                    }
+
+                    return parentPath;
+                })
                 .map(SmallworldProduct::new)
                 .collect(Collectors.toList());
         }

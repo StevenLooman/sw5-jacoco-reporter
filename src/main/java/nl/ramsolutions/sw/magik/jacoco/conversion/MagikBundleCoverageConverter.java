@@ -253,7 +253,9 @@ public class MagikBundleCoverageConverter {
             return sourceFileName;
         }
 
-        return sourcePath.toString();
+        // Strip leading `./`.
+        final String newSourceFileName = sourcePath.toString();
+        return newSourceFileName.replaceFirst("^\\./", "");
     }
 
     @CheckForNull
