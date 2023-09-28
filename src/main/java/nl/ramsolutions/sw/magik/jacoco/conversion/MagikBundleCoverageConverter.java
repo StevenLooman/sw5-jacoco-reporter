@@ -232,23 +232,16 @@ public class MagikBundleCoverageConverter {
     private String getSourceFileName(final IClassCoverage classCoverage) {
         final String packageName = classCoverage.getPackageName();
         final String sourceFileName = classCoverage.getSourceFileName();
-        final Path sourcePath;
-        try {
-            sourcePath = this.smallworldProducts.getSourcePath(packageName, sourceFileName);
-        } catch (final IOException exception) {
-            throw new IllegalStateException(exception);
-        }
-
-        if (sourcePath == null) {
-            return sourceFileName;
-        }
-
-        return sourcePath.toString();
+        return this.getSourceFileName(packageName, sourceFileName);
     }
 
     private String getSourceFileName(final ISourceFileCoverage sourceFileCoverage) {
         final String packageName = sourceFileCoverage.getPackageName();
         final String sourceFileName = sourceFileCoverage.getName();
+        return this.getSourceFileName(packageName, sourceFileName);
+    }
+
+    private String getSourceFileName(final String packageName, final String sourceFileName) {
         final Path sourcePath;
         try {
             sourcePath = this.smallworldProducts.getSourcePath(packageName, sourceFileName);
