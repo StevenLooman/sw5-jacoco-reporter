@@ -3,6 +3,8 @@ Changes
 
 2.1.2 (unreleased)
 
+- Make `--product-path` optional. If not given, current directory is used.
+
 2.1.1 (2023-09-26)
 
 - Fix resolving magik file paths in sub-products.

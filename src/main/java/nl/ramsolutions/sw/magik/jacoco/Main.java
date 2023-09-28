@@ -35,9 +35,8 @@ public final class Main {
         .build();
     private static final Option OPTION_PRODUCT_PATH = Option.builder()
         .longOpt("product-path")
-        .desc("Smallworld Product path")
+        .desc("Path to product. If not given, current working directory is used")
         .numberOfArgs(Option.UNLIMITED_VALUES)
-        .required()
         .type(PatternOptionBuilder.FILE_VALUE)
         .build();
     private static final Option OPTION_SOURCE_PATH = Option.builder()
@@ -55,7 +54,8 @@ public final class Main {
         .build();
     private static final Option OPTION_DISCARD_EXECUTABLE = Option.builder()
         .longOpt("discard-executable")
-        .desc("Discard executable classes").build();
+        .desc("Discard executable classes")
+        .build();
     private static final Option OPTION_HTML = Option.builder()
         .longOpt("html")
         .desc("Output HTML report to directory")
@@ -149,9 +149,11 @@ public final class Main {
             return;
         }
 
-        final List<Path> productPaths = Stream.of(commandLine.getOptionValues(OPTION_PRODUCT_PATH))
-            .map(Path::of)
-            .collect(Collectors.toList());
+        final List<Path> productPaths = commandLine.hasOption(OPTION_PRODUCT_PATH)
+            ? Stream.of(commandLine.getOptionValues(OPTION_PRODUCT_PATH))
+                .map(Path::of)
+                .collect(Collectors.toList())
+            : List.of(Path.of(""));
         final List<Path> sourcePaths = commandLine.hasOption(OPTION_SOURCE_PATH)
             ? Stream.of(commandLine.getOptionValues(OPTION_SOURCE_PATH))
                 .map(Path::of)
