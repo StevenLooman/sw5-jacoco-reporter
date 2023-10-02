@@ -1,9 +1,14 @@
 package nl.ramsolutions.sw.magik.jacoco.helpers;
 
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import javax.annotation.CheckForNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Utility class for {@link ClassNode}s.
@@ -50,7 +55,9 @@ public final class ClassNodeHelper {
      * @return
      */
     public static boolean isPrimaryClassNode(final ClassNode classNode) {
-        return classNode.visibleAnnotations.stream()
+        final List<AnnotationNode> visibleAnnotations =
+            Objects.requireNonNullElse(classNode.visibleAnnotations, Collections.emptyList());
+        return visibleAnnotations.stream()
             .anyMatch(annotation ->
                 annotation.desc.equals(ANNOTATION_CODE_TYPE)
                 && annotation.values.get(1).equals(ANNOTATION_CODE_TYPE_PRIMARY));
@@ -62,7 +69,9 @@ public final class ClassNodeHelper {
      * @return
      */
     public static boolean isSubsidiaryClassNode(final ClassNode classNode) {
-        return classNode.visibleAnnotations.stream()
+        final List<AnnotationNode> visibleAnnotations =
+            Objects.requireNonNullElse(classNode.visibleAnnotations, Collections.emptyList());
+        return visibleAnnotations.stream()
             .anyMatch(annotation ->
                 annotation.desc.equals(ANNOTATION_CODE_TYPE)
                 && annotation.values.get(1).equals(ANNOTATION_CODE_TYPE_SUBSIDIARY));
