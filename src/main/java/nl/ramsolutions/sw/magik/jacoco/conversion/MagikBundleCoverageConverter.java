@@ -242,6 +242,10 @@ public class MagikBundleCoverageConverter {
     }
 
     private String getSourceFileName(final String packageName, final String sourceFileName) {
+        if (!packageName.matches("^magik/.*")) {
+            return sourceFileName;
+        }
+
         final Path sourcePath;
         try {
             sourcePath = this.smallworldProducts.getSourcePath(packageName, sourceFileName);

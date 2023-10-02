@@ -5,6 +5,7 @@ Changes
 
 - Make `--product-path` optional. If not given, current directory is used.
 - Prevent polluting paths with `./`.
+- Fix trying to get magik file path for non-magik classes/files.
 
 2.1.1 (2023-09-26)
 
