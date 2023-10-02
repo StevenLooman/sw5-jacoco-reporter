@@ -84,8 +84,12 @@ public class MagikBundleCoverageConverter {
         return newBundleCoverage;
     }
 
-    private PackageCoverageImpl convert(final IPackageCoverage packageCoverage) {
+    private IPackageCoverage convert(final IPackageCoverage packageCoverage) {
         final String name = packageCoverage.getName();
+        if (!name.matches("^magik/.*")) {
+            return packageCoverage;
+        }
+
         final Collection<IClassCoverage> classCoverages = packageCoverage.getClasses();
         final List<IClassCoverage> newClassCoverages = classCoverages.stream()
             .map(classCoverage -> this.convert(classCoverages, classCoverage))
@@ -242,10 +246,6 @@ public class MagikBundleCoverageConverter {
     }
 
     private String getSourceFileName(final String packageName, final String sourceFileName) {
-        if (!packageName.matches("^magik/.*")) {
-            return sourceFileName;
-        }
-
         final Path sourcePath;
         try {
             sourcePath = this.smallworldProducts.getSourcePath(packageName, sourceFileName);
