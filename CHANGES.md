@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.1.2 (unreleased)
+2.1.2 (2023-10-03)
 
 - Make `--product-path` optional. If not given, current directory is used.
 - Prevent polluting paths with `./`.
