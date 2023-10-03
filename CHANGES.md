@@ -5,6 +5,7 @@ Changes
 
 - Make `--product-path` optional. If not given, current directory is used.
 - Prevent polluting paths with `./`.
+- Don't try to convert non-Smallworld/Magik packages.
 
 2.1.1 (2023-09-26)
 

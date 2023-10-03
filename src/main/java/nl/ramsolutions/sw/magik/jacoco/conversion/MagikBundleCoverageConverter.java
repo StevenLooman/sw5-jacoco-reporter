@@ -84,8 +84,12 @@ public class MagikBundleCoverageConverter {
         return newBundleCoverage;
     }
 
-    private PackageCoverageImpl convert(final IPackageCoverage packageCoverage) {
+    private IPackageCoverage convert(final IPackageCoverage packageCoverage) {
         final String name = packageCoverage.getName();
+        if (!name.matches("^magik/.*")) {
+            return packageCoverage;
+        }
+
         final Collection<IClassCoverage> classCoverages = packageCoverage.getClasses();
         final List<IClassCoverage> newClassCoverages = classCoverages.stream()
             .map(classCoverage -> this.convert(classCoverages, classCoverage))
