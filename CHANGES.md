@@ -1,6 +1,8 @@
 Changes
 =======
 
+2.2.0 (unreleased)
+
 2.1.2 (2023-10-03)
 
 - Make `--product-path` optional. If not given, current directory is used.
