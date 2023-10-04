@@ -54,7 +54,7 @@ class MagikBundleCoverageConverterTest {
         final Sw5LibAnalyzer libAnalyzer = TestData.getLibAnalyzer();
         final IBundleCoverage bundleCoverageOrig = TestData.getBundleCoverage();
         final MagikBundleCoverageConverter converter =
-            new MagikBundleCoverageConverter(libAnalyzer, bundleCoverageOrig, false);
+            new MagikBundleCoverageConverter(libAnalyzer, bundleCoverageOrig, false, false);
 
         final IBundleCoverage bundleCoverage = converter.convert();
 
@@ -77,7 +77,7 @@ class MagikBundleCoverageConverterTest {
         final Sw5LibAnalyzer libAnalyzer = TestData.getLibAnalyzer();
         final IBundleCoverage bundleCoverageOrig = TestData.getBundleCoverage();
         final MagikBundleCoverageConverter converter =
-            new MagikBundleCoverageConverter(libAnalyzer, bundleCoverageOrig, true);
+            new MagikBundleCoverageConverter(libAnalyzer, bundleCoverageOrig, true, true);
 
         final IPackageCoverage packageCoverageOrig0 = List.copyOf(bundleCoverageOrig.getPackages()).get(0);
         assertThat(packageCoverageOrig0.getClasses()).hasSize(5);  // 4 classes.

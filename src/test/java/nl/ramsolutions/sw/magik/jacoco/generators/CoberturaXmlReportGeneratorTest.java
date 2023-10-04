@@ -21,6 +21,7 @@ class CoberturaXmlReportGeneratorTest {
         final File executionDataFile = TestData.JACOCO_EXEC_FILE;
         final File outputFile = Files.createTempFile("cobertura", ".xml").toFile();
         final boolean discardExecutable = true;
+        final boolean discardNonMagik = true;
         final String bundleName = "TestCobertura";
         final CoberturaXmlReportGenerator coberturaXmlReportGenerator = new CoberturaXmlReportGenerator(
             productPaths,
@@ -28,6 +29,7 @@ class CoberturaXmlReportGeneratorTest {
             executionDataFile,
             outputFile,
             discardExecutable,
+            discardNonMagik,
             bundleName);
         coberturaXmlReportGenerator.run();
 

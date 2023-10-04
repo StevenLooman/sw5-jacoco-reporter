@@ -56,6 +56,10 @@ public final class Main {
         .longOpt("discard-executable")
         .desc("Discard executable classes")
         .build();
+    private static final Option OPTION_DISCARD_NON_MAGIK = Option.builder()
+        .longOpt("discard-non-magik")
+        .desc("Discard non-Magik sources")
+        .build();
     private static final Option OPTION_HTML = Option.builder()
         .longOpt("html")
         .desc("Output HTML report to directory")
@@ -94,6 +98,7 @@ public final class Main {
         OPTIONS.addOption(OPTION_SOURCE_PATH);
         OPTIONS.addOption(OPTION_JACOCO_FILE);
         OPTIONS.addOption(OPTION_DISCARD_EXECUTABLE);
+        OPTIONS.addOption(OPTION_DISCARD_NON_MAGIK);
         OPTIONS.addOption(OPTION_HTML);
         OPTIONS.addOption(OPTION_JACOCO_XML);
         OPTIONS.addOption(OPTION_SONAR_XML);
@@ -161,6 +166,7 @@ public final class Main {
             : Collections.emptyList();
         final File executionDataFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_FILE);
         final boolean discardExecutable = commandLine.hasOption(OPTION_DISCARD_EXECUTABLE);
+        final boolean discardNonMagik = commandLine.hasOption(OPTION_DISCARD_NON_MAGIK);
         final String bundleName = commandLine.hasOption(OPTION_BUNDLE_NAME)
             ? commandLine.getOptionValue(OPTION_BUNDLE_NAME)
             : DEFAULT_BUNDLE_NAME;
@@ -173,6 +179,7 @@ public final class Main {
                 executionDataFile,
                 outputDir,
                 discardExecutable,
+                discardNonMagik,
                 bundleName);
             htmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_JACOCO_XML)) {
@@ -183,6 +190,7 @@ public final class Main {
                 executionDataFile,
                 outputFile,
                 discardExecutable,
+                discardNonMagik,
                 bundleName);
             xmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_SONAR_XML)) {
@@ -193,6 +201,7 @@ public final class Main {
                 executionDataFile,
                 outputFile,
                 discardExecutable,
+                discardNonMagik,
                 bundleName);
             sonarXmlReportGenerator.run();
         } else if (commandLine.hasOption(OPTION_COBERTURA_XML)) {
@@ -203,6 +212,7 @@ public final class Main {
                 executionDataFile,
                 outputFile,
                 discardExecutable,
+                discardNonMagik,
                 bundleName);
             coberturaXmlReportGenerator.run();
         }

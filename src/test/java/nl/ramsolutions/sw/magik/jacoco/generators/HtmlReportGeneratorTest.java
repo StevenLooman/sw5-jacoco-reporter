@@ -21,6 +21,7 @@ class HtmlReportGeneratorTest {
         final File executionDataFile = TestData.JACOCO_EXEC_FILE;
         final File outputDir = Files.createTempDirectory("html").toFile();
         final boolean discardExecutable = true;
+        final boolean discardNonMagik = true;
         final String bundleName = "TestHtml";
         final HtmlReportGenerator htmlReportGenerator = new HtmlReportGenerator(
             productPaths,
@@ -28,6 +29,7 @@ class HtmlReportGeneratorTest {
             executionDataFile,
             outputDir,
             discardExecutable,
+            discardNonMagik,
             bundleName);
         htmlReportGenerator.run();
 

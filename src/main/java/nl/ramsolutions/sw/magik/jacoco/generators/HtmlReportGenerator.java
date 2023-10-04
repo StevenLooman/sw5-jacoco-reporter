@@ -32,6 +32,7 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param reportDirectory File to report directory (HTML).
      * @param discardExecutable Discard executable.
+     * @param discardNonMagik Discard non-Magik code.
      * @param bundleName Name of the bundle.
      */
     public HtmlReportGenerator(
@@ -40,8 +41,16 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
             final File executionDataFile,
             final File reportDirectory,
             final boolean discardExecutable,
+            final boolean discardNonMagik,
             final String bundleName) {
-        super(productPaths, sourcePaths, executionDataFile, reportDirectory, discardExecutable, bundleName);
+        super(
+            productPaths,
+            sourcePaths,
+            executionDataFile,
+            reportDirectory,
+            discardExecutable,
+            discardNonMagik,
+            bundleName);
     }
 
     @Override

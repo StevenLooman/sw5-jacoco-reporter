@@ -32,6 +32,7 @@ public class SonarXmlReportGenerator extends BaseReportGenerator {
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report file (XML).
      * @param discardExecutable Discard executable.
+     * @param discardNonMagik Discard non-Magik code.
      * @param bundleName Name of the bundle.
      */
     public SonarXmlReportGenerator(
@@ -40,8 +41,9 @@ public class SonarXmlReportGenerator extends BaseReportGenerator {
             final File executionDataFile,
             final File outputFile,
             final boolean discardExecutable,
+            final boolean discardNonMagik,
             final String bundleName) {
-        super(productPaths, sourcePaths, executionDataFile, outputFile, discardExecutable, bundleName);
+        super(productPaths, sourcePaths, executionDataFile, outputFile, discardExecutable, discardNonMagik, bundleName);
     }
 
     @Override
