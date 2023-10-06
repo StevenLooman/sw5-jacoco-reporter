@@ -33,6 +33,7 @@ public abstract class BaseReportGenerator {
     private final File outputFile;
     private final File executionDataFile;
     private final boolean discardExecutable;
+    private final boolean discardNonMagik;
     private final String bundleName;
     private final ExecFileLoader execFileLoader = new ExecFileLoader();
     private Sw5LibAnalyzer libAnalyzer;
@@ -49,6 +50,7 @@ public abstract class BaseReportGenerator {
      * @param executionDataFile File to {@literal jacoco.exec}.
      * @param outputFile File to report directory.
      * @param discardExecutable Discard executable.
+     * @param discardNonMagik Discard non-Magik code.
      * @param bundleName Name of the bundle.
      */
     protected BaseReportGenerator(
@@ -57,12 +59,14 @@ public abstract class BaseReportGenerator {
             final File executionDataFile,
             final File outputFile,
             final boolean discardExecutable,
+            final boolean discardNonMagik,
             final String bundleName) {
         this.productPaths = productPaths;
         this.sourcePaths = sourcePaths;
         this.executionDataFile = executionDataFile;
         this.outputFile = outputFile;
         this.discardExecutable = discardExecutable;
+        this.discardNonMagik = discardNonMagik;
         this.bundleName = bundleName;
     }
 
@@ -134,8 +138,11 @@ public abstract class BaseReportGenerator {
         final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(this.bundleName);
 
         // Merge method coverages (Magik), discard executable parts if needed.
-        final MagikBundleCoverageConverter bundleCoverageConverter =
-            new MagikBundleCoverageConverter(this.libAnalyzer, bundleCoverage, this.discardExecutable);
+        final MagikBundleCoverageConverter bundleCoverageConverter = new MagikBundleCoverageConverter(
+            this.libAnalyzer,
+            bundleCoverage,
+            this.discardExecutable,
+            this.discardNonMagik);
         return bundleCoverageConverter.convert();
     }
 

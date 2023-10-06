@@ -21,6 +21,7 @@ class SonarXmlReportGeneratorTest {
         final File executionDataFile = TestData.JACOCO_EXEC_FILE;
         final File outputFile = Files.createTempFile("sonar", ".xml").toFile();
         final boolean discardExecutable = true;
+        final boolean discardNonMagik = true;
         final String bundleName = "TestSonar";
         final SonarXmlReportGenerator sonarXmlReportGenerator = new SonarXmlReportGenerator(
             productPaths,
@@ -28,6 +29,7 @@ class SonarXmlReportGeneratorTest {
             executionDataFile,
             outputFile,
             discardExecutable,
+            discardNonMagik,
             bundleName);
         sonarXmlReportGenerator.run();
 

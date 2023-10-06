@@ -21,6 +21,7 @@ class JacocoXmlReportGeneratorTest {
         final File executionDataFile = TestData.JACOCO_EXEC_FILE;
         final File outputFile = Files.createTempFile("jacoco", ".xml").toFile();
         final boolean discardExecutable = true;
+        final boolean discardNonMagik = true;
         final String bundleName = "TestJacoco";
         final JacocoXmlReportGenerator jacocoXmlReportGenerator = new JacocoXmlReportGenerator(
             productPaths,
@@ -28,6 +29,7 @@ class JacocoXmlReportGeneratorTest {
             executionDataFile,
             outputFile,
             discardExecutable,
+            discardNonMagik,
             bundleName);
         jacocoXmlReportGenerator.run();
 

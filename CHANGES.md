@@ -3,6 +3,8 @@ Changes
 
 2.2.0 (unreleased)
 
+- Add `--discard-non-magik` option to filter coverage on non-Magik sources.
+
 2.1.2 (2023-10-03)
 
 - Make `--product-path` optional. If not given, current directory is used.

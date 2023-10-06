@@ -23,7 +23,7 @@ class MethodCoverageMergerTest {
         final Sw5LibAnalyzer libAnalyzer = TestData.getLibAnalyzer();
         final IBundleCoverage bundleCoverageOrig = TestData.getBundleCoverage();
         final MagikBundleCoverageConverter converter =
-            new MagikBundleCoverageConverter(libAnalyzer, bundleCoverageOrig, false);
+            new MagikBundleCoverageConverter(libAnalyzer, bundleCoverageOrig, false, false);
 
         final IBundleCoverage bundleCoverage = converter.convert();
 

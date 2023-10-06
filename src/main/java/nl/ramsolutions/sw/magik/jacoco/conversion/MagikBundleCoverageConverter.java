@@ -48,6 +48,7 @@ public class MagikBundleCoverageConverter {
     private final Sw5LibAnalyzer libAnalyzer;
     private final IBundleCoverage bundleCoverage;
     private final boolean discardExecutable;
+    private final boolean discardNonMagik;
     private final SmallworldProducts smallworldProducts;
 
     /**
@@ -55,14 +56,17 @@ public class MagikBundleCoverageConverter {
      * @param libAnalyzer Lib reader.
      * @param bundleCoverage Bundle coverage.
      * @param discardExecutable Discard executable.
+     * @param discardNonMagik Discard non-Magik code.
      */
     public MagikBundleCoverageConverter(
             final Sw5LibAnalyzer libAnalyzer,
             final IBundleCoverage bundleCoverage,
-            final boolean discardExecutable) {
+            final boolean discardExecutable,
+            final boolean discardNonMagik) {
         this.libAnalyzer = libAnalyzer;
         this.bundleCoverage = bundleCoverage;
         this.discardExecutable = discardExecutable;
+        this.discardNonMagik = discardNonMagik;
 
         final List<Path> productPaths = this.libAnalyzer.getProductPaths();
         this.smallworldProducts = new SmallworldProducts(productPaths);
@@ -76,6 +80,7 @@ public class MagikBundleCoverageConverter {
         final String name = this.bundleCoverage.getName();
         final List<IPackageCoverage> newPackages = this.bundleCoverage.getPackages().stream()
             .map(this::convert)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
         final BundleCoverageImpl newBundleCoverage = new BundleCoverageImpl(name, newPackages);
 
@@ -87,6 +92,10 @@ public class MagikBundleCoverageConverter {
     private IPackageCoverage convert(final IPackageCoverage packageCoverage) {
         final String name = packageCoverage.getName();
         if (!name.matches("^magik/.*")) {
+            if (this.discardNonMagik) {
+                return null;
+            }
+
             return packageCoverage;
         }
 
