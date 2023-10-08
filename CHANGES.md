@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.2.0 (unreleased)
+2.2.0 (2023-10-08)
 
 - Add `--discard-non-magik` option to filter coverage on non-Magik sources.
 
