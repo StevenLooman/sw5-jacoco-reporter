@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.2.1 (unreleased)
+2.2.1 (2024-05-09)
 
 - Fix missing `packages` element in Cobertura report.
 
