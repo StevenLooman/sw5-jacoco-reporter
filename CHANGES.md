@@ -3,6 +3,8 @@ Changes
 
 2.2.1 (unreleased)
 
+- Fix missing `packages` element in Cobertura report.
+
 2.2.0 (2023-10-08)
 
 - Add `--discard-non-magik` option to filter coverage on non-Magik sources.

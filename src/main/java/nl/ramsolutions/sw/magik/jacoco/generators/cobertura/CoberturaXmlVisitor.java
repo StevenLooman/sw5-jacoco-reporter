@@ -92,12 +92,18 @@ public class CoberturaXmlVisitor implements IReportVisitor {
     }
 
     private void writeBundle(final IBundleCoverage bundleCoverage) {
-        bundleCoverage.getPackages().forEach(this::writePackage);
+        try {
+            final XMLElement packagesEl = this.rootElement.element("packages");
+            bundleCoverage.getPackages()
+                .forEach(packageCoverage -> this.writePackage(packagesEl, packageCoverage));
+        } catch (final IOException exception) {
+            throw new IllegalStateException(exception);
+        }
     }
 
-    private void writePackage(final IPackageCoverage packageCoverage) {
+    private void writePackage(final XMLElement packagesEl, final IPackageCoverage packageCoverage) {
         try {
-            final XMLElement packageEl = this.rootElement.element("package");
+            final XMLElement packageEl = packagesEl.element("package");
             final String packageName = packageCoverage.getName();
             packageEl.attr("name", packageName);
 
