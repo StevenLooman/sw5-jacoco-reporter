@@ -20,7 +20,7 @@ A specific workflow is required to get the coverage data. The steps are as follo
 
 ### 1 Compile the modules
 
-To be able to determine which lines were hit during the tests, it is required to compile the modules to jars files, found in the `libs/` directory of the product. This is required for the JaCoCO agent which is used later on.
+To be able to determine which lines were hit during the tests, it is required to compile the modules to jars files, found in the `libs/` directory of the product. This is required for the JaCoCo agent which is used later on.
 
 You can compile to jar files by calling the method `sw:sw_product.compile_all_modules()` of your product(s). This will result in a `libs/` directory contaning a jar for each module. E.g.,
 
@@ -37,9 +37,9 @@ Magik> quit()
 
 ### 2 Using the JaCoCo agent
 
-JaCoCo inserts itself into the JVM through a so called Java Agent. The [JaCoCO Agent](https://www.eclemma.org/jacoco/trunk/doc/agent.html) records coverage data by instrumenting the loaded classes. Agents can be loaded on JVM startup by using the `-javaagent` option. E.g., `-javaagent:/path_to_agent.jar`.
+JaCoCo inserts itself into the JVM through a so called Java Agent. The [JaCoCo Agent](https://www.eclemma.org/jacoco/trunk/doc/agent.html) records coverage data by instrumenting the loaded classes. Agents can be loaded on JVM startup by using the `-javaagent` option. E.g., `-javaagent:/path_to_agent.jar`.
 
-To instrument the loaded module jars, the JaCoCO agent needs to installed when the JVM starts. The `-javaagent` option needs to the JVM through the run alias command. This can be done using the `-j` option. Combining the `-j` and `-agentpath` options, this results in, for example:
+To instrument the loaded module jars, the JaCoCo agent needs to installed when the JVM starts. The `-javaagent` option needs to the JVM through the run alias command. This can be done using the `-j` option. Combining the `-j` and `-agentpath` options, this results in, for example:
 
 ```sh
 $ /opt/Smallworld/core/bin/share/runalias -e /opt/Smallworld/core/config/environment -j -javaagent:.../org.jacoco.agent-0.8.8-runtime.jar swaf
