@@ -28,7 +28,7 @@
     <jacoco.unit-tests.limit.method-complexity>5</jacoco.unit-tests.limit.method-complexity>
 
     <commons-cli.version>1.5.0</commons-cli.version>
-    <jacoco.version>0.8.8</jacoco.version>
+    <jacoco.version>0.8.12</jacoco.version>
     <asm.version>9.2</asm.version>
     <jsr305.version>3.0.2</jsr305.version>
     <assertj.version>3.23.1</assertj.version>
