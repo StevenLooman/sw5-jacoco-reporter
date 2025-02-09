@@ -20,7 +20,7 @@
     <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <spotbugs-maven-plugin.version>4.2.3</spotbugs-maven-plugin.version>
-    <spotbugs.version>4.7.3</spotbugs.version>
+    <spotbugs.version>4.9.0</spotbugs.version>
     <!-- JaCoCo thresholds. Increase gradually as you add tests. -->
     <jacoco.unit-tests.limit.instruction-ratio>50%</jacoco.unit-tests.limit.instruction-ratio>
     <jacoco.unit-tests.limit.branch-ratio>50%</jacoco.unit-tests.limit.branch-ratio>
