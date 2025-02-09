@@ -1,5 +1,7 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,8 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -125,8 +125,10 @@ public class MethodCoverageMerger {
   /**
    * Build map with key as {@link MethodNode} and value as {@link IMethodCoverage}.
    *
-   * @param classCoverage Class coverage
-   * @param classNode Class node to extract methods form.
+   * @param primaryClassCoverage Primary class coverage
+   * @param providerClassNode Provider class node.
+   * @param subsidiaryClassCoverage Subsidiary class coverage
+   * @param supplierClassNode Supplier class node.
    * @return Map with {@link MethodNode} mapped to {@link IMethodCoverage}.
    */
   private Map<MethodNode, IMethodCoverage> buildMethodCoverageMap(

@@ -12,7 +12,6 @@ import org.jacoco.core.analysis.IPackageCoverage;
 import org.junit.jupiter.api.Test;
 
 /** Tests for MethodCoverageMerger. */
-@SuppressWarnings("checkstyle:MagicNumber")
 class MethodCoverageMergerTest {
 
   @Test

@@ -1,12 +1,12 @@
 package nl.ramsolutions.sw.magik.jacoco.helpers;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import javax.annotation.CheckForNull;
 
 /** Smallworld product. */
 class SmallworldProduct {
@@ -44,9 +44,8 @@ class SmallworldProduct {
     }
   }
 
-  @SuppressWarnings("checkstyle:MagicNumber")
   public boolean containsPackage(final String packageName) throws IOException {
-    final String[] parts = packageName.split("/");
+    final String[] parts = packageName.split("/", -1);
     if (parts.length != 3) {
       throw new IllegalArgumentException("Invalid package name");
     }

@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
 import nl.ramsolutions.sw.magik.jacoco.helpers.MethodNodeHelper;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;

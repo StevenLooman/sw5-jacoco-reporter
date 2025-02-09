@@ -51,10 +51,10 @@ public class SonarXmlReportGenerator extends BaseReportGenerator {
 
   @Override
   protected void createReport(final IBundleCoverage bundleCoverage) throws IOException {
-    final SonarXmlFormatter sonarNmlFormatter = new SonarXmlFormatter();
+    final SonarXmlFormatter sonarXmlFormatter = new SonarXmlFormatter();
     final File outputFile = this.getOutputFile();
     try (FileOutputStream output = new FileOutputStream(outputFile)) {
-      final IReportVisitor visitor = sonarNmlFormatter.createVisitor(output);
+      final IReportVisitor visitor = sonarXmlFormatter.createVisitor(output);
 
       final ExecFileLoader execFileLoader = this.getExecFileLoader();
       final List<SessionInfo> infos = execFileLoader.getSessionInfoStore().getInfos();

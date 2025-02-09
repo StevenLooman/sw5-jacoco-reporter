@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.conversion;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -8,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
 import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
@@ -168,7 +168,7 @@ public class MagikBundleCoverageConverter {
   /**
    * Convert method coverage.
    *
-   * @param primaryClassCoverage Class Coverage for the (merged) Primary class.
+   * @param subsidiaryClassCoverage Class Coverage for the subsidiary class.
    * @param methodCoverage Method Coverage.
    * @return Converted Method Coverage or null.
    */
@@ -270,28 +270,8 @@ public class MagikBundleCoverageConverter {
   }
 
   @CheckForNull
-  private IClassCoverage getSubsidiaryClassCoverage(final ISourceFileCoverage sourceFileCoverage) {
-    final String name = sourceFileCoverage.getName();
-    return this.bundleCoverage.getPackages().stream()
-        .flatMap(packageCoverage -> packageCoverage.getClasses().stream())
-        .filter(classCoverage -> classCoverage.getSourceFileName().equals(name))
-        .filter(classCoverage -> !this.isPrimaryClassCoverage(classCoverage))
-        .findFirst()
-        .orElse(null);
-  }
-
-  @CheckForNull
   private ClassNode getClassNode(final IClassCoverage classCoverage) {
     final String className = classCoverage.getName() + ".class";
     return this.libAnalyzer.getClassByName(className);
-  }
-
-  private boolean isPrimaryClassCoverage(final IClassCoverage classCoverage) {
-    final ClassNode classNode = this.getClassNode(classCoverage);
-    if (classNode == null) {
-      throw new IllegalStateException("ClassNode not found for " + classCoverage.getName());
-    }
-
-    return ClassNodeHelper.isPrimaryClassNode(classNode);
   }
 }

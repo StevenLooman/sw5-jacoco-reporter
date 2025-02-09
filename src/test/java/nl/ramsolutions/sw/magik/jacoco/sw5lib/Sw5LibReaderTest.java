@@ -13,7 +13,6 @@ import org.objectweb.asm.tree.ClassNode;
 /** Tests for Sw5LibReader. */
 class Sw5LibReaderTest {
 
-  @SuppressWarnings("checkstyle:MagicNumber")
   @Test
   void testGetPrimaryClassNodes() throws IOException {
     final Sw5LibReader libReader = TestData.getLibReader();

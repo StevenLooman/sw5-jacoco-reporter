@@ -39,8 +39,8 @@ public final class TestData {
   /**
    * Get Sw5LibReader for fixture data.
    *
-   * @return
-   * @throws IOException
+   * @return {@link Sw5LibReader}.
+   * @throws IOException -
    */
   public static Sw5LibReader getLibReader() throws IOException {
     return new Sw5LibReader(TestData.PRODUCT_PATHS);
@@ -49,8 +49,8 @@ public final class TestData {
   /**
    * Get Sw5LibAnalyzer for fixture data.
    *
-   * @return
-   * @throws IOException
+   * @return {@link Sw5LibAnalyzer}.
+   * @throws IOException -
    */
   public static Sw5LibAnalyzer getLibAnalyzer() throws IOException {
     final Sw5LibReader libReader = TestData.getLibReader();

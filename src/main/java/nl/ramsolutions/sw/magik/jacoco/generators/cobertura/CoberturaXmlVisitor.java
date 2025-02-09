@@ -38,12 +38,14 @@ public class CoberturaXmlVisitor implements IReportVisitor {
     this.sourcePaths = sourcePaths;
   }
 
+  @Override
   public void visitInfo(
       final List<SessionInfo> sessionInfos, final Collection<ExecutionData> executionData)
       throws IOException {
     // Don't need this.
   }
 
+  @Override
   public void visitBundle(final IBundleCoverage bundle, final ISourceFileLocator locator)
       throws IOException {
     this.createRootElement(bundle);
@@ -51,6 +53,7 @@ public class CoberturaXmlVisitor implements IReportVisitor {
     this.writeBundle(bundle);
   }
 
+  @Override
   public IReportGroupVisitor visitGroup(final String name) throws IOException {
     throw new IllegalStateException("Unexpected visit group");
   }
@@ -226,6 +229,7 @@ public class CoberturaXmlVisitor implements IReportVisitor {
     }
   }
 
+  @Override
   public void visitEnd() throws IOException {
     this.rootElement.close();
   }

@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.helpers;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import javax.annotation.CheckForNull;
 import org.jacoco.report.InputStreamSourceFileLocator;
 
 /** {@link InputStreamSourceFileLocator} for Smallworld/Magik products. */
@@ -24,7 +24,7 @@ public class SmallworldProductsSourceFileLocator extends InputStreamSourceFileLo
   /**
    * Constructor.
    *
-   * @param productPath Directory to Smallworld product.
+   * @param smallworldProducts Smallworld products provider.
    */
   public SmallworldProductsSourceFileLocator(final SmallworldProducts smallworldProducts) {
     super(DEFAULT_ENCODING.name(), TAB_WIDTH);

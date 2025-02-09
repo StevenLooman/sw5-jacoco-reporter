@@ -1,9 +1,9 @@
 package nl.ramsolutions.sw.magik.jacoco.helpers;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.CheckForNull;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -50,8 +50,8 @@ public final class ClassNodeHelper {
   /**
    * Test if this is the primary class node.
    *
-   * @param classNode
-   * @return
+   * @param classNode {@link ClassNode} to test.
+   * @return {@code true} if this is the primary class node.
    */
   public static boolean isPrimaryClassNode(final ClassNode classNode) {
     final List<AnnotationNode> visibleAnnotations =
@@ -66,8 +66,8 @@ public final class ClassNodeHelper {
   /**
    * Test if this is the subsidiary class node.
    *
-   * @param classNode
-   * @return
+   * @param classNode {@link ClassNode} to test.
+   * @return {@code true} if this is the subsidiary class node.
    */
   public static boolean isSubsidiaryClassNode(final ClassNode classNode) {
     final List<AnnotationNode> visibleAnnotations =

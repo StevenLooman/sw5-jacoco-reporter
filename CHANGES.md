@@ -1,7 +1,11 @@
 Changes
 =======
 
-2.2.2 (unreleased)
+2.3.0 (unreleased)
+
+- Cleaning up project/pom.xml.
+- Use ErrorProne + NullAway.
+- Bump to Java version 17
 
 2.2.1 (2024-05-09)
 

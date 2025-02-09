@@ -13,7 +13,6 @@ import org.jacoco.core.analysis.IPackageCoverage;
 import org.junit.jupiter.api.Test;
 
 /** Tests for MagikBundleCoverageConverter. */
-@SuppressWarnings("checkstyle:MagicNumber")
 class MagikBundleCoverageConverterTest {
 
   @Test

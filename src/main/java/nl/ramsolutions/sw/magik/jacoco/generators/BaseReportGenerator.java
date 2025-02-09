@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.generators;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -78,6 +79,7 @@ public abstract class BaseReportGenerator {
     return Collections.unmodifiableList(this.sourcePaths);
   }
 
+  @CheckForNull
   protected ExecFileLoader getExecFileLoader() {
     return this.execFileLoader;
   }
