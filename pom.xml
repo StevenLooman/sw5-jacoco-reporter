@@ -31,7 +31,7 @@
     <jacoco.version>0.8.12</jacoco.version>
     <asm.version>9.7.1</asm.version>
     <jsr305.version>3.0.2</jsr305.version>
-    <assertj.version>3.23.1</assertj.version>
+    <assertj.version>3.27.3</assertj.version>
 
     <sonar.organization>stevenlooman</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
