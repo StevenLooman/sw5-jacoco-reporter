@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
 import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import nl.ramsolutions.sw.magik.jacoco.helpers.MethodNodeHelper;
 import org.objectweb.asm.Opcodes;
@@ -75,6 +75,7 @@ final class Sw5LibDependencyBuilder {
    * @param supplierClassNode Supplier ClassNode, always the subsidiary if present.
    * @return Map with method dependencies.
    */
+  @SuppressWarnings("MixedMutabilityReturnType")
   public static Map<MethodNode, MethodNode> buildMethodDependencyMap(
       final ClassNode providerClassNode, @CheckForNull final ClassNode supplierClassNode) {
     if (supplierClassNode == null) {

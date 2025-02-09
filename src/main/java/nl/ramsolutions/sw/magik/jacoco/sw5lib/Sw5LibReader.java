@@ -1,5 +1,6 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,13 +12,13 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.annotation.CheckForNull;
 import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -82,13 +83,13 @@ public class Sw5LibReader {
     final BiPredicate<Path, BasicFileAttributes> pred =
         (path, basicFileAttributes) -> {
           final String filename = path.getFileName().toString();
-          return filename.toLowerCase().endsWith(".jar");
+          return filename.toLowerCase(Locale.ROOT).endsWith(".jar");
         };
     for (final Path productDir : this.productPaths) {
       final Path libsDir = productDir.resolve(DIRECTORY_LIBS);
-      final Stream<Path> libPaths = Files.find(libsDir, Integer.MAX_VALUE, pred);
-      libPaths.forEach(this::readNamedClassesSafe);
-      libPaths.close();
+      try (final Stream<Path> libPaths = Files.find(libsDir, Integer.MAX_VALUE, pred)) {
+        libPaths.forEach(this::readNamedClassesSafe);
+      }
     }
   }
 

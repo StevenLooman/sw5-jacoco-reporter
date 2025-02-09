@@ -3,6 +3,9 @@ Changes
 
 2.2.2 (unreleased)
 
+- Cleaning up project/pom.xml.
+- Use ErrorProne + NullAway.
+
 2.2.1 (2024-05-09)
 
 - Fix missing `packages` element in Cobertura report.

@@ -120,10 +120,10 @@ public final class Main {
 
   private static boolean showHelp(final CommandLine commandLine) {
     return commandLine.hasOption(OPTION_HELP)
-        || !commandLine.hasOption(OPTION_HTML)
+        || (!commandLine.hasOption(OPTION_HTML)
             && !commandLine.hasOption(OPTION_JACOCO_XML)
             && !commandLine.hasOption(OPTION_SONAR_XML)
-            && !commandLine.hasOption(OPTION_COBERTURA_XML);
+            && !commandLine.hasOption(OPTION_COBERTURA_XML));
   }
 
   /**
