@@ -22,7 +22,7 @@
     <commons-cli.version>1.9.0</commons-cli.version>
     <jacoco.version>0.8.12</jacoco.version>
     <asm.version>9.7.1</asm.version>
-    <spotbugs.version>4.9.1</spotbugs.version>
+    <spotbugs.version>4.9.2</spotbugs.version>
     <junit.version>5.12.0</junit.version>
     <assertj.version>3.27.3</assertj.version>
 
