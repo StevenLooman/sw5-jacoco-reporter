@@ -81,7 +81,7 @@ public class CoberturaXmlFormatter {
    * Create a new visitor.
    *
    * @param output Output stream to write to.
-   * @return Vistor.
+   * @return Visitor.
    * @throws IOException -
    */
   public IReportVisitor createVisitor(final OutputStream output, final List<Path> sourcePaths)
