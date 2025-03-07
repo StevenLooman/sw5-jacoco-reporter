@@ -1,18 +1,17 @@
 package nl.ramsolutions.sw.magik.jacoco.generators.cobertura;
 
-import org.jacoco.report.IReportVisitor;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.List;
+import org.jacoco.report.IReportVisitor;
 
 /**
  * Formatter which creates a file following the {@literal coverage-04.dtd} format.
  *
- * DTD:
- * <pre>
- * {@code
+ * <p>DTD:
+ *
+ * <pre>{@code
  * <!-- Portions (C) International Organization for Standardization 1986:
  *      Permission to copy in any form is granted for use with
  *      conforming SGML systems and applications as defined in
@@ -74,19 +73,19 @@ import java.util.List;
  *   <!ATTLIST condition number CDATA #REQUIRED>
  *   <!ATTLIST condition type CDATA #REQUIRED>
  *   <!ATTLIST condition coverage CDATA #REQUIRED>
- * }
- * </pre>
+ * }</pre>
  */
 public class CoberturaXmlFormatter {
 
-    /**
-     * Create a new visitor.
-     * @param output Output stream to write to.
-     * @return Visitor.
-     * @throws IOException -
-     */
-    public IReportVisitor createVisitor(final OutputStream output, final List<Path> sourcePaths) throws IOException {
-        return new CoberturaXmlVisitor(output, sourcePaths);
-    }
-
+  /**
+   * Create a new visitor.
+   *
+   * @param output Output stream to write to.
+   * @return Visitor.
+   * @throws IOException -
+   */
+  public IReportVisitor createVisitor(final OutputStream output, final List<Path> sourcePaths)
+      throws IOException {
+    return new CoberturaXmlVisitor(output, sourcePaths);
+  }
 }

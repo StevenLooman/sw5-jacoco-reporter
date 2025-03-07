@@ -1,18 +1,15 @@
 package nl.ramsolutions.sw.magik.jacoco.generators.sonar;
 
-import org.jacoco.report.IReportVisitor;
-
 import java.io.IOException;
 import java.io.OutputStream;
+import org.jacoco.report.IReportVisitor;
 
 /**
- * Formatter which creates a file following the SonarQube Generic test coverage
- * report format.
+ * Formatter which creates a file following the SonarQube Generic test coverage report format.
  *
- * XSD:
+ * <p>XSD:
  *
- * <pre>
- * {@code
+ * <pre>{@code
  * <xs:schema>
  *   <xs:element name="coverage">
  *     <xs:complexType>
@@ -37,20 +34,18 @@ import java.io.OutputStream;
  *     < /xs:complexType>
  *   < /xs:element>
  * < /xs:schema>
- * }
- * </pre>
+ * }</pre>
  */
 public class SonarXmlFormatter {
 
-    /**
-     * Create a new visitor.
-     *
-     * @param output Output stream to write to.
-     * @return Visitor.
-     * @throws IOException -
-     */
-    public IReportVisitor createVisitor(final OutputStream output) throws IOException {
-        return new SonarXmlVisitor(output);
-    }
-
+  /**
+   * Create a new visitor.
+   *
+   * @param output Output stream to write to.
+   * @return Visitor.
+   * @throws IOException -
+   */
+  public IReportVisitor createVisitor(final OutputStream output) throws IOException {
+    return new SonarXmlVisitor(output);
+  }
 }
