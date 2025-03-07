@@ -47,3 +47,12 @@ jobs:
       - uses: DavidAnson/markdownlint-cli2-action@v11
         with:
           globs: '**/*.md'
+
+  codespell:
+    name: Codespell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: codespell-project/actions-codespell@v2
+        with:
+          ignore_words_list: Datas,invokable,isnt,notIn
