@@ -4,11 +4,15 @@
 
 ## Introduction
 
-Using [JaCoCo](https://www.eclemma.org/jacoco/) coverage reports can be generated from Smallworld code. However, those reports will contain internal (Java) class names, internal (Java) method names. While very valuable, reading these reports is a bit tedious.
+Using [JaCoCo](https://www.eclemma.org/jacoco/) coverage reports can be generated from Smallworld code.
+However, those reports will contain internal (Java) class names, internal (Java) method names.
+While very valuable, reading these reports is a bit tedious.
 
 Additionally Smallworld generates "primary" classes which might be less interesting in a unit testing context. The additional classes are generated due to the way Smallworld 5 generates Java Bytecode.
 
-It would be easier if the internal method names are converted to Magik method names, and possibly the additionally "primary" classes are removed/ignored. This tool provides a means to convert the coverage data to the original Magik method names. Optionally, the additionally generated "primary" classes are removed/ignored.
+It would be easier if the internal method names are converted to Magik method names, and possibly the additionally "primary" classes are removed/ignored.
+This tool provides a means to convert the coverage data to the original Magik method names.
+Optionally, the additionally generated "primary" classes are removed/ignored.
 
 ## Workflow to get code coverage data
 
@@ -37,9 +41,13 @@ Magik> quit()
 
 ### 2 Using the JaCoCo agent
 
-JaCoCo inserts itself into the JVM through a so called Java Agent. The [JaCoCo Agent](https://www.eclemma.org/jacoco/trunk/doc/agent.html) records coverage data by instrumenting the loaded classes. Agents can be loaded on JVM startup by using the `-javaagent` option. E.g., `-javaagent:/path_to_agent.jar`.
+JaCoCo inserts itself into the JVM through a so called Java Agent.
+The [JaCoCo Agent](https://www.eclemma.org/jacoco/trunk/doc/agent.html) records coverage data by instrumenting the loaded classes.
+Agents can be loaded on JVM startup by using the `-javaagent` option. E.g., `-javaagent:/path_to_agent.jar`.
 
-To instrument the loaded module jars, the JaCoCo agent needs to installed when the JVM starts. The `-javaagent` option needs to the JVM through the run alias command. This can be done using the `-j` option. Combining the `-j` and `-agentpath` options, this results in, for example:
+To instrument the loaded module jars, the JaCoCo agent needs to installed when the JVM starts.
+The `-javaagent` option needs to the JVM through the run alias command.
+This can be done using the `-j` option. Combining the `-j` and `-agentpath` options, this results in, for example:
 
 ```sh
 $ /opt/Smallworld/core/bin/share/runalias -e /opt/Smallworld/core/config/environment -j -javaagent:.../org.jacoco.agent-0.8.8-runtime.jar swaf
@@ -48,7 +56,9 @@ $ /opt/Smallworld/core/bin/share/runalias -e /opt/Smallworld/core/config/environ
 
 ## 3 Running tests with instrumented code
 
-After the compiling is done and the JVM is restarted with the JaCoCo agent, the modules can now be loaded using the pre-compiled jars found in the `libs/` directory. When loading these modules, Smallworld now using the jar file, instead of loading and compiling the magik files. Run your tests as you would normally do, for example by using:
+After the compiling is done and the JVM is restarted with the JaCoCo agent, the modules can now be loaded using the pre-compiled jars found in the `libs/` directory.
+When loading these modules, Smallworld now using the jar file, instead of loading and compiling the magik files.
+Run your tests as you would normally do, for example by using:
 
 ```magik
 Magik> prd_dir << "..."
