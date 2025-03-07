@@ -46,7 +46,7 @@ public class SonarXmlFormatter {
      * Create a new visitor.
      *
      * @param output Output stream to write to.
-     * @return Vistor.
+     * @return Visitor.
      * @throws IOException -
      */
     public IReportVisitor createVisitor(final OutputStream output) throws IOException {

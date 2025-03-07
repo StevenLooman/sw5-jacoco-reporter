@@ -33,7 +33,7 @@ Changes
 2.0.2 (2023-08-21)
 
 - Fix error where JaCoCo coverage for a class, but the class is not known.
-- Cache class dependecy map, severly speeding up conversion.
+- Cache class dependency map, severely speeding up conversion.
 
 2.0.1 (2023-01-25)
 

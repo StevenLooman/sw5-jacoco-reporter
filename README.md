@@ -22,7 +22,7 @@ A specific workflow is required to get the coverage data. The steps are as follo
 
 To be able to determine which lines were hit during the tests, it is required to compile the modules to jars files, found in the `libs/` directory of the product. This is required for the JaCoCo agent which is used later on.
 
-You can compile to jar files by calling the method `sw:sw_product.compile_all_modules()` of your product(s). This will result in a `libs/` directory contaning a jar for each module. E.g.,
+You can compile to jar files by calling the method `sw:sw_product.compile_all_modules()` of your product(s). This will result in a `libs/` directory containing a jar for each module. E.g.,
 
 ```magik
 Magik> prd_dir << "..."
@@ -119,9 +119,9 @@ $ mvn -B versions:set -DnewVersion=<version> -DgenerateBackupPoms=false
 
 ## Inner workings
 
-For each magik source file, Smallworld 5 creates a Primary class and optionally a Subsidiary class. The Primary class contains the statements which are executed when loading the file, through the mehod called `execute()`. E.g., when you do a `show(...)` at the top level of a magik file, the `show` is executed via the `execute()` method.
+For each magik source file, Smallworld 5 creates a Primary class and optionally a Subsidiary class. The Primary class contains the statements which are executed when loading the file, through the method called `execute()`. E.g., when you do a `show(...)` at the top level of a magik file, the `show` is executed via the `execute()` method.
 
-Any nested "constructs", such as method definitions, procedures, loops, ... are compiled to a Subsidiary class as methods. The Primary class refers to this Subsidiary class through the `preload` method. The methods on the Subsidiary class are refered to via code in the Primary class/`execute` method.
+Any nested "constructs", such as method definitions, procedures, loops, ... are compiled to a Subsidiary class as methods. The Primary class refers to this Subsidiary class through the `preload` method. The methods on the Subsidiary class are referred to via code in the Primary class/`execute` method.
 
 When running the tests using the JaCoCo agent, the java method names are recorded. This software converts the Java names found in the coverage data back to Magik names, and merges the "constructs" where needed. The Primary and Subsidiary classes are merged to a single class, the Primary class.
 
