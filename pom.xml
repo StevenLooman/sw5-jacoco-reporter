@@ -23,7 +23,7 @@
     <jacoco.version>0.8.13</jacoco.version>
     <asm.version>9.8</asm.version>
     <spotbugs.version>4.9.3</spotbugs.version>
-    <junit.version>5.13.1</junit.version>
+    <junit.version>5.13.2</junit.version>
     <assertj.version>3.27.3</assertj.version>
 
     <!-- JaCoCo thresholds. Increase gradually as you add tests. -->
