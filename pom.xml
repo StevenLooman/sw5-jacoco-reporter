@@ -18,7 +18,7 @@
     <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
     <spotless.version>2.46.1</spotless.version>
     <error-prone.version>2.41.0</error-prone.version>
-    <nullaway.version>0.12.9</nullaway.version>
+    <nullaway.version>0.12.10</nullaway.version>
     <commons-cli.version>1.10.0</commons-cli.version>
     <jacoco.version>0.8.13</jacoco.version>
     <asm.version>9.8</asm.version>
