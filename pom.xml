@@ -16,7 +16,7 @@
     <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
-    <spotless.version>2.46.1</spotless.version>
+    <spotless.version>3.0.0</spotless.version>
     <error-prone.version>2.42.0</error-prone.version>
     <nullaway.version>0.12.10</nullaway.version>
     <commons-cli.version>1.10.0</commons-cli.version>
