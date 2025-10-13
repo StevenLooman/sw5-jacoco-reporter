@@ -20,7 +20,7 @@
     <error-prone.version>2.42.0</error-prone.version>
     <nullaway.version>0.12.10</nullaway.version>
     <commons-cli.version>1.10.0</commons-cli.version>
-    <jacoco.version>0.8.13</jacoco.version>
+    <jacoco.version>0.8.14</jacoco.version>
     <asm.version>9.9</asm.version>
     <spotbugs.version>4.9.6</spotbugs.version>
     <junit.version>6.0.0</junit.version>
