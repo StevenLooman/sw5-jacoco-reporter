@@ -43,10 +43,11 @@ class MethodCoverageMergerTest {
     //   - char16_vector.method1()
     //   - char16_vector.method2()
     //   - char16_vector.method3?()
+    //   - char16_vector.method4()
     //   - char16_vector.method1() (#2)
     // - loopbody method are merged into method definition:
     //   - char16_vector.method1()
     //   - char16_vector.method1() (#2)
-    assertThat(classCoverage0.getMethods()).hasSize(7);
+    assertThat(classCoverage0.getMethods()).hasSize(8);
   }
 }

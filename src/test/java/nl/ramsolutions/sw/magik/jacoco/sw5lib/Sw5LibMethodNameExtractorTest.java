@@ -31,6 +31,7 @@ class Sw5LibMethodNameExtractorTest {
             Map.entry(subsidiaryClassName + ".char16_vector__method1", "char16_vector.method1()"),
             Map.entry(subsidiaryClassName + ".char16_vector__method2", "char16_vector.method2()"),
             Map.entry(subsidiaryClassName + ".char16_vector__method3?", "char16_vector.method3?()"),
+            Map.entry(subsidiaryClassName + ".char16_vector__method4", "char16_vector.method4()"),
             Map.entry(subsidiaryClassName + ".char16_vector__method12", "char16_vector.method1()"));
   }
 }
