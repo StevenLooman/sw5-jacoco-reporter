@@ -114,8 +114,19 @@ public abstract class BaseReportGenerator {
     this.loadExecutionData();
     this.loadSw5Libs();
 
+    this.reportDuplicates();
+
     final IBundleCoverage bundleCoverage = this.analyzeStructure();
     this.createReport(bundleCoverage);
+  }
+
+  /** Report duplicate method definitions. */
+  private void reportDuplicates() {
+    final List<String> duplicates = this.libAnalyzer.getDuplicateMethodDefinitions();
+    if (!duplicates.isEmpty()) {
+      System.err.println("Warning: Duplicate method definitions found:");
+      duplicates.forEach(str -> System.err.println("  " + str));
+    }
   }
 
   /**

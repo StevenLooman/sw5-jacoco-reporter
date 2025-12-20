@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-/** Tests for Sw5LibDependencyBuilder. */
+/** Tests for {@link Sw5LibDependencyBuilder}. */
 class Sw5LibDependencyBuilderTest {
 
   @SafeVarargs
@@ -39,7 +39,9 @@ class Sw5LibDependencyBuilderTest {
     final Map<MethodNode, MethodNode> methodDependencyMap =
         Sw5LibDependencyBuilder.buildMethodDependencyMap(primaryClassNode, subsidiaryClassNode);
     this.assertMappingContainsOnly(
-        methodDependencyMap, Map.entry("__loopbody_", "char16_vector__method1"));
+        methodDependencyMap,
+        Map.entry("__loopbody_", "char16_vector__method1"),
+        Map.entry("__loopbody_2", "char16_vector__method12"));
   }
 
   @Test
@@ -51,7 +53,9 @@ class Sw5LibDependencyBuilderTest {
     final Map<MethodNode, MethodNode> methodDependencyMap =
         Sw5LibDependencyBuilder.buildMethodDependencyMap(subsidiaryClassNode, subsidiaryClassNode);
     this.assertMappingContainsOnly(
-        methodDependencyMap, Map.entry("__loopbody_", "char16_vector__method1"));
+        methodDependencyMap,
+        Map.entry("__loopbody_", "char16_vector__method1"),
+        Map.entry("__loopbody_2", "char16_vector__method12"));
   }
 
   @Test

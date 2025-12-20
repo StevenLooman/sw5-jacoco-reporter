@@ -6,7 +6,7 @@ import java.io.IOException;
 import nl.ramsolutions.sw.magik.jacoco.TestData;
 import org.junit.jupiter.api.Test;
 
-/** Tests for Sw5LibAnalyzer. */
+/** Tests for {@link Sw5LibAnalyzer}. */
 class Sw5LibAnalyzerTest {
 
   @Test

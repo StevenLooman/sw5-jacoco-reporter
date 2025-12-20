@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-/** Tests for Sw5LibMethodNameExtractor. */
+/** Tests for {@link Sw5LibMethodNameExtractor}. */
 class Sw5LibMethodNameExtractorTest {
 
   @Test
@@ -30,7 +30,7 @@ class Sw5LibMethodNameExtractorTest {
         .containsOnly(
             Map.entry(subsidiaryClassName + ".char16_vector__method1", "char16_vector.method1()"),
             Map.entry(subsidiaryClassName + ".char16_vector__method2", "char16_vector.method2()"),
-            Map.entry(
-                subsidiaryClassName + ".char16_vector__method3?", "char16_vector.method3?()"));
+            Map.entry(subsidiaryClassName + ".char16_vector__method3?", "char16_vector.method3?()"),
+            Map.entry(subsidiaryClassName + ".char16_vector__method12", "char16_vector.method1()"));
   }
 }

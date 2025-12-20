@@ -11,7 +11,7 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IPackageCoverage;
 import org.junit.jupiter.api.Test;
 
-/** Tests for MethodCoverageMerger. */
+/** Tests for {@link MethodCoverageMerger}. */
 class MethodCoverageMergerTest {
 
   @Test
@@ -23,7 +23,10 @@ class MethodCoverageMergerTest {
 
     final IBundleCoverage bundleCoverage = converter.convert();
 
+    // Primary classes, with subsidiary merged into them: char16_vector, mixed, primary.
     final IPackageCoverage packageCoverage0 = List.copyOf(bundleCoverage.getPackages()).get(0);
+    assertThat(packageCoverage0.getClasses()).hasSize(3);
+
     final IClassCoverage classCoverage0 =
         packageCoverage0.getClasses().stream()
             .filter(
@@ -31,10 +34,19 @@ class MethodCoverageMergerTest {
                     classCoverage.getName().equals(TestData.PRIMARY_CLASS_CHAR16_VECTOR))
             .findAny()
             .orElseThrow();
-    // From Primary: <init>, preload, execute.
+    // From Primary:
+    //   - <init>
+    //   - preload
+    //   - execute
     // From Subsidiary:
-    // - Method definitions are copied from subsidiary to primary (+4).
-    // - __loopbody method is merged into method definition (-1).
-    assertThat(classCoverage0.getMethods()).hasSize(6);
+    // - Method definitions are copied from subsidiary to primary:
+    //   - char16_vector.method1()
+    //   - char16_vector.method2()
+    //   - char16_vector.method3?()
+    //   - char16_vector.method1() (#2)
+    // - loopbody method are merged into method definition:
+    //   - char16_vector.method1()
+    //   - char16_vector.method1() (#2)
+    assertThat(classCoverage0.getMethods()).hasSize(7);
   }
 }
