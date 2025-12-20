@@ -6,6 +6,7 @@ Changes
 - Cleaning up project/pom.xml.
 - Use ErrorProne + NullAway.
 - Bump to Java version 17
+- Report duplicate method definitions.
 
 2.2.1 (2024-05-09)
 

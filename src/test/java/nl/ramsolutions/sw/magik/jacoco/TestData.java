@@ -24,15 +24,15 @@ public final class TestData {
       "magik/fixture_product/fixture_module/does_not_exist_99";
 
   public static final String PRIMARY_CLASS_CHAR16_VECTOR =
-      "magik/fixture_product/fixture_module/char16_vector_39";
-  public static final String PRIMARY_CLASS_MIXED = "magik/fixture_product/fixture_module/mixed_63";
+      "magik/fixture_product/fixture_module/char16_vector_34";
+  public static final String PRIMARY_CLASS_MIXED = "magik/fixture_product/fixture_module/mixed_58";
   public static final String PRIMARY_CLASS_PRIMARY =
-      "magik/fixture_product/fixture_module/primary_67";
+      "magik/fixture_product/fixture_module/primary_62";
 
   public static final String SUBSIDIARY_CLASS_CHAR16_VECTOR =
-      "magik/fixture_product/fixture_module/char16_vector_40";
+      "magik/fixture_product/fixture_module/char16_vector_35";
   public static final String SUBSIDIARY_CLASS_MIXED =
-      "magik/fixture_product/fixture_module/mixed_64";
+      "magik/fixture_product/fixture_module/mixed_59";
 
   private TestData() {}
 

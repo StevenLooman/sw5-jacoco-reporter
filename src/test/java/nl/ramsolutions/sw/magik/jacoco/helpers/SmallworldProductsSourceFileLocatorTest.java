@@ -7,6 +7,7 @@ import java.io.Reader;
 import nl.ramsolutions.sw.magik.jacoco.TestData;
 import org.junit.jupiter.api.Test;
 
+/** Tests for {@link SmallworldProductsSourceFileLocator}. */
 class SmallworldProductsSourceFileLocatorTest {
 
   private static final String PACKAGE_NAME = "magik/fixture_product/fixture_module";

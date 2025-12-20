@@ -91,7 +91,7 @@ final class Sw5LibMethodNameExtractor {
   }
 
   /**
-   * Extract Magik method names.
+   * Extract Java to Magik method name mapping.
    *
    * @param executeMethodNode Execute method from primary class.
    * @return Map keyed on Java names, and the corresponding Magik names.

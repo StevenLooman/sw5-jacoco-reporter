@@ -83,11 +83,33 @@ public final class Sw5LibAnalyzer {
         Sw5LibAnalyzer.keyForClassMethodName(javaClassName, javaMethodName);
     final String magikName = methodNames.get(completeJavaName);
     if (magikName == null) {
-      final String msg = "Could not find mapped method, key: " + completeJavaName;
-      throw new IllegalStateException(msg);
+      throw new IllegalStateException("Could not find mapped method, key: " + completeJavaName);
     }
 
     return magikName;
+  }
+
+  /**
+   * Get duplicate method definitions.
+   *
+   * @return List of duplicate method names and their files.
+   */
+  public List<String> getDuplicateMethodDefinitions() {
+    // Create map keyed on source file, valued on Magik method name.
+    final Map<String, List<String>> fileMethodsMapping =
+        this.libReader.getPrimaryClassNodes().stream()
+            .map(
+                classNode -> {
+                  final String sourceFileName = classNode.sourceFile;
+                  final MethodNode executeMethod = MethodNodeHelper.getExecuteMethod(classNode);
+                  final Map<String, String> javaToMagikMapping =
+                      Sw5LibMethodNameExtractor.extractMethodNames(executeMethod);
+                  List<String> magikNames =
+                      javaToMagikMapping.values().stream().collect(Collectors.toList());
+                  return Map.entry(sourceFileName, magikNames);
+                })
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    return Sw5LibDuplicateMethodFinder.findDuplicateMethodDefinitions(fileMethodsMapping);
   }
 
   /**

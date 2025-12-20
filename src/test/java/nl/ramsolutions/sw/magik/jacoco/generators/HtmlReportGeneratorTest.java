@@ -11,6 +11,7 @@ import java.util.List;
 import nl.ramsolutions.sw.magik.jacoco.TestData;
 import org.junit.jupiter.api.Test;
 
+/** Tests for {@link HtmlReportGenerator}. */
 class HtmlReportGeneratorTest {
 
   @Test

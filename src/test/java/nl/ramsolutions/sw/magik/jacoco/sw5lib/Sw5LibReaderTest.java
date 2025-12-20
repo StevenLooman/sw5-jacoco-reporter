@@ -10,7 +10,7 @@ import nl.ramsolutions.sw.magik.jacoco.TestData;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.ClassNode;
 
-/** Tests for Sw5LibReader. */
+/** Tests for {@link Sw5LibReader}. */
 class Sw5LibReaderTest {
 
   @Test
