@@ -24,15 +24,20 @@ public final class TestData {
       "magik/fixture_product/fixture_module/does_not_exist_99";
 
   public static final String PRIMARY_CLASS_CHAR16_VECTOR =
-      "magik/fixture_product/fixture_module/char16_vector_34";
-  public static final String PRIMARY_CLASS_MIXED = "magik/fixture_product/fixture_module/mixed_58";
+      "magik/fixture_product/fixture_module/char16_vector_36";
+  public static final String PRIMARY_CLASS_MIXED = "magik/fixture_product/fixture_module/mixed_60";
   public static final String PRIMARY_CLASS_PRIMARY =
-      "magik/fixture_product/fixture_module/primary_62";
+      "magik/fixture_product/fixture_module/primary_64";
 
   public static final String SUBSIDIARY_CLASS_CHAR16_VECTOR =
-      "magik/fixture_product/fixture_module/char16_vector_35";
+      "magik/fixture_product/fixture_module/char16_vector_37";
   public static final String SUBSIDIARY_CLASS_MIXED =
-      "magik/fixture_product/fixture_module/mixed_59";
+      "magik/fixture_product/fixture_module/mixed_61";
+
+  public static final Path PATH_CHAR16_VECTOR =
+      Path.of("modules/fixture_module/source/char16_vector.magik");
+  public static final Path PATH_MIXED = Path.of("modules/fixture_module/source/mixed.magik");
+  public static final Path PATH_PRIMARY = Path.of("modules/fixture_module/source/primary.magik");
 
   private TestData() {}
 

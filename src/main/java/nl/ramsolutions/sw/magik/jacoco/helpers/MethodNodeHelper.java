@@ -20,7 +20,16 @@ public final class MethodNodeHelper {
     return classNode.methods.stream()
         .filter(MethodNodeHelper::isExecuteMethod)
         .findFirst()
-        .orElseThrow(() -> new IllegalStateException("No execute() method found"));
+        .orElseThrow(
+            () ->
+                new IllegalStateException("No execute() method found in class " + classNode.name));
+  }
+
+  public static MethodNode getExecuteMethodSafe(final ClassNode classNode) {
+    return classNode.methods.stream()
+        .filter(MethodNodeHelper::isExecuteMethod)
+        .findFirst()
+        .orElse(null);
   }
 
   public static boolean isExecuteMethod(final MethodNode methodNode) {
@@ -32,8 +41,8 @@ public final class MethodNodeHelper {
     return annotationNodes.stream()
         .anyMatch(
             ann ->
-                ann.desc.equals(ANNOTATION_CODE_TYPE)
-                    && ann.values.equals(ANNOTATION_VALUE_TOP_LEVEL));
+                ann.desc.equals(MethodNodeHelper.ANNOTATION_CODE_TYPE)
+                    && ann.values.equals(MethodNodeHelper.ANNOTATION_VALUE_TOP_LEVEL));
   }
 
   public static boolean hasParentAnnotation(final MethodNode methodNode) {
@@ -43,7 +52,7 @@ public final class MethodNodeHelper {
     }
 
     return methodNode.visibleAnnotations.stream()
-        .anyMatch(ann -> ann.desc.equals(ANNOTATION_PARENT));
+        .anyMatch(ann -> ann.desc.equals(MethodNodeHelper.ANNOTATION_PARENT));
   }
 
   public static String getParentMethodName(final MethodNode methodNode) {
@@ -51,9 +60,11 @@ public final class MethodNodeHelper {
         methodNode.visibleAnnotations.stream()
             .filter(
                 ann ->
-                    ann.desc.equals(ANNOTATION_PARENT)
+                    ann.desc.equals(MethodNodeHelper.ANNOTATION_PARENT)
                         && !ann.values.isEmpty()
-                        && ann.values.get(0).equals(ANNOTATION_PARENT_VALUE_METHOD))
+                        && ann.values
+                            .get(0)
+                            .equals(MethodNodeHelper.ANNOTATION_PARENT_VALUE_METHOD))
             .findAny()
             .orElseThrow();
     return (String) parentMethodAnnotationNode.values.get(1);

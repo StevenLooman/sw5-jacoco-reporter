@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProductsSourceFileLocator;
+import nl.ramsolutions.sw.magik.jacoco.sw5lib.MethodDefinition;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibReader;
 import org.jacoco.core.analysis.Analyzer;
@@ -120,12 +123,23 @@ public abstract class BaseReportGenerator {
     this.createReport(bundleCoverage);
   }
 
-  /** Report duplicate method definitions. */
+  /** Report duplicate {@link MethodDefinition}s. */
   private void reportDuplicates() {
-    final List<String> duplicates = this.libAnalyzer.getDuplicateMethodDefinitions();
+    final Map<String, List<MethodDefinition>> duplicates =
+        this.libAnalyzer.getDuplicateMethodDefinitions();
     if (!duplicates.isEmpty()) {
       System.err.println("Warning: Duplicate method definitions found:");
-      duplicates.forEach(str -> System.err.println("  " + str));
+      duplicates.forEach(
+          (methodName, methodDefs) -> {
+            System.err.println(
+                "  "
+                    + methodName
+                    + " defined in files: "
+                    + methodDefs.stream()
+                        .map(MethodDefinition::getSourceFile)
+                        .map(Object::toString)
+                        .collect(Collectors.joining(", ")));
+          });
     }
   }
 

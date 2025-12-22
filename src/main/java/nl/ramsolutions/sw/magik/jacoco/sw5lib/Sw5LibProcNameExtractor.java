@@ -1,28 +1,48 @@
 package nl.ramsolutions.sw.magik.jacoco.sw5lib;
 
+import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Collections;
+import nl.ramsolutions.sw.magik.jacoco.helpers.MethodNodeHelper;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /** Utility class to extract proc name from INVOKEDYNAMIC proc calls. */
-final class Sw5LibProcNameExtractor {
+final class Sw5LibProcDefinitionExtractor {
 
   private static final String PROC_DEFINITION_OWNER =
       "com/gesmallworld/magik/language/invokers/ConstantBuilder";
   private static final String PROC_DEFINITION_NAME = "proc";
-  private static final String ANONYMOUS_PROC = "__anonymous_proc__";
 
-  private Sw5LibProcNameExtractor() {}
+  private Sw5LibProcDefinitionExtractor() {}
 
-  static String magikProcName(final String procName) {
-    final String fixedName = procName.isBlank() ? ANONYMOUS_PROC : procName;
-    return "@" + fixedName;
+  /**
+   * Extract Magik proc names.
+   *
+   * @param classNode ClassNode which might create procedures.
+   * @return Map keyed on Java names, and the corresponding Magik names.
+   */
+  static Collection<ProcDefinition> extractProcDefinitions(final ClassNode classNode) {
+    final MethodNode executeMethodNode = MethodNodeHelper.getExecuteMethodSafe(classNode);
+    if (executeMethodNode == null) {
+      return Collections.emptyList();
+    }
+
+    return Arrays.stream(executeMethodNode.instructions.toArray())
+        .filter(insn -> insn.getOpcode() == Opcodes.INVOKEDYNAMIC)
+        .map(InvokeDynamicInsnNode.class::cast)
+        .filter(Sw5LibProcDefinitionExtractor::isCreateProcCall)
+        .map(invokeDynamicInsnNode -> extractProcDefinition(classNode, invokeDynamicInsnNode))
+        .toList();
+  }
+
+  private static boolean isCreateProcCall(InvokeDynamicInsnNode invokeDynamicInsnNode) {
+    return invokeDynamicInsnNode.bsm.getOwner().equals(PROC_DEFINITION_OWNER)
+        && invokeDynamicInsnNode.name.equals(PROC_DEFINITION_NAME);
   }
 
   /**
@@ -31,36 +51,14 @@ final class Sw5LibProcNameExtractor {
    * @param invokeDynamicInsnNode {@link InvokeDynamicInsnNode} to extract from.
    * @return Java name / Magik name entry.
    */
-  static Map.Entry<String, String> extractProcName(
-      final InvokeDynamicInsnNode invokeDynamicInsnNode) {
+  private static ProcDefinition extractProcDefinition(
+      final ClassNode classNode, final InvokeDynamicInsnNode invokeDynamicInsnNode) {
+    final Path sourceFile = Path.of(classNode.sourceFile);
     final Object[] bsmArgs = invokeDynamicInsnNode.bsmArgs;
     final Type javaType = (Type) bsmArgs[0];
     final String javaTypeName = javaType.getClassName();
     final String javaMethodName = (String) bsmArgs[1];
     final String procName = (String) bsmArgs[2];
-
-    final String key = Sw5LibAnalyzer.keyForClassMethodName(javaTypeName, javaMethodName);
-    final String magikProcName = Sw5LibProcNameExtractor.magikProcName(procName);
-    return Map.entry(key, magikProcName);
-  }
-
-  /**
-   * Extract Magik proc names.
-   *
-   * @param methodNode MethodNode which might create procedures.
-   * @return Map keyed on Java names, and the corresponding Magik names.
-   */
-  static Map<String, String> extractProcNames(final MethodNode methodNode) {
-    final InsnList instructions = methodNode.instructions;
-    return Arrays.stream(instructions.toArray())
-        .filter(insn -> insn.getOpcode() == Opcodes.INVOKEDYNAMIC)
-        .map(InvokeDynamicInsnNode.class::cast)
-        .filter(
-            invokeDynamicInsnNode ->
-                invokeDynamicInsnNode.bsm.getOwner().equals(PROC_DEFINITION_OWNER)
-                    && invokeDynamicInsnNode.name.equals(PROC_DEFINITION_NAME))
-        .map(Sw5LibProcNameExtractor::extractProcName)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    return new ProcDefinition(sourceFile, javaTypeName, javaMethodName, procName);
   }
 }

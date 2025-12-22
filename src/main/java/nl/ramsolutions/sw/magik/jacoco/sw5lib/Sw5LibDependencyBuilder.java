@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import nl.ramsolutions.sw.magik.jacoco.helpers.MethodNodeHelper;
@@ -17,7 +18,7 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-/** Smallworld/Magik dependency builder. */
+/** Smallworld/Magik primary/subsidiary class and method mapping builder. */
 final class Sw5LibDependencyBuilder {
 
   private static final String PRELOAD_METHOD = "preload";
@@ -105,8 +106,10 @@ final class Sw5LibDependencyBuilder {
             : null;
     if (executeMethodNode != null) {
       final String supplierClassNodeName = supplierClassNode.name.replace("/", ".");
-      final Map<String, String> methodNamesMap =
-          Sw5LibMethodNameExtractor.extractMethodNames(executeMethodNode);
+      final Collection<MethodDefinition> methodDefinitions =
+          Sw5LibMethodDefinitionExtractor.extractMethodDefinitions(providerClassNode);
+      final Set<String> javaKeys =
+          methodDefinitions.stream().map(MethodDefinition::getJavaName).collect(Collectors.toSet());
       final Map<MethodNode, MethodNode> executableDependencyMap =
           supplierClassNode.methods.stream()
               .filter(methodNode -> !subsidiaryDependencyMap.containsKey(methodNode))
@@ -114,7 +117,7 @@ final class Sw5LibDependencyBuilder {
                   methodNode -> {
                     // Is not a defined method at subsidiary.
                     final String key = supplierClassNodeName + "." + methodNode.name;
-                    return !methodNamesMap.containsKey(key);
+                    return !javaKeys.contains(key);
                   })
               .collect(Collectors.toMap(methodNode -> methodNode, methodNode -> executeMethodNode));
       dependencyMap.putAll(executableDependencyMap);

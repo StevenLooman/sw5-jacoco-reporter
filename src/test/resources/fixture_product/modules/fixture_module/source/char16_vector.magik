@@ -25,6 +25,11 @@ _method char16_vector.method3?()
 _endmethod
 $
 
+_abstract _method char16_vector.method4()
+_endmethod
+$
+
+
 # Intentional duplicate method.
 _method char16_vector.method1()
 	_local str << _self + "abc"

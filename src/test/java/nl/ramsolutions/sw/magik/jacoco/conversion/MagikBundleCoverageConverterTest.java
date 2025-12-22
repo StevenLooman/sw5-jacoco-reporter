@@ -43,7 +43,7 @@ class MagikBundleCoverageConverterTest {
                     classCoverage.getName().equals(TestData.SUBSIDIARY_CLASS_CHAR16_VECTOR))
             .findAny()
             .orElseThrow();
-    assertThat(subsidiaryClassCoverage0.getMethods()).hasSize(6); // 3 methods + loopbody.
+    assertThat(subsidiaryClassCoverage0.getMethods()).hasSize(7); // 5 methods + 2 loopbody.
 
     final List<IMethodCoverage> methodCoverages =
         List.copyOf(subsidiaryClassCoverage0.getMethods());
@@ -81,11 +81,12 @@ class MagikBundleCoverageConverterTest {
     //   - char16_vector.method1()
     //   - char16_vector.method2()
     //   - char16_vector.method3?()
+    //   - char16_vector.method4()
     //   - char16_vector.method1() (#2)
     // - loopbody method are merged into method definition:
     //   - char16_vector.method1()
     //   - char16_vector.method1() (#2)
-    assertThat(classCoverage0.getMethods()).hasSize(7);
+    assertThat(classCoverage0.getMethods()).hasSize(8);
   }
 
   @Test
