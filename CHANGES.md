@@ -7,6 +7,7 @@ Changes
 - Use ErrorProne + NullAway.
 - Bump to Java version 17
 - Report duplicate method definitions.
+- Discard coverage data for abstract methods.
 
 2.2.1 (2024-05-09)
 

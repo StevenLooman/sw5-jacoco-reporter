@@ -196,7 +196,15 @@ public class MagikBundleCoverageConverter {
     final String signature = methodCoverage.getSignature();
     final MethodCoverageImpl newMethodCoverage = new MethodCoverageImpl(name, desc, signature);
 
-    newMethodCoverage.increment(methodCoverage);
+    // Only copy coverage if not abstract.
+    // Smallworld does actually generate code for abstract methods,
+    // but this is never executed, even when called.
+    final boolean isAbstractMethod =
+        element instanceof MethodDefinition methodDefinition
+            && methodDefinition.isFlagSet(MethodDefinition.Flag.ABSTRACT);
+    if (!isAbstractMethod) {
+      newMethodCoverage.increment(methodCoverage);
+    }
 
     return newMethodCoverage;
   }
