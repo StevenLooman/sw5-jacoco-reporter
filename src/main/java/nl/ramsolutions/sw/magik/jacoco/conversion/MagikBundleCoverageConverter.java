@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import nl.ramsolutions.sw.magik.jacoco.helpers.ClassNodeHelper;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
+import nl.ramsolutions.sw.magik.jacoco.sw5lib.MethodDefinition;
 import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibAnalyzer;
+import nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibCodeDefinition;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
@@ -181,14 +183,15 @@ public class MagikBundleCoverageConverter {
     }
 
     if (isPrimaryClassMethod) {
-      // Nothing to discard. Regard this as a regular method.
+      // Nothing to discard, regard this as a regular method.
       return methodCoverage;
     }
 
     // This is a Magik method, which always lives on the subsidiary class.
     final String javaClassName = subsidiaryClassCoverage.getName();
     final String javaMethodName = methodCoverage.getName();
-    final String name = this.libAnalyzer.getMagikMethodName(javaClassName, javaMethodName);
+    final Sw5LibCodeDefinition element = this.libAnalyzer.getElement(javaClassName, javaMethodName);
+    final String name = element.getMagikName();
     final String desc = "";
     final String signature = methodCoverage.getSignature();
     final MethodCoverageImpl newMethodCoverage = new MethodCoverageImpl(name, desc, signature);

@@ -231,6 +231,7 @@
                   <excludes>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter</exclude>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.generators.cobertura.CoberturaXmlVisitor</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibMethodDefinitionExtractor</exclude>
                   </excludes>
                 </rule>
                 <rule>
@@ -245,6 +246,11 @@
                   <excludes>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.Main.main(java.lang.String[])</exclude>
                     <exclude>nl.ramsolutions.sw.magik.jacoco.Main.showHelp(org.apache.commons.cli.CommandLine)</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter.convert(org.jacoco.core.analysis.IClassCoverage, org.jacoco.core.analysis.IMethodCoverage)</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.sw5lib.MethodDefinition.equals(java.lang.Object)</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.sw5lib.ProcDefinition.equals(java.lang.Object)</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibCodeDefinition.equals(java.lang.Object)</exclude>
+                    <exclude>nl.ramsolutions.sw.magik.jacoco.sw5lib.Sw5LibMethodDefinitionExtractor.extractMethodDefinition(org.objectweb.asm.tree.ClassNode, org.objectweb.asm.tree.MethodInsnNode)</exclude>
                   </excludes>
                 </rule>
               </rules>

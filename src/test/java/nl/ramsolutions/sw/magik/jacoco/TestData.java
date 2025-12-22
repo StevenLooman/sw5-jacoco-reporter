@@ -34,6 +34,11 @@ public final class TestData {
   public static final String SUBSIDIARY_CLASS_MIXED =
       "magik/fixture_product/fixture_module/mixed_61";
 
+  public static final Path PATH_CHAR16_VECTOR =
+      Path.of("modules/fixture_module/source/char16_vector.magik");
+  public static final Path PATH_MIXED = Path.of("modules/fixture_module/source/mixed.magik");
+  public static final Path PATH_PRIMARY = Path.of("modules/fixture_module/source/primary.magik");
+
   private TestData() {}
 
   /**
