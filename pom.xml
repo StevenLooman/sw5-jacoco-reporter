@@ -24,7 +24,7 @@
     <asm.version>9.9.1</asm.version>
     <spotbugs.version>4.9.8</spotbugs.version>
     <junit.version>6.0.2</junit.version>
-    <assertj.version>3.27.6</assertj.version>
+    <assertj.version>3.27.7</assertj.version>
 
     <!-- JaCoCo thresholds. Increase gradually as you add tests. -->
     <jacoco.unit-tests.limit.instruction-ratio>50%</jacoco.unit-tests.limit.instruction-ratio>
