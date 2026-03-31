@@ -1,14 +1,21 @@
-name: Lint, build and test
+name: Lint and package
 on:
   push:
     branches:
       - develop
   pull_request:
     types: [opened, synchronize, reopened]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   build:
-    name: Build and test
+    name: Build, test and package
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -33,7 +40,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn --batch-mode --update-snapshots verify test package
-      - run: mkdir staging && cp target/*.jar staging
+      - run: mkdir -v staging && cp -v target/*.jar staging
       - uses: actions/upload-artifact@v7
         with:
           name: Package-${{ matrix.os }}
