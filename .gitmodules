@@ -1,0 +1,3 @@
+[submodule "sw-jar-analyzer"]
+	path = sw-jar-analyzer
+	url = git@github.com:StevenLooman/sw-jar-analyzer.git

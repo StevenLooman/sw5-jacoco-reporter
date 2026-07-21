@@ -1,0 +1,180 @@
+package nl.ramsolutions.sw.magik.jacoco.generators;
+
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter;
+import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
+import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProductsSourceFileLocator;
+import nl.ramsolutions.sw.magik.jaranalyzer.MethodDefinition;
+import nl.ramsolutions.sw.magik.jaranalyzer.SwJarAnalyzerAnalyzer;
+import nl.ramsolutions.sw.magik.jaranalyzer.SwJarAnalyzerReader;
+import org.jacoco.core.analysis.Analyzer;
+import org.jacoco.core.analysis.CoverageBuilder;
+import org.jacoco.core.analysis.IBundleCoverage;
+import org.jacoco.core.data.ExecutionDataStore;
+import org.jacoco.core.tools.ExecFileLoader;
+import org.jacoco.report.DirectorySourceFileLocator;
+import org.jacoco.report.ISourceFileLocator;
+import org.jacoco.report.MultiSourceFileLocator;
+
+/** Base report generator. */
+public abstract class BaseReportGenerator {
+
+  private static final String LIBS_DIR = "libs";
+  private static final int TAB_WIDTH = 8;
+
+  private final List<Path> productPaths;
+  private final List<Path> sourcePaths;
+  private final File outputFile;
+  private final File executionDataFile;
+  private final boolean discardExecutable;
+  private final boolean discardNonMagik;
+  private final String bundleName;
+  private final ExecFileLoader execFileLoader = new ExecFileLoader();
+  private SwJarAnalyzerAnalyzer libAnalyzer;
+
+  /**
+   * Constructor.
+   *
+   * <p>The product is expected to contain the {@literal libs} directory containing the compiled
+   * product.
+   *
+   * @param productPaths Paths to Smallworld product directories.
+   * @param sourcePaths Paths to regular (Java) source directories.
+   * @param executionDataFile File to {@literal jacoco.exec}.
+   * @param outputFile File to report directory.
+   * @param discardExecutable Discard executable.
+   * @param discardNonMagik Discard non-Magik code.
+   * @param bundleName Name of the bundle.
+   */
+  protected BaseReportGenerator(
+      final List<Path> productPaths,
+      final List<Path> sourcePaths,
+      final File executionDataFile,
+      final File outputFile,
+      final boolean discardExecutable,
+      final boolean discardNonMagik,
+      final String bundleName) {
+    this.productPaths = productPaths;
+    this.sourcePaths = sourcePaths;
+    this.executionDataFile = executionDataFile;
+    this.outputFile = outputFile;
+    this.discardExecutable = discardExecutable;
+    this.discardNonMagik = discardNonMagik;
+    this.bundleName = bundleName;
+  }
+
+  protected File getOutputFile() {
+    return this.outputFile;
+  }
+
+  protected List<Path> getProductPaths() {
+    return Collections.unmodifiableList(this.productPaths);
+  }
+
+  protected List<Path> getSourcePaths() {
+    return Collections.unmodifiableList(this.sourcePaths);
+  }
+
+  @CheckForNull
+  protected ExecFileLoader getExecFileLoader() {
+    return this.execFileLoader;
+  }
+
+  protected ISourceFileLocator getLocator() {
+    final MultiSourceFileLocator locator = new MultiSourceFileLocator(TAB_WIDTH);
+
+    // Add Smallworld product source file locator.
+    final SmallworldProducts smallworldProducts = new SmallworldProducts(this.productPaths);
+    final SmallworldProductsSourceFileLocator productSourceFileLocator =
+        new SmallworldProductsSourceFileLocator(smallworldProducts);
+    locator.add(productSourceFileLocator);
+
+    // Add all regular/Java locators.
+    this.sourcePaths.stream()
+        .map(sourcePath -> new DirectorySourceFileLocator(sourcePath.toFile(), null, TAB_WIDTH))
+        .forEach(locator::add);
+
+    return locator;
+  }
+
+  protected MagikNames getMagikNames() {
+    return new MagikNames();
+  }
+
+  /**
+   * Run the report generation.
+   *
+   * @throws IOException -
+   */
+  public void run() throws IOException {
+    this.loadExecutionData();
+    this.loadLibs();
+
+    this.reportDuplicates();
+
+    final IBundleCoverage bundleCoverage = this.analyzeStructure();
+    this.createReport(bundleCoverage);
+  }
+
+  /** Report duplicate {@link MethodDefinition}s. */
+  private void reportDuplicates() {
+    final Map<String, List<MethodDefinition>> duplicates =
+        this.libAnalyzer.getDuplicateMethodDefinitions();
+    if (!duplicates.isEmpty()) {
+      System.err.println("Warning: Duplicate method definitions found:");
+      duplicates.forEach(
+          (methodName, methodDefs) -> {
+            System.err.println(
+                "  "
+                    + methodName
+                    + " defined in files: "
+                    + methodDefs.stream()
+                        .map(MethodDefinition::getSourceFile)
+                        .map(Object::toString)
+                        .collect(Collectors.joining(", ")));
+          });
+    }
+  }
+
+  /**
+   * Create the report.
+   *
+   * @param bundleCoverage {@link IBundleCoverage}, converted to Magik style.
+   * @throws IOException -
+   */
+  protected abstract void createReport(IBundleCoverage bundleCoverage) throws IOException;
+
+  private IBundleCoverage analyzeStructure() throws IOException {
+    // Analyze classes (JaCoCo).
+    final CoverageBuilder coverageBuilder = new CoverageBuilder();
+    final ExecutionDataStore dataStore = this.execFileLoader.getExecutionDataStore();
+    final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
+    for (final Path productPath : this.productPaths) {
+      final File libsDirectory = productPath.resolve(LIBS_DIR).toFile();
+      analyzer.analyzeAll(libsDirectory);
+    }
+    final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(this.bundleName);
+
+    // Merge method coverages (Magik), discard executable parts if needed.
+    final MagikBundleCoverageConverter bundleCoverageConverter =
+        new MagikBundleCoverageConverter(
+            this.libAnalyzer, bundleCoverage, this.discardExecutable, this.discardNonMagik);
+    return bundleCoverageConverter.convert();
+  }
+
+  private void loadExecutionData() throws IOException {
+    this.execFileLoader.load(this.executionDataFile);
+  }
+
+  private void loadLibs() throws IOException {
+    final SwJarAnalyzerReader libReader = new SwJarAnalyzerReader(this.productPaths);
+    this.libAnalyzer = new SwJarAnalyzerAnalyzer(libReader);
+  }
+}

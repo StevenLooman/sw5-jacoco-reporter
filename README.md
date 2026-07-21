@@ -14,6 +14,23 @@ It would be easier if the internal method names are converted to Magik method na
 This tool provides a means to convert the coverage data to the original Magik method names.
 Optionally, the additionally generated "primary" classes are removed/ignored.
 
+### Build prerequisites
+
+This project depends on the `sw-jar-analyzer` library, vendored as a git submodule at
+`sw-jar-analyzer/`. The repository root is a Maven reactor (aggregator) that builds that library
+from source ahead of the reporter, so a fresh clone only needs the submodule initialised — there
+is no separate install step:
+
+```sh
+$ git submodule update --init --recursive
+...
+$ mvn clean verify
+...
+```
+
+The reporter itself is the `sw5-jacoco-reporter/` module, so its build output is
+`sw5-jacoco-reporter/target/`.
+
 ## Workflow to get code coverage data
 
 A specific workflow is required to get the coverage data. The steps are as follows:
