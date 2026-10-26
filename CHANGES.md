@@ -7,6 +7,8 @@ Changes
 - Use ErrorProne + NullAway.
 - Bump to Java version 17
 - Report duplicate method definitions.
+- Add `--version` option, and report the embedded JaCoCo version when generating a report, as
+  `jacoco.exec` must be recorded with a JaCoCo agent of that same version. Uses JaCoCo 0.8.15.
 - Discard coverage data for abstract methods.
 
 2.2.1 (2024-05-09)

@@ -24,10 +24,16 @@ import org.apache.commons.cli.PatternOptionBuilder;
 public final class Main {
 
   private static final String DEFAULT_BUNDLE_NAME = "Smallworld product";
+  private static final String OPTION_VERSION_ARG = "--version";
 
   private static final Options OPTIONS;
   private static final Option OPTION_HELP =
       Option.builder().longOpt("help").desc("Show this help").build();
+  private static final Option OPTION_VERSION =
+      Option.builder()
+          .longOpt("version")
+          .desc("Show the version of this tool and of the embedded JaCoCo library")
+          .build();
   private static final Option OPTION_PRODUCT_PATH =
       Option.builder()
           .longOpt("product-path")
@@ -90,9 +96,14 @@ public final class Main {
           .type(PatternOptionBuilder.STRING_VALUE)
           .build();
 
+  /** Options selecting a report to generate. Without any of these, there is nothing to do. */
+  private static final List<Option> OUTPUT_OPTIONS =
+      List.of(OPTION_HTML, OPTION_JACOCO_XML, OPTION_SONAR_XML, OPTION_COBERTURA_XML);
+
   static {
     OPTIONS = new Options();
     OPTIONS.addOption(OPTION_HELP);
+    OPTIONS.addOption(OPTION_VERSION);
     OPTIONS.addOption(OPTION_PRODUCT_PATH);
     OPTIONS.addOption(OPTION_SOURCE_PATH);
     OPTIONS.addOption(OPTION_JACOCO_FILE);
@@ -118,12 +129,24 @@ public final class Main {
     return parser.parse(Main.OPTIONS, args);
   }
 
+  /**
+   * Print the help, including the version of the embedded JaCoCo library.
+   *
+   * <p>The JaCoCo version is part of the help as the {@literal jacoco.exec} file must be recorded
+   * with a matching JaCoCo agent.
+   */
+  private static void printHelp() {
+    final HelpFormatter formatter = new HelpFormatter();
+    formatter.printHelp(
+        "sw5-jacoco-reporter",
+        VersionInfo.getVersionString(),
+        Main.OPTIONS,
+        VersionInfo.getAgentVersionNotice());
+  }
+
   private static boolean showHelp(final CommandLine commandLine) {
     return commandLine.hasOption(OPTION_HELP)
-        || (!commandLine.hasOption(OPTION_HTML)
-            && !commandLine.hasOption(OPTION_JACOCO_XML)
-            && !commandLine.hasOption(OPTION_SONAR_XML)
-            && !commandLine.hasOption(OPTION_COBERTURA_XML));
+        || OUTPUT_OPTIONS.stream().noneMatch(commandLine::hasOption);
   }
 
   /**
@@ -134,20 +157,25 @@ public final class Main {
    * @throws ParseException -
    */
   public static void main(String[] args) throws IOException, ParseException {
+    if (Stream.of(args).anyMatch(OPTION_VERSION_ARG::equals)) {
+      VersionInfo.printTo(System.out);
+
+      System.exit(0);
+      return;
+    }
+
     final CommandLine commandLine;
     try {
       commandLine = Main.parseCommandline(args);
     } catch (ParseException exception) {
-      final HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("sw5-jacoco-reporter", Main.OPTIONS);
+      Main.printHelp();
 
       System.exit(-1);
       return;
     }
 
     if (Main.showHelp(commandLine)) {
-      final HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("sw5-jacoco-reporter", Main.OPTIONS);
+      Main.printHelp();
 
       System.exit(0);
       return;

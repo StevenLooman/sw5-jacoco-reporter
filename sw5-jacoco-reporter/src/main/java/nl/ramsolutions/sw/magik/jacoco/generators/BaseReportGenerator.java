@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import nl.ramsolutions.sw.magik.jacoco.VersionInfo;
 import nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProductsSourceFileLocator;
@@ -114,6 +115,8 @@ public abstract class BaseReportGenerator {
    * @throws IOException -
    */
   public void run() throws IOException {
+    this.reportVersions();
+
     this.loadExecutionData();
     this.loadLibs();
 
@@ -121,6 +124,17 @@ public abstract class BaseReportGenerator {
 
     final IBundleCoverage bundleCoverage = this.analyzeStructure();
     this.createReport(bundleCoverage);
+  }
+
+  /**
+   * Report the versions in use.
+   *
+   * <p>The {@literal jacoco.exec} file must be recorded with a JaCoCo agent of the same version as
+   * the JaCoCo library used here, as probes recorded by another version can be interpreted
+   * incorrectly.
+   */
+  private void reportVersions() {
+    VersionInfo.printTo(System.err);
   }
 
   /** Report duplicate {@link MethodDefinition}s. */

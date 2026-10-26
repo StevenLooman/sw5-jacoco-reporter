@@ -67,9 +67,24 @@ The `-javaagent` option needs to the JVM through the run alias command.
 This can be done using the `-j` option. Combining the `-j` and `-agentpath` options, this results in, for example:
 
 ```sh
-$ /opt/Smallworld/core/bin/share/runalias -e /opt/Smallworld/core/config/environment -j -javaagent:.../org.jacoco.agent-0.8.8-runtime.jar swaf
+$ /opt/Smallworld/core/bin/share/runalias -e /opt/Smallworld/core/config/environment -j -javaagent:.../org.jacoco.agent-<jacoco_version>-runtime.jar swaf
 ...
 ```
+
+> **Warning: use a JaCoCo agent of the same version as the JaCoCo library embedded in this tool.**
+>
+> With a different agent version, executed lines might be reported as missed.
+>
+> Ask the tool which JaCoCo version it embeds, and use the agent of exactly that version:
+>
+> ```sh
+> $ java -jar sw5-jacoco-reporter.jar --version
+> sw5-jacoco-reporter <version>, using JaCoCo <jacoco_version>
+> Note: record jacoco.exec with the JaCoCo agent version <jacoco_version>. Using another version of the agent can silently report covered lines as missed.
+> ```
+>
+> The same versions are printed when a report is generated, and by `--help`.
+> The matching agent is the `org.jacoco.agent-<jacoco_version>-runtime.jar` artifact, available from [Maven Central](https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/) or the [JaCoCo download page](https://www.jacoco.org/jacoco/).
 
 ## 3 Running tests with instrumented code
 
@@ -96,6 +111,8 @@ Options:
 
 - `--help`
   - Show help.
+- `--version`
+  - Show the version of this tool and of the embedded JaCoCo library. Record `jacoco.exec` with a JaCoCo agent of that same version, see the warning above.
 - `--bundle-name [bundle_name]`
   - Name of the bundle.
 - `--product-path [path_to_product_directory]`
