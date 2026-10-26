@@ -18,7 +18,7 @@ class HtmlReportGeneratorTest {
   void testGeneratorRunsWithoutFailure() throws IOException {
     final List<Path> productPaths = TestData.PRODUCT_PATHS;
     final List<Path> sourcePaths = Collections.emptyList();
-    final File executionDataFile = TestData.JACOCO_EXEC_FILE;
+    final List<File> executionDataFiles = List.of(TestData.JACOCO_EXEC_FILE);
     final File outputDir = Files.createTempDirectory("html").toFile();
     final boolean discardExecutable = true;
     final boolean discardNonMagik = true;
@@ -27,7 +27,7 @@ class HtmlReportGeneratorTest {
         new HtmlReportGenerator(
             productPaths,
             sourcePaths,
-            executionDataFile,
+            executionDataFiles,
             outputDir,
             discardExecutable,
             discardNonMagik,

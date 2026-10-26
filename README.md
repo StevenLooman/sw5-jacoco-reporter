@@ -119,8 +119,8 @@ Options:
   - Path to your Smallworld 5 product.
 - `--source-path [path_to_source_directory]`
   - Path to additional regular Java source files.
-- `--jacoco-file [path_to_file]`
-  - Path to the `jacoco.exec` file.
+- `--jacoco-file [path_to_file...]`
+  - Path to the `jacoco.exec` file. Multiple files can be given, see [Merging multiple `jacoco.exec` files](#merging-multiple-jacocoexec-files).
 - `--html [path_to_directory]`
   - Path to the directory to generate the HTML report in.
 - `--jacoco-xml [path_to_file]`
@@ -145,6 +145,23 @@ To generate a Sonar XML report:
 $ java -jar sw5-jacoco-reporter.jar --product-path ... --jacoco-file .../jacoco.exec --sonar-xml .../coveragereport.xml
 ...
 ```
+
+### Merging multiple `jacoco.exec` files
+
+When the tests are split over multiple sessions, each session writes its own `jacoco.exec` file holding part of the coverage.
+Give all files to `--jacoco-file` to merge their coverage into a single report, a line is covered if it is covered in any of the sessions:
+
+```sh
+$ java -jar sw5-jacoco-reporter.jar --product-path ... --jacoco-file .../session1/jacoco.exec .../session2/jacoco.exec --html .../coveragereport
+...
+```
+
+Repeating the option, i.e., `--jacoco-file .../session1/jacoco.exec --jacoco-file .../session2/jacoco.exec`, works as well.
+
+All sessions must be run against the same compiled `libs/` directory, which is also used to generate the report.
+JaCoCo matches the recorded coverage to the classes through a checksum of the class.
+If the `libs/` are recompiled after recording, the coverage of the changed classes is lost.
+A warning listing these classes is printed when this happens.
 
 ### Jenkins integration
 

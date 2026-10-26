@@ -11,6 +11,7 @@ import nl.ramsolutions.sw.magik.jacoco.generators.CoberturaXmlReportGenerator;
 import nl.ramsolutions.sw.magik.jacoco.generators.HtmlReportGenerator;
 import nl.ramsolutions.sw.magik.jacoco.generators.JacocoXmlReportGenerator;
 import nl.ramsolutions.sw.magik.jacoco.generators.SonarXmlReportGenerator;
+import nl.ramsolutions.sw.magik.jacoco.helpers.ExecFilesLoader;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -51,8 +52,8 @@ public final class Main {
   private static final Option OPTION_JACOCO_FILE =
       Option.builder()
           .longOpt("jacoco-file")
-          .desc("Path to jacoco.exec")
-          .hasArg()
+          .desc("Path to jacoco.exec. If multiple are given, coverage is merged")
+          .numberOfArgs(Option.UNLIMITED_VALUES)
           .required()
           .type(PatternOptionBuilder.FILE_VALUE)
           .build();
@@ -193,7 +194,20 @@ public final class Main {
                 .map(Path::of)
                 .collect(Collectors.toList())
             : Collections.emptyList();
-    final File executionDataFile = (File) commandLine.getParsedOptionValue(OPTION_JACOCO_FILE);
+    final List<File> executionDataFiles =
+        Stream.of(commandLine.getOptionValues(OPTION_JACOCO_FILE))
+            .map(File::new)
+            .collect(Collectors.toList());
+    final List<File> missingExecutionDataFiles =
+        ExecFilesLoader.findMissingFiles(executionDataFiles);
+    if (!missingExecutionDataFiles.isEmpty()) {
+      missingExecutionDataFiles.forEach(
+          missingFile -> System.err.println("Error: jacoco file not found: " + missingFile));
+
+      System.exit(-1);
+      return;
+    }
+
     final boolean discardExecutable = commandLine.hasOption(OPTION_DISCARD_EXECUTABLE);
     final boolean discardNonMagik = commandLine.hasOption(OPTION_DISCARD_NON_MAGIK);
     final String bundleName =
@@ -207,7 +221,7 @@ public final class Main {
           new HtmlReportGenerator(
               productPaths,
               sourcePaths,
-              executionDataFile,
+              executionDataFiles,
               outputDir,
               discardExecutable,
               discardNonMagik,
@@ -219,7 +233,7 @@ public final class Main {
           new JacocoXmlReportGenerator(
               productPaths,
               sourcePaths,
-              executionDataFile,
+              executionDataFiles,
               outputFile,
               discardExecutable,
               discardNonMagik,
@@ -231,7 +245,7 @@ public final class Main {
           new SonarXmlReportGenerator(
               productPaths,
               sourcePaths,
-              executionDataFile,
+              executionDataFiles,
               outputFile,
               discardExecutable,
               discardNonMagik,
@@ -243,7 +257,7 @@ public final class Main {
           new CoberturaXmlReportGenerator(
               productPaths,
               sourcePaths,
-              executionDataFile,
+              executionDataFiles,
               outputFile,
               discardExecutable,
               discardNonMagik,

@@ -25,7 +25,7 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
    *
    * @param productPaths Paths to Smallworld product directories.
    * @param sourcePaths Paths to regular (Java) source directories.
-   * @param executionDataFile File to {@literal jacoco.exec}.
+   * @param executionDataFiles Files to {@literal jacoco.exec}, coverage is merged.
    * @param reportDirectory File to report directory (HTML).
    * @param discardExecutable Discard executable.
    * @param discardNonMagik Discard non-Magik code.
@@ -34,7 +34,7 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
   public HtmlReportGenerator(
       final List<Path> productPaths,
       final List<Path> sourcePaths,
-      final File executionDataFile,
+      final List<File> executionDataFiles,
       final File reportDirectory,
       final boolean discardExecutable,
       final boolean discardNonMagik,
@@ -42,7 +42,7 @@ public final class HtmlReportGenerator extends BaseReportGenerator {
     super(
         productPaths,
         sourcePaths,
-        executionDataFile,
+        executionDataFiles,
         reportDirectory,
         discardExecutable,
         discardNonMagik,

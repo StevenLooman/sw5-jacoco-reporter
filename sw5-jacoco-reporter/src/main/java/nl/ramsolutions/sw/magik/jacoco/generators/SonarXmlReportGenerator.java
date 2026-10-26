@@ -25,7 +25,7 @@ public class SonarXmlReportGenerator extends BaseReportGenerator {
    *
    * @param productPaths Paths to Smallworld product directories.
    * @param sourcePaths Paths to regular (Java) source directories.
-   * @param executionDataFile File to {@literal jacoco.exec}.
+   * @param executionDataFiles Files to {@literal jacoco.exec}, coverage is merged.
    * @param outputFile File to report file (XML).
    * @param discardExecutable Discard executable.
    * @param discardNonMagik Discard non-Magik code.
@@ -34,7 +34,7 @@ public class SonarXmlReportGenerator extends BaseReportGenerator {
   public SonarXmlReportGenerator(
       final List<Path> productPaths,
       final List<Path> sourcePaths,
-      final File executionDataFile,
+      final List<File> executionDataFiles,
       final File outputFile,
       final boolean discardExecutable,
       final boolean discardNonMagik,
@@ -42,7 +42,7 @@ public class SonarXmlReportGenerator extends BaseReportGenerator {
     super(
         productPaths,
         sourcePaths,
-        executionDataFile,
+        executionDataFiles,
         outputFile,
         discardExecutable,
         discardNonMagik,

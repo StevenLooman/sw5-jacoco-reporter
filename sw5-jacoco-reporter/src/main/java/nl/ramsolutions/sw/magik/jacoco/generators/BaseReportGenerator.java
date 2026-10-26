@@ -4,12 +4,14 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import nl.ramsolutions.sw.magik.jacoco.VersionInfo;
 import nl.ramsolutions.sw.magik.jacoco.conversion.MagikBundleCoverageConverter;
+import nl.ramsolutions.sw.magik.jacoco.helpers.ExecFilesLoader;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProducts;
 import nl.ramsolutions.sw.magik.jacoco.helpers.SmallworldProductsSourceFileLocator;
 import nl.ramsolutions.sw.magik.jaranalyzer.MethodDefinition;
@@ -18,6 +20,7 @@ import nl.ramsolutions.sw.magik.jaranalyzer.SwJarAnalyzerReader;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IBundleCoverage;
+import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.tools.ExecFileLoader;
 import org.jacoco.report.DirectorySourceFileLocator;
@@ -33,7 +36,7 @@ public abstract class BaseReportGenerator {
   private final List<Path> productPaths;
   private final List<Path> sourcePaths;
   private final File outputFile;
-  private final File executionDataFile;
+  private final List<File> executionDataFiles;
   private final boolean discardExecutable;
   private final boolean discardNonMagik;
   private final String bundleName;
@@ -48,7 +51,7 @@ public abstract class BaseReportGenerator {
    *
    * @param productPaths Paths to Smallworld product directories.
    * @param sourcePaths Paths to regular (Java) source directories.
-   * @param executionDataFile File to {@literal jacoco.exec}.
+   * @param executionDataFiles Files to {@literal jacoco.exec}, coverage is merged.
    * @param outputFile File to report directory.
    * @param discardExecutable Discard executable.
    * @param discardNonMagik Discard non-Magik code.
@@ -57,14 +60,14 @@ public abstract class BaseReportGenerator {
   protected BaseReportGenerator(
       final List<Path> productPaths,
       final List<Path> sourcePaths,
-      final File executionDataFile,
+      final List<File> executionDataFiles,
       final File outputFile,
       final boolean discardExecutable,
       final boolean discardNonMagik,
       final String bundleName) {
     this.productPaths = productPaths;
     this.sourcePaths = sourcePaths;
-    this.executionDataFile = executionDataFile;
+    this.executionDataFiles = executionDataFiles;
     this.outputFile = outputFile;
     this.discardExecutable = discardExecutable;
     this.discardNonMagik = discardNonMagik;
@@ -158,6 +161,29 @@ public abstract class BaseReportGenerator {
   }
 
   /**
+   * Report classes for which the execution data does not match the class in the {@literal libs}.
+   *
+   * <p>The coverage of these classes is lost, as JaCoCo matches the execution data to the class by
+   * a checksum of the class. This happens when the {@literal libs} are recompiled after recording
+   * the {@literal jacoco.exec} file(s).
+   *
+   * @param coverageBuilder {@link CoverageBuilder} which analyzed the classes.
+   */
+  private void reportNoMatchClasses(final CoverageBuilder coverageBuilder) {
+    final Collection<IClassCoverage> noMatchClasses = coverageBuilder.getNoMatchClasses();
+    if (!noMatchClasses.isEmpty()) {
+      System.err.println(
+          "Warning: Execution data of classes do not match the classes in libs, "
+              + "coverage of these classes is lost. "
+              + "Were the libs recompiled after recording?");
+      noMatchClasses.stream()
+          .map(IClassCoverage::getName)
+          .sorted()
+          .forEach(className -> System.err.println("  " + className));
+    }
+  }
+
+  /**
    * Create the report.
    *
    * @param bundleCoverage {@link IBundleCoverage}, converted to Magik style.
@@ -175,6 +201,7 @@ public abstract class BaseReportGenerator {
       analyzer.analyzeAll(libsDirectory);
     }
     final IBundleCoverage bundleCoverage = coverageBuilder.getBundle(this.bundleName);
+    this.reportNoMatchClasses(coverageBuilder);
 
     // Merge method coverages (Magik), discard executable parts if needed.
     final MagikBundleCoverageConverter bundleCoverageConverter =
@@ -184,7 +211,7 @@ public abstract class BaseReportGenerator {
   }
 
   private void loadExecutionData() throws IOException {
-    this.execFileLoader.load(this.executionDataFile);
+    ExecFilesLoader.load(this.execFileLoader, this.executionDataFiles);
   }
 
   private void loadLibs() throws IOException {
